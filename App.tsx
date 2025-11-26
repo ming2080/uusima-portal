@@ -1,0 +1,84 @@
+import React, { useState } from 'react';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Layout from './components/Layout';
+import Home from './pages/Home';
+import Courses from './pages/Courses';
+import Labs from './pages/Labs';
+import Exams from './pages/Exams';
+import Products from './pages/Products';
+import About from './pages/About';
+import LoginModal from './components/LoginModal';
+import SmartAssistant from './components/SmartAssistant';
+import { User, UserRole } from './types';
+
+const App: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  // The Trigger Logic:
+  // If user is guest, show login modal.
+  // If user is logged in, theoretically navigate to actual content (simulated here).
+  const handleRestrictedAccess = () => {
+    if (!user) {
+      setIsLoginModalOpen(true);
+    } else {
+      // In a real app, this might redirect to a specific detail page or launch a VM
+      alert(`访问许可：欢迎，${user.name}！正在打开资源...`);
+    }
+  };
+
+  const handleLogin = (role: UserRole, name: string) => {
+    const newUser: User = {
+      id: Date.now().toString(),
+      name: name,
+      role: role,
+      avatar: 'https://picsum.photos/100',
+    };
+    setUser(newUser);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+  };
+
+  return (
+    <HashRouter>
+      <Layout 
+        user={user} 
+        onLoginClick={() => setIsLoginModalOpen(true)} 
+        onLogoutClick={handleLogout}
+      >
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route 
+            path="/courses" 
+            element={<Courses onAccessTrigger={handleRestrictedAccess} />} 
+          />
+          <Route 
+            path="/labs" 
+            element={<Labs onAccessTrigger={handleRestrictedAccess} />} 
+          />
+          <Route 
+            path="/exams" 
+            element={<Exams onAccessTrigger={handleRestrictedAccess} />} 
+          />
+          <Route path="/products" element={<Products />} />
+          <Route path="/about" element={<About />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Layout>
+
+      <LoginModal 
+        isOpen={isLoginModalOpen} 
+        onClose={() => setIsLoginModalOpen(false)} 
+        onLogin={handleLogin} 
+      />
+
+      {/* Floating AI Assistant - Always available or conditionally available */}
+      <SmartAssistant />
+
+    </HashRouter>
+  );
+};
+
+export default App;
