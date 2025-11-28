@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Monitor, BookOpen, Award, Cpu, ChevronLeft, ChevronRight, Star, Zap, Activity, Truck, Sprout, Building, Wallet, Radio } from 'lucide-react';
+import { ArrowRight, Monitor, BookOpen, Award, Cpu, ChevronLeft, ChevronRight, Star, Zap, Activity, Truck, Sprout, Building, Wallet, Radio, Code, BarChart3, Smartphone } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Home: React.FC = () => {
@@ -51,6 +51,33 @@ const Home: React.FC = () => {
       link: "/about",
       cta: "体验 AI",
       color: "from-emerald-600 to-teal-900"
+    }
+  ];
+
+  const featuredCourses = [
+    {
+      id: 101,
+      title: "嵌入式系统开发",
+      category: "硬件开发",
+      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800", // Circuit board
+      desc: "深入理解ARM架构与实时操作系统，掌握底层驱动编写。",
+      hours: "48 课时"
+    },
+    {
+      id: 102,
+      title: "移动端应用实战",
+      category: "软件工程",
+      image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=800", // Mobile phone
+      desc: "使用 React Native 构建跨平台移动应用，从UI设计到上架发布。",
+      hours: "32 课时"
+    },
+    {
+      id: 103,
+      title: "商业数据可视化",
+      category: "数据分析",
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800", // Charts
+      desc: "学习 Tableau 与 ECharts，将复杂数据转化为直观的商业洞察。",
+      hours: "24 课时"
     }
   ];
 
@@ -141,9 +168,6 @@ const Home: React.FC = () => {
     
     const timer = setInterval(() => {
       setCaseIndex((prev) => {
-        // Stop sliding when we reach the end of the list (visual end)
-        // If we want infinite loop, we reset.
-        // Formula: maxIndex = cases.length - itemsPerScreen
         const maxIndex = cases.length - itemsPerScreen;
         if (prev >= maxIndex) return 0;
         return prev + 1;
@@ -277,19 +301,19 @@ const Home: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-             {[1, 2, 3].map((i) => (
-               <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group">
+             {featuredCourses.map((course) => (
+               <div key={course.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group">
                   <div className="h-48 bg-gray-200 relative overflow-hidden">
-                     <img src={`https://picsum.photos/600/400?random=${i}`} alt="Course" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                     <img src={course.image} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                      <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-2 py-1 rounded text-xs font-bold text-blue-800 uppercase">
-                        技术
+                        {course.category}
                      </div>
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">物联网系统导论</h3>
-                    <p className="text-gray-500 text-sm mb-4 line-clamp-2">学习物联网、传感器和云集成的基础知识，掌握从端到云的全栈开发能力。</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{course.title}</h3>
+                    <p className="text-gray-500 text-sm mb-4 line-clamp-2">{course.desc}</p>
                     <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-                       <span className="text-sm text-gray-500 flex items-center"><Monitor className="w-3 h-3 mr-1"/> 24 课时</span>
+                       <span className="text-sm text-gray-500 flex items-center"><Monitor className="w-3 h-3 mr-1"/> {course.hours}</span>
                        <span className="font-medium text-blue-600 hover:text-blue-800 cursor-pointer">开始学习</span>
                     </div>
                   </div>
@@ -299,7 +323,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-       {/* --- INDUSTRY CASES SLIDER (NEW) --- */}
+       {/* --- INDUSTRY CASES SLIDER --- */}
        <section className="py-16 bg-white overflow-hidden" onMouseEnter={() => setIsCaseHovered(true)} onMouseLeave={() => setIsCaseHovered(false)}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
            <div className="flex justify-between items-center mb-10">

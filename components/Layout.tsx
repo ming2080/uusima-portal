@@ -38,24 +38,24 @@ const Layout: React.FC<LayoutProps> = ({ children, user, onLoginClick, onLogoutC
       {/* Header - Optimized Design */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+          <div className="flex items-center justify-between md:justify-start h-20 flex-nowrap">
             {/* Logo Section */}
-            <Link to="/" className="flex-shrink-0 flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center text-white font-extrabold text-xl shadow-lg group-hover:scale-105 transition-transform duration-300">
+            <Link to="/" className="flex-shrink-0 flex items-center gap-2 lg:gap-3 group mr-4 lg:mr-8">
+              <div className="w-9 h-9 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center text-white font-extrabold text-lg lg:text-xl shadow-lg group-hover:scale-105 transition-transform duration-300">
                 U
               </div>
               <div className="flex flex-col">
-                <span className="font-extrabold text-2xl text-slate-900 tracking-tight leading-none group-hover:text-blue-700 transition-colors">
+                <span className="font-extrabold text-xl lg:text-2xl text-slate-900 tracking-tight leading-none group-hover:text-blue-700 transition-colors whitespace-nowrap">
                   UUSIMA
                 </span>
-                <span className="text-[10px] text-gray-500 font-medium tracking-widest uppercase mt-0.5">
+                <span className="text-[9px] lg:text-[10px] text-gray-500 font-medium tracking-widest uppercase mt-0.5 whitespace-nowrap">
                   智慧教学实验平台
                 </span>
               </div>
             </Link>
 
-            {/* Desktop Nav - Larger fonts & Pill hover effect */}
-            <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
+            {/* Desktop Nav - Responsive spacing and font sizes */}
+            <nav className="hidden md:flex items-center space-x-1">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.path;
                 return (
@@ -63,56 +63,59 @@ const Layout: React.FC<LayoutProps> = ({ children, user, onLoginClick, onLogoutC
                     key={item.path}
                     to={item.path}
                     className={`
-                      flex items-center px-4 py-2.5 rounded-full text-base font-semibold transition-all duration-200
+                      flex items-center px-2 lg:px-3 xl:px-4 py-2 lg:py-2.5 rounded-full font-semibold transition-all duration-200 whitespace-nowrap
+                      text-sm xl:text-base
                       ${isActive 
                         ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100' 
                         : 'text-slate-600 hover:text-blue-600 hover:bg-gray-50'
                       }
                     `}
                   >
-                    {/* Hide icon on smaller desktop screens to save space, show on large */}
-                    <span className="hidden xl:inline-block">{isActive ? item.icon : null}</span>
+                    {/* Icon only visible on very large screens for nav items to save space */}
+                    <span className="hidden 2xl:inline-block">{isActive ? item.icon : null}</span>
                     <span>{item.label}</span>
                   </Link>
                 );
               })}
             </nav>
 
-            {/* Right Side: External Links + Auth */}
-            <div className="flex items-center ml-auto md:ml-0">
+            {/* Right Side: Action Block (Tools + Auth) - Distinct Group */}
+            <div className="hidden md:flex items-center gap-3 lg:gap-6 ml-auto pl-4 lg:pl-6 border-l-2 border-gray-100 h-10 flex-shrink-0">
                {/* External Utility Links (Desktop) */}
-               <div className="hidden lg:flex items-center gap-4 mr-6">
+               <div className="hidden lg:flex items-center gap-2">
                   <a 
                     href="https://aistudio.google.com/" 
                     target="_blank" 
                     rel="noreferrer"
-                    className="flex items-center text-sm font-bold text-slate-600 hover:text-purple-600 transition-colors bg-purple-50 hover:bg-purple-100 px-3 py-1.5 rounded-lg border border-transparent hover:border-purple-200"
+                    className="flex items-center justify-center px-3 py-2 text-sm font-bold text-gray-600 bg-gray-50 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors group"
+                    title="学科大模型"
                   >
-                     <BrainCircuit className="w-4 h-4 mr-2 text-purple-600" />
-                     学科大模型
+                     <BrainCircuit className="w-4 h-4 text-purple-500 group-hover:text-purple-600 xl:mr-2" />
+                     <span className="hidden xl:inline whitespace-nowrap">学科大模型</span>
                   </a>
                   <a 
                     href="#" 
-                    className="flex items-center text-sm font-bold text-slate-600 hover:text-teal-600 transition-colors bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg border border-transparent hover:border-teal-200"
+                    className="flex items-center justify-center px-3 py-2 text-sm font-bold text-gray-600 bg-gray-50 hover:bg-teal-50 hover:text-teal-600 rounded-lg transition-colors group"
+                    title="帮助文档"
                   >
-                     <BookOpenText className="w-4 h-4 mr-2 text-teal-600" />
-                     帮助文档
+                     <BookOpenText className="w-4 h-4 text-teal-500 group-hover:text-teal-600 xl:mr-2" />
+                     <span className="hidden xl:inline whitespace-nowrap">帮助文档</span>
                   </a>
                </div>
 
                 {/* Auth Button */}
-                <div className="hidden md:flex items-center pl-6 border-l border-gray-200">
+                <div className="flex items-center">
                   {user ? (
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-3 pl-2">
-                        <div className="flex flex-col items-end">
-                          <span className="text-sm font-bold text-gray-800 leading-tight">{user.name}</span>
-                          <span className="text-xs text-blue-600 font-medium bg-blue-50 px-2 py-0.5 rounded-full mt-0.5">
+                    <div className="flex items-center space-x-2 lg:space-x-4">
+                      <div className="flex items-center space-x-2 lg:space-x-3 pl-2">
+                        <div className="hidden lg:flex flex-col items-end">
+                          <span className="text-sm font-bold text-gray-800 leading-tight whitespace-nowrap">{user.name}</span>
+                          <span className="text-xs text-blue-600 font-medium bg-blue-50 px-2 py-0.5 rounded-full mt-0.5 whitespace-nowrap">
                             {getRoleName(user.role)}
                           </span>
                         </div>
-                        <div className="h-10 w-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex items-center justify-center overflow-hidden">
-                          <UserIcon className="w-6 h-6 text-blue-600" />
+                        <div className="h-9 w-9 lg:h-10 lg:w-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex items-center justify-center overflow-hidden">
+                          <UserIcon className="w-5 h-5 lg:w-6 lg:h-6 text-blue-600" />
                         </div>
                       </div>
                       <button
@@ -126,18 +129,18 @@ const Layout: React.FC<LayoutProps> = ({ children, user, onLoginClick, onLogoutC
                   ) : (
                     <button
                       onClick={onLoginClick}
-                      className="group relative inline-flex items-center justify-center px-6 py-2.5 text-base font-semibold text-white transition-all duration-200 bg-blue-600 border border-transparent rounded-full shadow-md hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 overflow-hidden"
+                      className="group relative inline-flex items-center justify-center px-4 lg:px-6 py-2 lg:py-2.5 text-sm lg:text-base font-semibold text-white transition-all duration-200 bg-blue-600 border border-transparent rounded-full shadow-md hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 overflow-hidden whitespace-nowrap"
                     >
                       <span className="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
-                      <LogIn className="w-5 h-5 mr-2 -ml-1 group-hover:scale-110 transition-transform" />
+                      <LogIn className="w-4 h-4 lg:w-5 lg:h-5 mr-1.5 lg:mr-2 -ml-0.5 group-hover:scale-110 transition-transform" />
                       登录平台
                     </button>
                   )}
                 </div>
             </div>
 
-            {/* Mobile Menu Button */}
-            <div className="flex items-center md:hidden ml-4">
+            {/* Mobile Menu Button - Pushed to right on mobile */}
+            <div className="flex items-center md:hidden ml-auto">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="text-gray-500 hover:text-blue-600 p-2 rounded-lg hover:bg-gray-100 transition-colors"
