@@ -197,7 +197,8 @@ const Home: React.FC = () => {
   return (
     <div>
       {/* --- HERO CAROUSEL --- */}
-      <section className="relative h-[500px] md:h-[600px] bg-gray-900 text-white overflow-hidden group">
+      {/* Reduced height to h-[280px] md:h-[380px] */}
+      <section className="relative h-[280px] md:h-[380px] bg-gray-900 text-white overflow-hidden group">
         {heroSlides.map((slide, index) => (
           <div
             key={slide.id}
@@ -214,23 +215,24 @@ const Home: React.FC = () => {
             <div className="absolute inset-0 bg-black/20"></div>
 
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
-              <div className="max-w-2xl animate-fade-in-up">
-                <div className="inline-flex items-center px-3 py-1 rounded-full border border-white/30 bg-white/10 backdrop-blur-sm text-sm font-medium mb-4 text-blue-100">
-                   <Star className="w-4 h-4 mr-2 text-yellow-400" fill="currentColor" />
+              <div className="max-w-2xl animate-fade-in-up pt-4 md:pt-0">
+                <div className="inline-flex items-center px-2.5 py-0.5 rounded-full border border-white/30 bg-white/10 backdrop-blur-sm text-[10px] md:text-xs font-medium mb-2 md:mb-3 text-blue-100">
+                   <Star className="w-3 h-3 mr-1.5 text-yellow-400" fill="currentColor" />
                    {slide.subtitle}
                 </div>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 leading-tight shadow-sm">
+                {/* Scaled down font sizes */}
+                <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-2 md:mb-3 leading-tight shadow-sm">
                   {slide.title}
                 </h1>
-                <p className="text-lg md:text-xl text-gray-100 mb-8 leading-relaxed border-l-4 border-white/30 pl-4">
+                <p className="text-sm md:text-base text-gray-100 mb-4 md:mb-6 leading-relaxed border-l-4 border-white/30 pl-3 md:pl-4 max-w-lg line-clamp-2 md:line-clamp-none">
                   {slide.description}
                 </p>
                 <Link 
                   to={slide.link} 
-                  className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-lg text-blue-900 bg-white hover:bg-blue-50 transition-all transform hover:scale-105 shadow-lg"
+                  className="inline-flex items-center justify-center px-5 py-2 md:px-6 md:py-2.5 border border-transparent text-xs md:text-sm font-medium rounded-lg text-blue-900 bg-white hover:bg-blue-50 transition-all transform hover:scale-105 shadow-lg"
                 >
                   {slide.cta}
-                  <ArrowRight className="ml-2 w-5 h-5" />
+                  <ArrowRight className="ml-1.5 w-3.5 h-3.5 md:ml-2 md:w-4 md:h-4" />
                 </Link>
               </div>
             </div>
@@ -239,23 +241,23 @@ const Home: React.FC = () => {
 
         <button
           onClick={prevHeroSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-black/30 text-white hover:bg-white hover:text-gray-900 transition-all backdrop-blur-sm opacity-0 group-hover:opacity-100"
+          className="absolute left-3 top-1/2 -translate-y-1/2 z-20 p-1.5 rounded-full bg-black/30 text-white hover:bg-white hover:text-gray-900 transition-all backdrop-blur-sm opacity-0 group-hover:opacity-100"
         >
-          <ChevronLeft className="w-8 h-8" />
+          <ChevronLeft className="w-5 h-5 md:w-7 md:h-7" />
         </button>
         <button
           onClick={nextHeroSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-black/30 text-white hover:bg-white hover:text-gray-900 transition-all backdrop-blur-sm opacity-0 group-hover:opacity-100"
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-20 p-1.5 rounded-full bg-black/30 text-white hover:bg-white hover:text-gray-900 transition-all backdrop-blur-sm opacity-0 group-hover:opacity-100"
         >
-          <ChevronRight className="w-8 h-8" />
+          <ChevronRight className="w-5 h-5 md:w-7 md:h-7" />
         </button>
 
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex space-x-3">
+        <div className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 z-20 flex space-x-2">
           {heroSlides.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-12 h-1.5 rounded-full transition-all duration-300 ${
+              className={`w-6 h-1 md:w-10 md:h-1.5 rounded-full transition-all duration-300 ${
                 index === currentSlide ? 'bg-white' : 'bg-white/30 hover:bg-white/50'
               }`}
             />
@@ -264,22 +266,23 @@ const Home: React.FC = () => {
       </section>
 
       {/* --- STATS BAR --- */}
-      <section className="bg-white border-b border-gray-100 shadow-sm relative z-20 -mt-8 mx-4 md:mx-auto max-w-7xl rounded-xl">
-        <div className="px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      {/* Reduced negative margin to match smaller header -mt-4 md:-mt-6 */}
+      <section className="bg-white border-b border-gray-100 shadow-sm relative z-20 -mt-6 md:-mt-8 mx-3 md:mx-auto max-w-7xl rounded-xl">
+        <div className="px-4 sm:px-6 lg:px-8 py-5 md:py-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             {[
               { icon: BookOpen, label: '500+ 精品课程', sub: '教育部标准对齐' },
               { icon: Monitor, label: '云端实验室', sub: 'Docker/K8s 容器化' },
               { icon: Award, label: '1+X 证书认证', sub: '行业龙头企业认可' },
               { icon: Zap, label: 'AI 智慧教学', sub: '知识图谱 + 个性化' },
             ].map((stat, idx) => (
-              <div key={idx} className="flex items-center space-x-4 group cursor-default">
-                <div className="bg-blue-50 p-3 rounded-lg text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
-                  <stat.icon className="w-6 h-6" />
+              <div key={idx} className="flex items-center space-x-3 md:space-x-4 group cursor-default">
+                <div className="bg-blue-50 p-2 md:p-3 rounded-lg text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                  <stat.icon className="w-5 h-5 md:w-6 md:h-6" />
                 </div>
                 <div>
-                  <p className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{stat.label}</p>
-                  <p className="text-sm text-gray-500">{stat.sub}</p>
+                  <p className="font-bold text-gray-900 text-sm md:text-base group-hover:text-blue-600 transition-colors">{stat.label}</p>
+                  <p className="text-xs text-gray-500 hidden sm:block">{stat.sub}</p>
                 </div>
               </div>
             ))}
@@ -288,33 +291,33 @@ const Home: React.FC = () => {
       </section>
 
       {/* --- FEATURED COURSES --- */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-12 md:py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-end mb-8">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900">热门课程推荐</h2>
-              <p className="mt-2 text-gray-600">根据本学期教学大纲为您精选。</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">热门课程推荐</h2>
+              <p className="mt-2 text-sm md:text-base text-gray-600">根据本学期教学大纲为您精选。</p>
             </div>
-            <Link to="/courses" className="hidden sm:flex items-center text-blue-600 font-medium hover:text-blue-700 group">
+            <Link to="/courses" className="hidden sm:flex items-center text-blue-600 font-medium hover:text-blue-700 group text-sm">
               查看课程大厅 <ArrowRight className="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
              {featuredCourses.map((course) => (
                <div key={course.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group">
-                  <div className="h-48 bg-gray-200 relative overflow-hidden">
+                  <div className="h-40 md:h-48 bg-gray-200 relative overflow-hidden">
                      <img src={course.image} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                      <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-2 py-1 rounded text-xs font-bold text-blue-800 uppercase">
                         {course.category}
                      </div>
                   </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{course.title}</h3>
-                    <p className="text-gray-500 text-sm mb-4 line-clamp-2">{course.desc}</p>
+                  <div className="p-5 md:p-6">
+                    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{course.title}</h3>
+                    <p className="text-gray-500 text-xs md:text-sm mb-4 line-clamp-2">{course.desc}</p>
                     <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-                       <span className="text-sm text-gray-500 flex items-center"><Monitor className="w-3 h-3 mr-1"/> {course.hours}</span>
-                       <span className="font-medium text-blue-600 hover:text-blue-800 cursor-pointer">开始学习</span>
+                       <span className="text-xs text-gray-500 flex items-center"><Monitor className="w-3 h-3 mr-1"/> {course.hours}</span>
+                       <span className="font-medium text-sm text-blue-600 hover:text-blue-800 cursor-pointer">开始学习</span>
                     </div>
                   </div>
                </div>
@@ -324,19 +327,19 @@ const Home: React.FC = () => {
       </section>
 
        {/* --- INDUSTRY CASES SLIDER --- */}
-       <section className="py-16 bg-white overflow-hidden" onMouseEnter={() => setIsCaseHovered(true)} onMouseLeave={() => setIsCaseHovered(false)}>
+       <section className="py-12 md:py-16 bg-white overflow-hidden" onMouseEnter={() => setIsCaseHovered(true)} onMouseLeave={() => setIsCaseHovered(false)}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-           <div className="flex justify-between items-center mb-10">
+           <div className="flex justify-between items-center mb-8 md:mb-10">
               <div>
-                <h2 className="text-3xl font-bold text-gray-900">行业融合案例展示</h2>
-                <p className="mt-2 text-gray-500">探索 UUSIMA 产品在各行各业的实际应用场景。</p>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">行业融合案例展示</h2>
+                <p className="mt-2 text-sm md:text-base text-gray-500">探索 UUSIMA 产品在各行各业的实际应用场景。</p>
               </div>
               <div className="flex space-x-2">
                  <button onClick={prevCase} className="p-2 rounded-full border border-gray-300 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                    <ChevronLeft className="w-5 h-5" />
+                    <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                  </button>
                  <button onClick={nextCase} className="p-2 rounded-full border border-gray-300 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                    <ChevronRight className="w-5 h-5" />
+                    <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                  </button>
               </div>
            </div>
@@ -349,28 +352,28 @@ const Home: React.FC = () => {
                  {cases.map((item) => (
                     <div 
                       key={item.id} 
-                      className="flex-shrink-0 px-3"
+                      className="flex-shrink-0 px-2 md:px-3"
                       style={{ width: `${100 / itemsPerScreen}%` }}
                     >
                        <div className="bg-gray-50 rounded-2xl overflow-hidden group hover:shadow-xl transition-all duration-300 h-full flex flex-col border border-gray-100">
-                          <div className="relative h-48 overflow-hidden">
+                          <div className="relative h-40 md:h-48 overflow-hidden">
                              <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                             <div className="absolute bottom-3 left-4 text-white font-medium flex items-center text-sm">
-                                <item.icon className="w-4 h-4 mr-1.5" />
+                             <div className="absolute bottom-3 left-4 text-white font-medium flex items-center text-xs md:text-sm">
+                                <item.icon className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5" />
                                 {item.category}
                              </div>
                           </div>
-                          <div className="p-6 flex-1 flex flex-col">
-                             <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{item.title}</h3>
-                             <p className="text-gray-500 text-sm mb-4 line-clamp-3 flex-1">
+                          <div className="p-5 md:p-6 flex-1 flex flex-col">
+                             <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{item.title}</h3>
+                             <p className="text-gray-500 text-xs md:text-sm mb-4 line-clamp-3 flex-1">
                                {item.description}
                              </p>
                              <div className="pt-4 border-t border-gray-200 mt-auto flex items-center justify-between">
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] md:text-xs font-medium bg-green-100 text-green-800">
                                    {item.stats}
                                 </span>
-                                <Link to="/products" className="text-blue-600 text-sm font-semibold hover:text-blue-800 flex items-center">
+                                <Link to="/products" className="text-blue-600 text-xs md:text-sm font-semibold hover:text-blue-800 flex items-center">
                                    查看详情 <ArrowRight className="w-3 h-3 ml-1" />
                                 </Link>
                              </div>
