@@ -15,7 +15,7 @@ const EXAMS_DATA: Exam[] = [
 const Exams: React.FC<ExamsProps> = ({ onAccessTrigger }) => {
   return (
     <div className="bg-gray-50 min-h-screen py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">考试中心</h1>
 
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200">

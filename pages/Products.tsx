@@ -10,7 +10,7 @@ const Products: React.FC = () => {
 
     return (
         <div className="bg-gray-50 min-h-screen py-12">
-            <div className="max-w-7xl mx-auto px-4">
+            <div className="max-w-[1440px] mx-auto px-4">
                  <div className="text-center mb-12">
                      <h1 className="text-3xl font-bold text-gray-900 mb-4">产品中心</h1>
                      <p className="text-gray-600 max-w-2xl mx-auto">

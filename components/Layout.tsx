@@ -1,7 +1,22 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, LogIn, User as UserIcon, LogOut, GraduationCap, Beaker, FileBadge, Box, Users, BrainCircuit, BookOpenText } from 'lucide-react';
-import { User } from '../types';
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import {
+  Menu,
+  X,
+  LogIn,
+  User as UserIcon,
+  LogOut,
+  GraduationCap,
+  Beaker,
+  FileBadge,
+  Box,
+  Users,
+  BrainCircuit,
+  BookOpenText,
+  ChevronDown,
+  Settings,
+} from "lucide-react";
+import { User } from "../types";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -10,42 +25,75 @@ interface LayoutProps {
   onLogoutClick: () => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, user, onLoginClick, onLogoutClick }) => {
+const Layout: React.FC<LayoutProps> = ({
+  children,
+  user,
+  onLoginClick,
+  onLogoutClick,
+}) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   const navItems = [
-    { label: '首页', path: '/', icon: null },
-    { label: '课程大厅', path: '/courses', icon: <GraduationCap className="w-5 h-5 mr-1.5" /> },
-    { label: '实验大厅', path: '/labs', icon: <Beaker className="w-5 h-5 mr-1.5" /> },
-    { label: '考试认证', path: '/exams', icon: <FileBadge className="w-5 h-5 mr-1.5" /> },
-    { label: '产品中心', path: '/products', icon: <Box className="w-5 h-5 mr-1.5" /> },
-    { label: '关于我们', path: '/about', icon: <Users className="w-5 h-5 mr-1.5" /> },
+    { label: "首页", path: "/", icon: null },
+    {
+      label: "课程大厅",
+      path: "/courses",
+      icon: <GraduationCap className="w-5 h-5 mr-1.5" />,
+    },
+    {
+      label: "实验大厅",
+      path: "/labs",
+      icon: <Beaker className="w-5 h-5 mr-1.5" />,
+    },
+    {
+      label: "考试认证",
+      path: "/exams",
+      icon: <FileBadge className="w-5 h-5 mr-1.5" />,
+    },
+    {
+      label: "产品中心",
+      path: "/products",
+      icon: <Box className="w-5 h-5 mr-1.5" />,
+    },
+    {
+      label: "关于我们",
+      path: "/about",
+      icon: <Users className="w-5 h-5 mr-1.5" />,
+    },
   ];
 
   const getRoleName = (role: string) => {
     switch (role) {
-      case 'STUDENT': return '学生';
-      case 'TEACHER': return '教师';
-      case 'ADMIN_SCHOOL': return '校管';
-      case 'ADMIN_PLATFORM': return '超管';
-      default: return role;
+      case "STUDENT":
+        return "学生";
+      case "TEACHER":
+        return "教师";
+      case "ADMIN_SCHOOL":
+        return "校管";
+      case "ADMIN_PLATFORM":
+        return "超管";
+      default:
+        return role;
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
       {/* Header - Optimized Design */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between md:justify-start h-20 flex-nowrap">
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-lg border-b border-gray-200/80 shadow-sm transition-all duration-300 supports-[backdrop-filter]:bg-white/60">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
             {/* Logo Section */}
-            <Link to="/" className="flex-shrink-0 flex items-center gap-2 lg:gap-3 group mr-4 lg:mr-8">
-              <div className="w-9 h-9 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center text-white font-extrabold text-lg lg:text-xl shadow-lg group-hover:scale-105 transition-transform duration-300">
+            <Link
+              to="/"
+              className="flex-shrink-0 flex items-center gap-2 lg:gap-3 group mr-6 lg:mr-8 relative z-50"
+            >
+              <div className="w-9 h-9 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center text-white font-extrabold text-lg lg:text-xl shadow-lg shadow-blue-500/20 group-hover:scale-105 group-hover:shadow-blue-600/30 transition-all duration-300">
                 U
               </div>
               <div className="flex flex-col">
-                <span className="font-extrabold text-xl lg:text-2xl text-slate-900 tracking-tight leading-none group-hover:text-blue-700 transition-colors whitespace-nowrap">
+                <span className="font-extrabold text-xl lg:text-2xl text-slate-900 tracking-tight leading-none group-hover:text-blue-700 transition-colors whitespace-nowrap font-['Fira_Code']">
                   UUSIMA
                 </span>
                 <span className="text-[9px] lg:text-[10px] text-gray-500 font-medium tracking-widest uppercase mt-0.5 whitespace-nowrap">
@@ -54,8 +102,8 @@ const Layout: React.FC<LayoutProps> = ({ children, user, onLoginClick, onLogoutC
               </div>
             </Link>
 
-            {/* Desktop Nav - Responsive spacing and font sizes */}
-            <nav className="hidden md:flex items-center space-x-1">
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex items-center space-x-1 flex-1">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.path;
                 return (
@@ -63,89 +111,169 @@ const Layout: React.FC<LayoutProps> = ({ children, user, onLoginClick, onLogoutC
                     key={item.path}
                     to={item.path}
                     className={`
-                      flex items-center px-2 lg:px-3 xl:px-4 py-2 lg:py-2.5 rounded-full font-semibold transition-all duration-200 whitespace-nowrap
-                      text-sm xl:text-base
-                      ${isActive 
-                        ? 'text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100' 
-                        : 'text-slate-600 hover:text-blue-600 hover:bg-gray-50'
+                      flex items-center px-3 py-2 rounded-full font-semibold transition-all duration-200 whitespace-nowrap text-sm
+                      ${
+                        isActive
+                          ? "text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100"
+                          : "text-slate-600 hover:text-blue-600 hover:bg-gray-50/80"
                       }
                     `}
                   >
-                    {/* Icon only visible on very large screens for nav items to save space */}
-                    <span className="hidden 2xl:inline-block">{isActive ? item.icon : null}</span>
                     <span>{item.label}</span>
                   </Link>
                 );
               })}
+
+              {/* "More Features" Dropdown */}
+              <div className="relative group ml-1">
+                <button className="flex items-center px-3 py-2 rounded-full font-semibold text-slate-600 hover:text-blue-600 hover:bg-gray-50 transition-all text-sm whitespace-nowrap outline-none group-hover:bg-gray-50">
+                  更多功能
+                  <ChevronDown className="w-4 h-4 ml-1 text-gray-400 group-hover:text-blue-500 group-hover:rotate-180 transition-all duration-300" />
+                </button>
+
+                <div className="absolute top-full right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100/80 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right translate-y-2 group-hover:translate-y-0 z-50 ring-1 ring-black/5">
+                  <div className="p-2 space-y-1">
+                    <Link
+                      to="/config"
+                      className="group/item flex items-center px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 rounded-xl transition-all"
+                    >
+                      <div className="mr-3 p-2 rounded-lg bg-slate-100 text-slate-600 group-hover/item:bg-white group-hover/item:shadow-sm group-hover/item:text-blue-600 transition-all">
+                        <Settings className="w-4 h-4" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-gray-900 group-hover/item:text-blue-700">
+                          配置管理
+                        </span>
+                        <span className="text-[10px] text-gray-400">
+                          系统设置与偏好
+                        </span>
+                      </div>
+                    </Link>
+                    <Link
+                      to="#"
+                      className="group/item flex items-center px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 rounded-xl transition-all"
+                    >
+                      <div className="mr-3 p-2 rounded-lg bg-blue-50 text-blue-600 group-hover/item:bg-white group-hover/item:shadow-sm group-hover/item:text-blue-700 transition-all">
+                        <UserIcon className="w-4 h-4" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-gray-900 group-hover/item:text-blue-700">
+                          个人中心
+                        </span>
+                        <span className="text-[10px] text-gray-400">
+                          账号信息与安全
+                        </span>
+                      </div>
+                    </Link>
+                  </div>
+                </div>
+              </div>
             </nav>
 
-            {/* Right Side: Action Block (Tools + Auth) - Distinct Group */}
-            <div className="hidden md:flex items-center gap-3 lg:gap-6 ml-auto pl-4 lg:pl-6 border-l-2 border-gray-100 h-10 flex-shrink-0">
-               {/* External Utility Links (Desktop) */}
-               <div className="hidden lg:flex items-center gap-2">
-                  <a 
-                    href="https://aistudio.google.com/" 
-                    target="_blank" 
-                    rel="noreferrer"
-                    className="flex items-center justify-center px-3 py-2 text-sm font-bold text-gray-600 bg-gray-50 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors group"
-                    title="学科大模型"
-                  >
-                     <BrainCircuit className="w-4 h-4 text-purple-500 group-hover:text-purple-600 xl:mr-2" />
-                     <span className="hidden xl:inline whitespace-nowrap">学科大模型</span>
-                  </a>
-                  <a 
-                    href="#" 
-                    className="flex items-center justify-center px-3 py-2 text-sm font-bold text-gray-600 bg-gray-50 hover:bg-teal-50 hover:text-teal-600 rounded-lg transition-colors group"
-                    title="帮助文档"
-                  >
-                     <BookOpenText className="w-4 h-4 text-teal-500 group-hover:text-teal-600 xl:mr-2" />
-                     <span className="hidden xl:inline whitespace-nowrap">帮助文档</span>
-                  </a>
-               </div>
+            {/* Right Side: Action Block (Icons Only) */}
+            <div className="hidden md:flex items-center gap-4 ml-auto pl-6 border-l border-gray-200 h-8 flex-shrink-0">
+              {/* External Utility Links (Icons) */}
+              <div className="flex items-center gap-1.5">
+                <a
+                  href="https://aistudio.google.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-2.5 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all relative group/tooltip"
+                  aria-label="学科大模型"
+                >
+                  <BrainCircuit className="w-5 h-5 transition-transform group-hover/tooltip:scale-110" />
+                  <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] font-medium px-2 py-1 rounded-md opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-xl translate-y-1 group-hover/tooltip:translate-y-0">
+                    学科大模型
+                  </span>
+                </a>
+                <a
+                  href="#"
+                  className="p-2.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all relative group/tooltip"
+                  aria-label="帮助文档"
+                >
+                  <BookOpenText className="w-5 h-5 transition-transform group-hover/tooltip:scale-110" />
+                  <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] font-medium px-2 py-1 rounded-md opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-xl translate-y-1 group-hover/tooltip:translate-y-0">
+                    帮助文档
+                  </span>
+                </a>
+              </div>
 
-                {/* Auth Button */}
-                <div className="flex items-center">
-                  {user ? (
-                    <div className="flex items-center space-x-2 lg:space-x-4">
-                      <div className="flex items-center space-x-2 lg:space-x-3 pl-2">
-                        <div className="hidden lg:flex flex-col items-end">
-                          <span className="text-sm font-bold text-gray-800 leading-tight whitespace-nowrap">{user.name}</span>
-                          <span className="text-xs text-blue-600 font-medium bg-blue-50 px-2 py-0.5 rounded-full mt-0.5 whitespace-nowrap">
-                            {getRoleName(user.role)}
-                          </span>
+              {/* Auth Section (Icons) */}
+              <div className="flex items-center gap-2 ml-2">
+                {user ? (
+                  <>
+                    <div className="relative group/user py-1">
+                      <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-blue-100 to-indigo-100 border-2 border-white ring-1 ring-gray-100 shadow-sm flex items-center justify-center overflow-hidden cursor-pointer hover:ring-2 hover:ring-blue-200 transition-all">
+                        {user.avatar && !user.avatar.includes("http") ? (
+                          <UserIcon className="w-5 h-5 text-blue-600" />
+                        ) : (
+                          <img
+                            src={
+                              user.avatar ||
+                              "https://ui-avatars.com/api/?name=User&background=random"
+                            }
+                            alt={user.name}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </div>
+                      {/* User Tooltip */}
+                      <div className="absolute top-full right-0 mt-3 w-48 bg-white text-gray-800 p-3 rounded-xl opacity-0 invisible group-hover/user:opacity-100 group-hover/user:visible transition-all pointer-events-none shadow-xl border border-gray-100 z-50 transform translate-y-2 group-hover/user:translate-y-0">
+                        <div className="flex items-center gap-3 mb-2 pb-2 border-b border-gray-50">
+                          <div className="h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-xs">
+                            {user.name.charAt(0)}
+                          </div>
+                          <div>
+                            <p className="font-bold text-sm text-gray-900">
+                              {user.name}
+                            </p>
+                            <p className="text-xs text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded inline-block mt-0.5">
+                              {getRoleName(user.role)}
+                            </p>
+                          </div>
                         </div>
-                        <div className="h-9 w-9 lg:h-10 lg:w-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex items-center justify-center overflow-hidden">
-                          <UserIcon className="w-5 h-5 lg:w-6 lg:h-6 text-blue-600" />
+                        <div className="text-xs text-gray-400 text-center">
+                          已登录
                         </div>
                       </div>
-                      <button
-                        onClick={onLogoutClick}
-                        className="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-full transition-all"
-                        title="退出登录"
-                      >
-                        <LogOut className="w-5 h-5" />
-                      </button>
                     </div>
-                  ) : (
                     <button
-                      onClick={onLoginClick}
-                      className="group relative inline-flex items-center justify-center px-4 lg:px-6 py-2 lg:py-2.5 text-sm lg:text-base font-semibold text-white transition-all duration-200 bg-blue-600 border border-transparent rounded-full shadow-md hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 overflow-hidden whitespace-nowrap"
+                      onClick={onLogoutClick}
+                      className="p-2.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all relative group/tooltip"
+                      aria-label="退出登录"
                     >
-                      <span className="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
-                      <LogIn className="w-4 h-4 lg:w-5 lg:h-5 mr-1.5 lg:mr-2 -ml-0.5 group-hover:scale-110 transition-transform" />
-                      登录平台
+                      <LogOut className="w-5 h-5 transition-transform group-hover/tooltip:scale-110" />
+                      <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] font-medium px-2 py-1 rounded-md opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-xl translate-y-1 group-hover/tooltip:translate-y-0">
+                        退出登录
+                      </span>
                     </button>
-                  )}
-                </div>
+                  </>
+                ) : (
+                  <button
+                    onClick={onLoginClick}
+                    className="p-2.5 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:shadow-blue-600/40 hover:-translate-y-0.5 transition-all duration-300 relative group/tooltip"
+                    aria-label="登录平台"
+                  >
+                    <LogIn className="w-5 h-5" />
+                    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] font-medium px-2 py-1 rounded-md opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-xl translate-y-1 group-hover/tooltip:translate-y-0">
+                      立即登录
+                    </span>
+                  </button>
+                )}
+              </div>
             </div>
 
-            {/* Mobile Menu Button - Pushed to right on mobile */}
+            {/* Mobile Menu Button */}
             <div className="flex items-center md:hidden ml-auto">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-gray-500 hover:text-blue-600 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                className="text-gray-500 hover:text-blue-600 p-2 rounded-xl hover:bg-gray-100 transition-colors"
               >
-                {isMobileMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
+                {isMobileMenuOpen ? (
+                  <X className="w-7 h-7" />
+                ) : (
+                  <Menu className="w-7 h-7" />
+                )}
               </button>
             </div>
           </div>
@@ -153,7 +281,7 @@ const Layout: React.FC<LayoutProps> = ({ children, user, onLoginClick, onLogoutC
 
         {/* Mobile Nav */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100 animate-fade-in-down shadow-xl absolute w-full z-50">
+          <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-gray-100 animate-fade-in-down shadow-2xl absolute w-full z-50 max-h-[90vh] overflow-y-auto rounded-b-2xl">
             <div className="px-4 pt-4 pb-6 space-y-2">
               {navItems.map((item) => (
                 <Link
@@ -161,57 +289,102 @@ const Layout: React.FC<LayoutProps> = ({ children, user, onLoginClick, onLogoutC
                   to={item.path}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`block px-4 py-3 rounded-xl text-base font-semibold flex items-center transition-colors ${
-                     location.pathname === item.path 
-                     ? 'bg-blue-50 text-blue-700 border border-blue-100' 
-                     : 'text-gray-600 hover:bg-gray-50 hover:text-blue-600'
+                    location.pathname === item.path
+                      ? "bg-blue-50 text-blue-700 border border-blue-100"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-blue-600"
                   }`}
                 >
                   {item.icon}
                   {item.label}
                 </Link>
               ))}
-              
+
+              {/* Mobile "More Features" */}
+              <div className="pt-2 pb-2 border-t border-gray-50 mt-2">
+                <p className="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+                  更多功能
+                </p>
+                <Link
+                  to="/config"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-xl text-base font-medium text-gray-600 hover:bg-gray-50 flex items-center group"
+                >
+                  <div className="p-1.5 bg-slate-100 rounded-lg mr-3 text-slate-500 group-hover:bg-white group-hover:text-blue-600 transition-colors">
+                    <Settings className="w-5 h-5" />
+                  </div>
+                  配置管理
+                </Link>
+                <Link
+                  to="#"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-xl text-base font-medium text-gray-600 hover:bg-gray-50 flex items-center group"
+                >
+                  <div className="p-1.5 bg-blue-50 rounded-lg mr-3 text-blue-500 group-hover:bg-white group-hover:text-blue-700 transition-colors">
+                    <UserIcon className="w-5 h-5" />
+                  </div>
+                  个人中心
+                </Link>
+              </div>
+
               {/* Mobile External Links */}
-              <div className="grid grid-cols-2 gap-3 pt-2">
-                 <a href="https://aistudio.google.com/" target="_blank" rel="noreferrer" className="flex items-center justify-center px-4 py-3 bg-purple-50 text-purple-700 rounded-xl text-sm font-bold">
-                    <BrainCircuit className="w-5 h-5 mr-2" />
-                    学科大模型
-                 </a>
-                 <a href="#" className="flex items-center justify-center px-4 py-3 bg-teal-50 text-teal-700 rounded-xl text-sm font-bold">
-                    <BookOpenText className="w-5 h-5 mr-2" />
-                    帮助文档
-                 </a>
+              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-gray-50 mt-2">
+                <a
+                  href="https://aistudio.google.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center px-4 py-3 bg-purple-50 text-purple-700 rounded-xl text-sm font-bold border border-purple-100"
+                >
+                  <BrainCircuit className="w-5 h-5 mr-2" />
+                  学科大模型
+                </a>
+                <a
+                  href="#"
+                  className="flex items-center justify-center px-4 py-3 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-bold border border-emerald-100"
+                >
+                  <BookOpenText className="w-5 h-5 mr-2" />
+                  帮助文档
+                </a>
               </div>
 
               <div className="pt-6 mt-4 border-t border-gray-100">
-                 {user ? (
-                   <div className="flex items-center justify-between px-2">
-                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <UserIcon className="w-6 h-6 text-blue-600" />
+                {user ? (
+                  <div className="flex items-center justify-between px-2 bg-gray-50 p-3 rounded-xl">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-gray-200 shadow-sm">
+                        <UserIcon className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-gray-900">
+                          {user.name}
                         </div>
-                        <div>
-                            <div className="font-bold text-gray-900">{user.name}</div>
-                            <div className="text-xs text-blue-600">{getRoleName(user.role)}</div>
+                        <div className="text-xs text-blue-600 bg-blue-100 px-1.5 rounded inline-block">
+                          {getRoleName(user.role)}
                         </div>
-                     </div>
-                     <button 
-                        onClick={() => { onLogoutClick(); setIsMobileMenuOpen(false); }} 
-                        className="flex items-center text-red-600 bg-red-50 px-3 py-1.5 rounded-lg text-sm font-medium"
-                     >
-                        <LogOut className="w-4 h-4 mr-1" />
-                        退出
-                     </button>
-                   </div>
-                 ) : (
+                      </div>
+                    </div>
                     <button
-                      onClick={() => { onLoginClick(); setIsMobileMenuOpen(false); }}
-                      className="w-full flex items-center justify-center px-4 py-3 border border-transparent rounded-xl shadow-sm text-base font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all"
+                      onClick={() => {
+                        onLogoutClick();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex items-center text-red-600 bg-white border border-red-100 px-3 py-1.5 rounded-lg text-sm font-medium shadow-sm hover:bg-red-50"
                     >
-                      <LogIn className="w-5 h-5 mr-2" />
-                      立即登录
+                      <LogOut className="w-4 h-4 mr-1" />
+                      退出
                     </button>
-                 )}
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      onLoginClick();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full flex items-center justify-center px-4 py-3 border border-transparent rounded-xl shadow-lg shadow-blue-500/20 text-base font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all"
+                  >
+                    <LogIn className="w-5 h-5 mr-2" />
+                    立即登录
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -219,61 +392,170 @@ const Layout: React.FC<LayoutProps> = ({ children, user, onLoginClick, onLogoutC
       </header>
 
       {/* Main Content */}
-      <main className="flex-grow">
-        {children}
-      </main>
+      <main className="flex-grow">{children}</main>
 
       {/* Footer */}
       <footer className="bg-slate-900 text-white pt-16 pb-8 border-t border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
             <div className="col-span-1 md:col-span-1">
-               <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-bold shadow-lg shadow-blue-900/50">U</div>
-                  <span className="text-2xl font-bold tracking-tight">UUSIMA</span>
-               </div>
-               <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                 致力于用智能技术和虚拟仿真赋能职业教育，连接课堂与产业，打造下一代数字化教学平台。
-               </p>
-               <div className="flex space-x-4">
-                  {/* Social placeholders */}
-                  <div className="w-8 h-8 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors cursor-pointer"></div>
-                  <div className="w-8 h-8 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors cursor-pointer"></div>
-                  <div className="w-8 h-8 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors cursor-pointer"></div>
-               </div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-bold shadow-lg shadow-blue-900/50">
+                  U
+                </div>
+                <span className="text-2xl font-bold tracking-tight">
+                  UUSIMA
+                </span>
+              </div>
+              <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                致力于用智能技术和虚拟仿真赋能职业教育，连接课堂与产业，打造下一代数字化教学平台。
+              </p>
+              <div className="flex space-x-4">
+                {/* Social placeholders */}
+                <div className="w-8 h-8 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors cursor-pointer flex items-center justify-center text-slate-400 hover:text-white">
+                  <svg
+                    className="w-4 h-4"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="w-8 h-8 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors cursor-pointer flex items-center justify-center text-slate-400 hover:text-white">
+                  <svg
+                    className="w-4 h-4"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                  </svg>
+                </div>
+                <div className="w-8 h-8 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors cursor-pointer flex items-center justify-center text-slate-400 hover:text-white">
+                  <svg
+                    className="w-4 h-4"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+              </div>
             </div>
-            
+
             <div>
-              <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-6">核心栏目</h3>
+              <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-6">
+                核心栏目
+              </h3>
               <ul className="space-y-3 text-sm text-slate-300">
-                <li><Link to="/courses" className="hover:text-white hover:translate-x-1 transition-transform inline-block">课程大厅</Link></li>
-                <li><Link to="/labs" className="hover:text-white hover:translate-x-1 transition-transform inline-block">实验大厅</Link></li>
-                <li><Link to="/exams" className="hover:text-white hover:translate-x-1 transition-transform inline-block">考试认证</Link></li>
-                <li><Link to="/products" className="hover:text-white hover:translate-x-1 transition-transform inline-block">产品中心</Link></li>
+                <li>
+                  <Link
+                    to="/courses"
+                    className="hover:text-white hover:translate-x-1 transition-transform inline-block"
+                  >
+                    课程大厅
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/labs"
+                    className="hover:text-white hover:translate-x-1 transition-transform inline-block"
+                  >
+                    实验大厅
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/exams"
+                    className="hover:text-white hover:translate-x-1 transition-transform inline-block"
+                  >
+                    考试认证
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/products"
+                    className="hover:text-white hover:translate-x-1 transition-transform inline-block"
+                  >
+                    产品中心
+                  </Link>
+                </li>
               </ul>
             </div>
 
-             <div>
-              <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-6">服务支持</h3>
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-6">
+                服务支持
+              </h3>
               <ul className="space-y-3 text-sm text-slate-300">
-                <li><Link to="/about" className="hover:text-white hover:translate-x-1 transition-transform inline-block">关于我们</Link></li>
-                <li><Link to="#" className="hover:text-white hover:translate-x-1 transition-transform inline-block">合作咨询</Link></li>
-                <li><Link to="#" className="hover:text-white hover:translate-x-1 transition-transform inline-block">技术文档</Link></li>
-                <li><Link to="#" className="hover:text-white hover:translate-x-1 transition-transform inline-block">隐私政策</Link></li>
+                <li>
+                  <Link
+                    to="/about"
+                    className="hover:text-white hover:translate-x-1 transition-transform inline-block"
+                  >
+                    关于我们
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="#"
+                    className="hover:text-white hover:translate-x-1 transition-transform inline-block"
+                  >
+                    合作咨询
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="#"
+                    className="hover:text-white hover:translate-x-1 transition-transform inline-block"
+                  >
+                    技术文档
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="#"
+                    className="hover:text-white hover:translate-x-1 transition-transform inline-block"
+                  >
+                    隐私政策
+                  </Link>
+                </li>
               </ul>
             </div>
 
-             <div>
-              <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-6">联系我们</h3>
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-6">
+                联系我们
+              </h3>
               <div className="space-y-3 text-sm text-slate-300">
-                <p className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> 邮箱: support@uusima.edu</p>
-                <p className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> 电话: 400-123-4567</p>
-                <p className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> 地址: 深圳市南山区科技园</p>
+                <p className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>{" "}
+                  邮箱: support@uusima.edu
+                </p>
+                <p className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>{" "}
+                  电话: 400-123-4567
+                </p>
+                <p className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>{" "}
+                  地址: 深圳市南山区科技园
+                </p>
               </div>
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-slate-800 text-center text-sm text-slate-500">
-            &copy; {new Date().getFullYear()} UUSIMA 智慧教学平台. All rights reserved.
+            &copy; {new Date().getFullYear()} UUSIMA 智慧教学平台. All rights
+            reserved.
           </div>
         </div>
       </footer>

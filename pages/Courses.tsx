@@ -1,6 +1,7 @@
 import React from 'react';
 import { Course } from '../types';
-import { Clock, BarChart } from 'lucide-react';
+import { Clock, BarChart, BookOpen, Users, Star } from 'lucide-react';
+import CourseFilterHeader from '../components/CourseFilterHeader';
 
 interface CoursesProps {
   onAccessTrigger: () => void;
@@ -72,50 +73,50 @@ const COURSES_DATA: Course[] = [
 
 const Courses: React.FC<CoursesProps> = ({ onAccessTrigger }) => {
   return (
-    <div className="bg-gray-50 min-h-screen py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">课程大厅</h1>
-          <p className="text-gray-600 mt-2">浏览我们丰富的职业教育课程库。</p>
-        </div>
+    <div className="bg-slate-50 min-h-screen py-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <CourseFilterHeader 
+          title="课程大厅" 
+          subtitle="真实行业项目实战学习" 
+          icon={<BookOpen className="w-6 h-6" />}
+        />
 
-        {/* Filters (Visual only for demo) */}
-        <div className="flex flex-wrap gap-2 mb-8">
-            {['全部', '数据科学', '云计算', '物联网', '安全'].map(cat => (
-                <button key={cat} className={`px-4 py-2 rounded-full text-sm font-medium ${cat === '全部' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>
-                    {cat}
-                </button>
-            ))}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {COURSES_DATA.map((course) => (
-            <div key={course.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-300 flex flex-col">
-              <div className="h-48 relative overflow-hidden group">
+            <div key={course.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group">
+              <div className="h-44 relative overflow-hidden bg-slate-100">
                 <img
                   src={course.thumbnail}
                   alt={course.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
-                <span className="absolute top-4 right-4 bg-black/60 text-white text-xs px-2 py-1 rounded">
-                   {course.category}
-                </span>
-              </div>
-              <div className="p-6 flex-1 flex flex-col">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{course.title}</h3>
-                <p className="text-gray-500 text-sm mb-4 line-clamp-2 flex-1">{course.description}</p>
-                
-                <div className="flex items-center space-x-4 text-xs text-gray-400 mb-6">
-                    <div className="flex items-center"><Clock className="w-3 h-3 mr-1"/> {course.duration}</div>
-                    <div className="flex items-center"><BarChart className="w-3 h-3 mr-1"/> {course.difficulty}</div>
+                <div className="absolute top-3 left-3 flex gap-2">
+                  {/* Removed category tag from image as per reference */}
                 </div>
-
-                <button
-                  onClick={onAccessTrigger}
-                  className="w-full py-2 bg-blue-50 text-blue-600 font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-colors"
-                >
-                  开始学习
-                </button>
+                <div className="absolute bottom-3 right-3 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-md flex items-center gap-1 shadow-sm">
+                  <Clock className="w-3 h-3" /> {course.duration}
+                </div>
+              </div>
+              <div className="p-5 flex-1 flex flex-col">
+                <div className="flex items-center justify-between text-xs mb-3">
+                  <span className="text-blue-500 font-medium bg-blue-50 px-2 py-1 rounded">人工智能/基础</span>
+                  <span className="text-blue-500 font-medium">281 人在学</span>
+                </div>
+                
+                <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">{course.title}</h3>
+                <p className="text-slate-500 text-sm mb-4 line-clamp-2 flex-1 leading-relaxed"><span className="text-slate-400">课程概述：</span> {course.description}</p>
+                
+                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                    <div className="flex items-center gap-2 text-sm text-slate-500">
+                      <span>实验环境：</span>
+                      <div className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100">
+                        <img src="https://api.iconify.design/logos:python.svg" alt="Python" className="w-4 h-4" />
+                      </div>
+                    </div>
+                    <div className="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center text-white text-xs font-bold italic shadow-sm">
+                      AI
+                    </div>
+                </div>
               </div>
             </div>
           ))}

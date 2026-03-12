@@ -7,17 +7,62 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+      
       body {
         font-family: 'Inter', "Microsoft YaHei", sans-serif;
         background-color: #f8fafc;
       }
-      /* Custom scrollbar for chat */
+      
+      /* Utilities */
       .scrollbar-hide::-webkit-scrollbar {
           display: none;
       }
       .scrollbar-hide {
           -ms-overflow-style: none;
           scrollbar-width: none;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.3s ease-out forwards;
+      }
+      
+      @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in-down {
+        animation: fadeInDown 0.3s ease-out forwards;
+      }
+      
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in-up {
+        animation: fadeInUp 0.5s ease-out forwards;
+      }
+
+      /* Custom Scrollbar for Terminal */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #1e1e1e;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #424242;
+        border-radius: 4px;
+        border: 1px solid #1e1e1e;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #555;
       }
     </style>
   <script type="importmap">
@@ -32,8 +77,10 @@
   }
 }
 </script>
+<link rel="stylesheet" href="/index.css">
 </head>
   <body>
     <div id="root"></div>
-  </body>
+  <script type="module" src="/index.tsx"></script>
+</body>
 </html>

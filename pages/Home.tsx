@@ -214,7 +214,7 @@ const Home: React.FC = () => {
             <div className={`absolute inset-0 bg-gradient-to-r ${slide.color} opacity-80 sm:opacity-70 mix-blend-multiply`}></div>
             <div className="absolute inset-0 bg-black/20"></div>
 
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+            <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
               <div className="max-w-2xl animate-fade-in-up pt-4 md:pt-0">
                 <div className="inline-flex items-center px-2.5 py-0.5 rounded-full border border-white/30 bg-white/10 backdrop-blur-sm text-[10px] md:text-xs font-medium mb-2 md:mb-3 text-blue-100">
                    <Star className="w-3 h-3 mr-1.5 text-yellow-400" fill="currentColor" />
@@ -267,7 +267,7 @@ const Home: React.FC = () => {
 
       {/* --- STATS BAR --- */}
       {/* Reduced negative margin to match smaller header -mt-4 md:-mt-6 */}
-      <section className="bg-white border-b border-gray-100 shadow-sm relative z-20 -mt-6 md:-mt-8 mx-3 md:mx-auto max-w-7xl rounded-xl">
+      <section className="bg-white border-b border-gray-100 shadow-sm relative z-20 -mt-6 md:-mt-8 mx-3 md:mx-auto max-w-[1440px] rounded-xl">
         <div className="px-4 sm:px-6 lg:px-8 py-5 md:py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             {[
@@ -292,7 +292,7 @@ const Home: React.FC = () => {
 
       {/* --- FEATURED COURSES --- */}
       <section className="py-12 md:py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-end mb-8">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">热门课程推荐</h2>
@@ -328,7 +328,7 @@ const Home: React.FC = () => {
 
        {/* --- INDUSTRY CASES SLIDER --- */}
        <section className="py-12 md:py-16 bg-white overflow-hidden" onMouseEnter={() => setIsCaseHovered(true)} onMouseLeave={() => setIsCaseHovered(false)}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
            <div className="flex justify-between items-center mb-8 md:mb-10">
               <div>
                 <h2 className="text-2xl md:text-3xl font-bold text-gray-900">行业融合案例展示</h2>
