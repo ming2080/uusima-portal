@@ -17,6 +17,7 @@ import {
   Users,
   Star,
   Send,
+  Ban,
   Eye,
   Copy,
   Paperclip,
@@ -33,6 +34,13 @@ const Config: React.FC = () => {
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
   const [courseToDelete, setCourseToDelete] = useState<string>("");
+  const [publishedCourses, setPublishedCourses] = useState<number[]>([1, 2, 3, 4, 5, 6]);
+
+  const togglePublish = (id: number) => {
+    setPublishedCourses(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
 
   const courses = [
     "计算机网络基础",
@@ -124,6 +132,7 @@ const Config: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => {
             const courseName = courses[i - 1];
+            const isPublished = publishedCourses.includes(i);
             return (
             <div
               key={i}
@@ -136,8 +145,10 @@ const Config: React.FC = () => {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs font-bold text-emerald-600 shadow-sm">
-                  已发布
+                <div className={`absolute top-3 right-3 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs font-bold shadow-sm transition-colors ${
+                  isPublished ? 'bg-white/90 text-emerald-600' : 'bg-slate-800/80 text-white'
+                }`}>
+                  {isPublished ? '已发布' : '未发布'}
                 </div>
                 <div className="absolute bottom-3 right-3 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-md flex items-center gap-1 shadow-sm">
                   <Clock className="w-3 h-3" /> 12小时
@@ -149,53 +160,7 @@ const Config: React.FC = () => {
                     {courseName}
                   </h3>
                   <div className="relative">
-                    <button 
-                      onClick={() => setActiveMenuId(activeMenuId === i ? null : i)}
-                      className="bg-blue-500 text-white p-1.5 rounded-md hover:bg-blue-600 transition-colors flex-shrink-0"
-                    >
-                      <MoreHorizontal className="w-4 h-4" />
-                    </button>
-                    
-                    {/* Extended Menu */}
-                    {activeMenuId === i && (
-                      <>
-                        <div 
-                          className="fixed inset-0 z-10" 
-                          onClick={() => setActiveMenuId(null)}
-                        ></div>
-                        <div className="absolute right-0 top-full mt-2 w-36 bg-white rounded-xl shadow-xl border border-slate-100 py-2 z-20 animate-fade-in">
-                          <div className="absolute -top-2 right-3 w-4 h-4 bg-white border-t border-l border-slate-100 rotate-45"></div>
-                          <button className="w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-blue-50 flex items-center gap-2 transition-colors relative z-10">
-                            <Send className="w-4 h-4" /> 发布
-                          </button>
-                          <button 
-                            onClick={() => { setView("editor"); setActiveMenuId(null); }}
-                            className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-2 transition-colors relative z-10"
-                          >
-                            <Edit className="w-4 h-4" /> 编辑
-                          </button>
-                          <button className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-2 transition-colors relative z-10">
-                            <Eye className="w-4 h-4" /> 查看
-                          </button>
-                          <button className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-2 transition-colors relative z-10">
-                            <Copy className="w-4 h-4" /> 复制
-                          </button>
-                          <button className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-2 transition-colors relative z-10">
-                            <Paperclip className="w-4 h-4" /> 标签绑定
-                          </button>
-                          <button 
-                            onClick={() => {
-                              setCourseToDelete(courseName);
-                              setDeleteConfirmId(i);
-                              setActiveMenuId(null);
-                            }}
-                            className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 flex items-center gap-2 transition-colors relative z-10"
-                          >
-                            <Trash2 className="w-4 h-4" /> 删除
-                          </button>
-                        </div>
-                      </>
-                    )}
+                    {/* Removed MoreHorizontal from here */}
                   </div>
                 </div>
                 
@@ -213,6 +178,80 @@ const Config: React.FC = () => {
                     <span>环境：</span>
                     <div className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100">
                       <img src="https://api.iconify.design/logos:python.svg" alt="Python" className="w-4 h-4" />
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={() => togglePublish(i)}
+                      className={`p-1.5 rounded-lg transition-colors ${
+                        isPublished 
+                          ? 'text-amber-600 hover:bg-amber-50' 
+                          : 'text-blue-600 hover:bg-blue-50'
+                      }`} 
+                      title={isPublished ? "取消发布" : "发布"}
+                    >
+                      {isPublished ? <Ban className="w-4 h-4" /> : <Send className="w-4 h-4" />}
+                    </button>
+                    <button 
+                      onClick={() => setView("editor")}
+                      className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
+                      title="编辑"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    
+                    <div className="relative">
+                      <button 
+                        onClick={() => setActiveMenuId(activeMenuId === i ? null : i)}
+                        className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                      >
+                        <MoreHorizontal className="w-4 h-4" />
+                      </button>
+                      
+                      {/* Extended Menu */}
+                      {activeMenuId === i && (
+                        <>
+                          <div 
+                            className="fixed inset-0 z-10" 
+                            onClick={() => setActiveMenuId(null)}
+                          ></div>
+                          <div className="absolute right-0 bottom-full mb-2 w-36 bg-white rounded-xl shadow-xl border border-slate-100 py-2 z-20 animate-fade-in">
+                            <div className="absolute -bottom-2 right-3 w-4 h-4 bg-white border-b border-r border-slate-100 rotate-45"></div>
+                            <button 
+                              onClick={() => { togglePublish(i); setActiveMenuId(null); }}
+                              className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 transition-colors relative z-10 ${
+                                isPublished ? 'text-amber-600 hover:bg-amber-50' : 'text-blue-500 hover:bg-blue-50'
+                              }`}
+                            >
+                              {isPublished ? (
+                                <><Ban className="w-4 h-4" /> 取消发布</>
+                              ) : (
+                                <><Send className="w-4 h-4" /> 发布</>
+                              )}
+                            </button>
+                            <button className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-2 transition-colors relative z-10">
+                              <Eye className="w-4 h-4" /> 查看
+                            </button>
+                            <button className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-2 transition-colors relative z-10">
+                              <Copy className="w-4 h-4" /> 复制
+                            </button>
+                            <button className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-2 transition-colors relative z-10">
+                              <Paperclip className="w-4 h-4" /> 标签绑定
+                            </button>
+                            <button 
+                              onClick={() => {
+                                setCourseToDelete(courseName);
+                                setDeleteConfirmId(i);
+                                setActiveMenuId(null);
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 flex items-center gap-2 transition-colors relative z-10"
+                            >
+                              <Trash2 className="w-4 h-4" /> 删除
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
