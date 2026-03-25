@@ -1,20 +1,78 @@
 import React from 'react';
 
 const About: React.FC = () => (
-    <div className="bg-white min-h-screen py-12">
-        <div className="max-w-3xl mx-auto px-4">
-             <h1 className="text-3xl font-bold text-gray-900 mb-6">关于 UUSIMA</h1>
-             <div className="prose prose-blue text-gray-600">
-                 <p className="mb-4">
-                     UUSIMA 是一家致力于高等职业教育的领先智能教育解决方案提供商。
-                     我们将尖端技术与教学专业知识相结合，创造沉浸式学习体验。
-                 </p>
-                 <p className="mb-4">
-                     我们的平台集成了课程管理、虚拟仿真实验室和认证系统，
-                     帮助学校培养符合行业需求的高质量技术人才。
-                 </p>
-                 <h2 className="text-xl font-bold text-gray-900 mt-8 mb-4">我们的使命</h2>
-                 <p>通过数字创新弥合课堂理论与工业实践之间的差距。</p>
+    <div className="bg-gray-50 min-h-screen py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+             <div className="bg-white rounded-2xl shadow-sm p-8 md:p-12">
+                 <h1 className="text-3xl font-bold text-gray-900 mb-8 border-b border-gray-100 pb-4">关于 UUSIMA</h1>
+                 
+                 <div className="prose prose-blue max-w-none text-gray-600 leading-relaxed">
+                     <p className="mb-8 text-lg">
+                         UUSIMA 智慧教学实验平台覆盖物联网、人工智能、工业互联网、大数据等新一代信息技术专业教学实验及综合应用，构建了一套“学习-实践-评测”闭环的智慧教学实验平台。平台以真实产业项目为载体，融合项目教学法及 AI 赋能，支持师生随时随地开展线上实践。通过引入AI智能体到教学设计、课件制作、教案编制，辅助教师高效备课，提升教学质量；将AI大模型智能体融入到教学实验环境，指导学生完成实验步骤、优化代码逻辑，智能推荐项目与学习路径。
+                     </p>
+
+                     <div className="my-10 rounded-xl overflow-hidden shadow-md">
+                         <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=1200" alt="UUSIMA 平台概览" className="w-full h-auto object-cover" />
+                     </div>
+
+                     <h2 className="text-2xl font-bold text-gray-900 mt-12 mb-6">核心模块</h2>
+                     <p className="mb-8">
+                         UUSIMA 智慧教学实验平台主要由课程大厅、实训中心、考试学习系统、学科大模型智能系统、技能数据汇聚系统和全过程节能分析系统等核心应用组成，内容如下：
+                     </p>
+
+                     <div className="space-y-8">
+                         <div>
+                             <h3 className="text-xl font-semibold text-gray-800 mb-3">1.课程大厅</h3>
+                             <p>
+                                 课程大厅全面整合物联网、人工智能、大数据、区块链、工业互联网等前沿技术课程，能够覆盖职业院校不同专业群的教学需求，为教师与学生提供系统化、体系化的学习资源。平台通过实训模拟功能，将基础知识、核心技能与综合项目贯穿在统一的实践环境中，以高度还原的工程情境支持学生在“做中学、学中用”的过程中逐步形成岗位所需的关键能力。依托平台的数据驱动分析机制，系统能够实时采集学生的学习过程数据，形成可视化的学情反馈与能力评估结果，帮助教师精准识别学生的学习状态与差异化需求，从而优化教学组织与策略设计。平台同时具备良好的灵活集成能力，可与院校现有教学管理系统、课程资源库及实训平台进行互联互通，实现课程内容的扩展与资源的统一管理。在此基础上，课程内容支持云端同步更新，确保教学资源持续保持与行业发展同步的先进性与实用性，为职业教育的教学改革与专业建设提供稳定可靠的数字化支撑。
+                             </p>
+                         </div>
+
+                         <div>
+                             <h3 className="text-xl font-semibold text-gray-800 mb-3">2.实训中心</h3>
+                             <p>
+                                 实训中心融合人工智能实验环境、嵌入式系统仿真、图形化/低代码开发与 2D/3D 虚拟仿真，构建全方位实践生态。学生可在 2D 工程仿真完成传感器连线与协议调试，在3D 场景中体验数字孪生流程；依托 Jupyter Notebook / 图形化编程 / VSCode 开发算法与应用；通过 Docker 虚机桌面与终端灵活装载工具链；连接物联网平台采集与管理数据，借助3D 应用平台与中间件实现模型 and 应用联动。该中心精准契合新一代信息技术专业实训需求，助力学生掌握前沿技术、提升实战能力。
+                             </p>
+                         </div>
+
+                         <div>
+                             <h3 className="text-xl font-semibold text-gray-800 mb-3">3.学科大模型管理系统</h3>
+                             <p>
+                                 学科大模型管理系统基于新一代大语言模型架构，构建统一的知识智能底座和可扩展的智能体能力体系，面向多行业、多业务场景提供知识理解、语义检索、智能生成与流程智能化等系统能力。系统融合学科知识库、智能工作流、RAG 检索增强、多模态解析和可视化编排等技术，实现从知识加工、模型推理到业务协同的一体化智能服务，支持企业、机构与平台构建自主可控的专属智能应用体系。
+                             </p>
+                         </div>
+
+                         <div>
+                             <h3 className="text-xl font-semibold text-gray-800 mb-3">4.AI技能助手系统</h3>
+                             <p>
+                                 AI技能助手系统为组织提供统一的大模型推理服务能力，通过集中化的模型接入、资源调度和多角色访问控制，实现面向教学、管理、科研与办公等多场景的高并发、可管理、可监控的智能服务体系。系统以通用大模型与知识增强技术为核心，为用户提供自然语言交互、内容生成、知识问答、代码辅助等智能技能支持，构成组织内大规模智能应用的基础能力层。
+                             </p>
+                         </div>
+
+                         <div>
+                             <h3 className="text-xl font-semibold text-gray-800 mb-3">5.AI教师助手系统</h3>
+                             <p>
+                                 AI教师助手系统，在AI 课件与内容生成能力方面，系统能够围绕教学主题与学习目标自动生成多模板风格的课件文稿、教学文案、目录结构、图片提示等内容，同时提供案例生成、课堂活动建议与情境化内容扩展能力，使教学课件的构建更加高效与专业。系统支持预览与多格式导出，也支持在不同课程或不同章节之间复用内容，提升课程资源的标准化程度。
+                             </p>
+                         </div>
+
+                         <div>
+                             <h3 className="text-xl font-semibold text-gray-800 mb-3">6.AI技能分析系统</h3>
+                             <p>
+                                 系统基于大模型与数据采集技术，对学生在实验、编程、仿真等环节的操作步骤、时间分布、错误类型与修正路径进行全程记录与分析，不仅关注最终结果，更重视学习与操作的过程表现。
+                                 <br/><br/>
+                                 教师可通过可视化面板直观查看学员的操作轨迹与技能掌握程度，快速发现薄弱环节；学生则能获得个性化的技能画像与改进建议，明确提升路径。系统支持多维度数据对比与趋势分析，能够生成个人与班级的综合学习报告，帮助院校进行精准教学与质量监控。
+                             </p>
+                         </div>
+
+                         <div>
+                             <h3 className="text-xl font-semibold text-gray-800 mb-3">7.AI智能考试系统「考试系统」</h3>
+                             <p>
+                                 AI智能培训系统专为院校及教育培训场景打造，提供从在线学习、能力训练到考试认证的完整数字化培训流程。系统以智能管理和过程可视化为核心，通过课程观看计时、在线理论考核、智能题库生成等功能，实现培训全过程的精准记录与质量保障。学习者可通过平台观看教学视频、查看配套资源并参与在线练习，系统会自动累积学习时长，实时更新学习进度，并根据学习行为生成掌握情况与薄弱点分析，帮助学生形成个性化的学习路径。
+                             </p>
+                         </div>
+                     </div>
+                 </div>
              </div>
         </div>
     </div>

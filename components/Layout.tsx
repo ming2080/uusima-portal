@@ -15,6 +15,7 @@ import {
   BookOpenText,
   ChevronDown,
   Settings,
+  Globe,
 } from "lucide-react";
 import { User } from "../types";
 
@@ -32,6 +33,7 @@ const Layout: React.FC<LayoutProps> = ({
   onLogoutClick,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [language, setLanguage] = useState<"zh" | "en">("zh");
   const location = useLocation();
 
   const navItems = [
@@ -42,7 +44,7 @@ const Layout: React.FC<LayoutProps> = ({
       icon: <GraduationCap className="w-5 h-5 mr-1.5" />,
     },
     {
-      label: "实验大厅",
+      label: "实训中心",
       path: "/labs",
       icon: <Beaker className="w-5 h-5 mr-1.5" />,
     },
@@ -50,11 +52,6 @@ const Layout: React.FC<LayoutProps> = ({
       label: "考试认证",
       path: "/exams",
       icon: <FileBadge className="w-5 h-5 mr-1.5" />,
-    },
-    {
-      label: "产品中心",
-      path: "/products",
-      icon: <Box className="w-5 h-5 mr-1.5" />,
     },
     {
       label: "关于我们",
@@ -103,7 +100,7 @@ const Layout: React.FC<LayoutProps> = ({
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center space-x-1 flex-1">
+            <nav className="hidden md:flex items-center space-x-4 flex-1">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.path;
                 return (
@@ -111,7 +108,7 @@ const Layout: React.FC<LayoutProps> = ({
                     key={item.path}
                     to={item.path}
                     className={`
-                      flex items-center px-3 py-2 rounded-full font-semibold transition-all duration-200 whitespace-nowrap text-sm
+                      flex items-center px-4 py-2 rounded-full font-semibold transition-all duration-200 whitespace-nowrap text-base
                       ${
                         isActive
                           ? "text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100"
@@ -126,7 +123,7 @@ const Layout: React.FC<LayoutProps> = ({
 
               {/* "More Features" Dropdown */}
               <div className="relative group ml-1">
-                <button className="flex items-center px-3 py-2 rounded-full font-semibold text-slate-600 hover:text-blue-600 hover:bg-gray-50 transition-all text-sm whitespace-nowrap outline-none group-hover:bg-gray-50">
+                <button className="flex items-center px-4 py-2 rounded-full font-semibold text-slate-600 hover:text-blue-600 hover:bg-gray-50 transition-all text-base whitespace-nowrap outline-none group-hover:bg-gray-50">
                   更多功能
                   <ChevronDown className="w-4 h-4 ml-1 text-gray-400 group-hover:text-blue-500 group-hover:rotate-180 transition-all duration-300" />
                 </button>
@@ -174,6 +171,17 @@ const Layout: React.FC<LayoutProps> = ({
             <div className="hidden md:flex items-center gap-4 ml-auto pl-6 border-l border-gray-200 h-8 flex-shrink-0">
               {/* External Utility Links (Icons) */}
               <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setLanguage(lang => lang === "zh" ? "en" : "zh")}
+                  className="p-2.5 flex items-center gap-1 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all relative group/tooltip"
+                  aria-label="切换语言"
+                >
+                  <Globe className="w-5 h-5 transition-transform group-hover/tooltip:scale-110" />
+                  <span className="text-sm font-medium">{language === "zh" ? "中" : "EN"}</span>
+                  <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] font-medium px-2 py-1 rounded-md opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-xl translate-y-1 group-hover/tooltip:translate-y-0">
+                    {language === "zh" ? "Switch to English" : "切换到中文"}
+                  </span>
+                </button>
                 <a
                   href="https://aistudio.google.com/"
                   target="_blank"
@@ -200,6 +208,21 @@ const Layout: React.FC<LayoutProps> = ({
 
               {/* Auth Section (Icons) */}
               <div className="flex items-center gap-2 ml-2">
+                {user && (
+                  <Link
+                    to="/my-home"
+                    className={`
+                      flex items-center px-4 py-2 rounded-full font-semibold transition-all duration-200 whitespace-nowrap text-sm
+                      ${
+                        location.pathname.startsWith("/my-home")
+                          ? "text-blue-700 bg-blue-50 shadow-sm ring-1 ring-blue-100"
+                          : "text-slate-600 hover:text-blue-600 hover:bg-gray-50/80"
+                      }
+                    `}
+                  >
+                    我的主页
+                  </Link>
+                )}
                 {user ? (
                   <>
                     <div className="relative group/user py-1">
@@ -471,7 +494,7 @@ const Layout: React.FC<LayoutProps> = ({
                     to="/labs"
                     className="hover:text-white hover:translate-x-1 transition-transform inline-block"
                   >
-                    实验大厅
+                    实训中心
                   </Link>
                 </li>
                 <li>
@@ -480,14 +503,6 @@ const Layout: React.FC<LayoutProps> = ({
                     className="hover:text-white hover:translate-x-1 transition-transform inline-block"
                   >
                     考试认证
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/products"
-                    className="hover:text-white hover:translate-x-1 transition-transform inline-block"
-                  >
-                    产品中心
                   </Link>
                 </li>
               </ul>

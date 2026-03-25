@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   X, Upload, Plus, Trash2, ArrowUp, ArrowDown, Link as LinkIcon, 
   Image as ImageIcon, Code, Layout, Eye, Code2, Bold, Italic, 
   Underline, Strikethrough, AlignLeft, AlignCenter, AlignRight, 
   Quote, List, ListOrdered, Box, FileText, CheckCircle2, ChevronRight, ChevronDown,
-  UploadCloud, Video, AlertCircle, Terminal, Cpu, Globe, Database
+  UploadCloud, Video, AlertCircle, Terminal, Cpu, Globe, Database, PlayCircle
 } from 'lucide-react';
 
 export type TaskType = 'text' | 'video' | 'exercise' | 'experiment' | 'report';
@@ -14,6 +14,10 @@ export interface Task {
   title: string;
   type: TaskType;
   isTrial: boolean;
+  videoUrl?: string;
+  selectedEnvId?: string;
+  expFiles?: any[];
+  content?: string;
 }
 
 interface TaskEditDrawerProps {
@@ -29,6 +33,9 @@ const TaskEditDrawer: React.FC<TaskEditDrawerProps> = ({ isOpen, onClose, task, 
 
   // Video upload simulation state
   const [videoUrl, setVideoUrl] = useState('');
+  const [videoFileName, setVideoFileName] = useState('');
+  const [previewVideoUrl, setPreviewVideoUrl] = useState('');
+  const videoInputRef = useRef<HTMLInputElement>(null);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -65,53 +72,87 @@ const TaskEditDrawer: React.FC<TaskEditDrawerProps> = ({ isOpen, onClose, task, 
   ]);
 
   // Update local state when task changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (task) {
       setTitle(task.title);
       setType(task.type);
+      setVideoUrl(task.videoUrl || '');
+      if (task.videoUrl) {
+        setUploadStatus('success');
+        setVideoFileName(task.videoUrl.split('/').pop() || 'video.mp4');
+      } else {
+        setUploadStatus('idle');
+        setVideoFileName('');
+      }
+      setSelectedEnvId(task.selectedEnvId || 'env-1');
+      if (task.expFiles) {
+        setExpFiles(task.expFiles);
+      }
     }
   }, [task]);
 
   if (!isOpen || !task) return null;
 
   const handleSave = () => {
-    onSave({ ...task, title, type });
+    onSave({ 
+      ...task, 
+      title, 
+      type,
+      videoUrl,
+      selectedEnvId,
+      expFiles
+    });
     onClose();
   };
 
-  const handleUploadVideo = () => {
+  const handleUploadVideoClick = () => {
     if (uploadStatus === 'uploading' || uploadStatus === 'success') return;
+    videoInputRef.current?.click();
+  };
+
+  const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setVideoFileName(file.name);
     setUploadStatus('uploading');
     setUploadProgress(0);
     setVideoUrl('');
-    
-    // Simulate a 20% chance of failure for demonstration purposes
-    const willFail = Math.random() < 0.2;
-    const failAt = Math.floor(Math.random() * 40) + 30; // Fail between 30% and 70%
 
     const interval = setInterval(() => {
       setUploadProgress(prev => {
-        if (willFail && prev >= failAt) {
-          clearInterval(interval);
-          setUploadStatus('error');
-          return prev;
-        }
-        
         if (prev >= 100) {
           clearInterval(interval);
           setUploadStatus('success');
           setVideoUrl('https://vod.huaweicloud.com/asset/v1/video_7a8b9c.mp4');
-          
-          // Reset to idle after 3 seconds so they can upload again if they want
-          setTimeout(() => {
-            setUploadStatus('idle');
-          }, 3000);
-          
           return 100;
         }
         return prev + 10;
       });
-    }, 200);
+    }, 300);
+  };
+
+  const handleRemoveVideo = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setVideoUrl('');
+    setVideoFileName('');
+    setUploadStatus('idle');
+    setUploadProgress(0);
+    if (videoInputRef.current) {
+      videoInputRef.current.value = '';
+    }
+  };
+
+  const handleDownloadVideo = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoUrl) return;
+    // Simulate download
+    const a = document.createElement('a');
+    a.href = videoUrl;
+    a.download = videoFileName || 'video.mp4';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   const handleUploadExpResource = () => {
@@ -149,7 +190,9 @@ const TaskEditDrawer: React.FC<TaskEditDrawerProps> = ({ isOpen, onClose, task, 
   };
 
   const removeExpFile = (id: number) => {
-    setExpFiles(prev => prev.filter(f => f.id !== id));
+    if (confirm('确定要删除该资源文件吗？')) {
+      setExpFiles(prev => prev.filter(f => f.id !== id));
+    }
   };
 
   const renderIcon = (type: string) => {
@@ -327,10 +370,19 @@ const TaskEditDrawer: React.FC<TaskEditDrawerProps> = ({ isOpen, onClose, task, 
               </div>
               
               <div className="space-y-4">
+                <input 
+                  type="file" 
+                  ref={videoInputRef} 
+                  className="hidden" 
+                  accept="video/mp4,video/webm,video/flv" 
+                  onChange={handleVideoFileChange} 
+                />
                 {/* Upload Area */}
                 <div 
-                  onClick={handleUploadVideo}
-                  className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-colors cursor-pointer ${
+                  onClick={handleUploadVideoClick}
+                  className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-colors ${
+                    uploadStatus === 'success' ? 'cursor-default' : 'cursor-pointer'
+                  } ${
                     uploadStatus === 'uploading' ? 'border-blue-400 bg-blue-50' :
                     uploadStatus === 'success' ? 'border-emerald-400 bg-emerald-50' :
                     uploadStatus === 'error' ? 'border-red-400 bg-red-50' :
@@ -340,7 +392,7 @@ const TaskEditDrawer: React.FC<TaskEditDrawerProps> = ({ isOpen, onClose, task, 
                   {uploadStatus === 'uploading' && (
                     <div className="w-full max-w-xs text-center">
                       <div className="mb-2 flex justify-between text-xs text-blue-600 font-medium">
-                        <span>正在上传至华为云 VOD...</span>
+                        <span>正在上传 {videoFileName}...</span>
                         <span>{uploadProgress}%</span>
                       </div>
                       <div className="w-full bg-blue-100 rounded-full h-2 overflow-hidden">
@@ -352,12 +404,26 @@ const TaskEditDrawer: React.FC<TaskEditDrawerProps> = ({ isOpen, onClose, task, 
                     </div>
                   )}
                   {uploadStatus === 'success' && (
-                    <div className="text-center animate-fade-in">
+                    <div className="text-center animate-fade-in w-full">
                       <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-500 mb-3 mx-auto">
                         <CheckCircle2 className="w-6 h-6" />
                       </div>
-                      <p className="text-sm font-medium text-emerald-700 mb-1">上传成功！</p>
-                      <p className="text-xs text-emerald-600/70">视频已保存至华为云 VOD</p>
+                      <p className="text-sm font-medium text-emerald-700 mb-1">视频已就绪</p>
+                      <p className="text-xs text-emerald-600/70 mb-4">{videoFileName || '已上传的视频'}</p>
+                      <div className="flex items-center justify-center gap-3">
+                        <button 
+                          onClick={handleDownloadVideo}
+                          className="px-4 py-1.5 bg-white border border-emerald-200 text-emerald-600 rounded-lg text-xs font-medium hover:bg-emerald-50 transition-colors"
+                        >
+                          下载资源
+                        </button>
+                        <button 
+                          onClick={handleRemoveVideo}
+                          className="px-4 py-1.5 bg-white border border-red-200 text-red-600 rounded-lg text-xs font-medium hover:bg-red-50 transition-colors"
+                        >
+                          移除重新添加
+                        </button>
+                      </div>
                     </div>
                   )}
                   {uploadStatus === 'error' && (
@@ -374,7 +440,7 @@ const TaskEditDrawer: React.FC<TaskEditDrawerProps> = ({ isOpen, onClose, task, 
                       <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-500 mb-3 mx-auto">
                         <UploadCloud className="w-6 h-6" />
                       </div>
-                      <p className="text-sm font-medium text-slate-700 mb-1">点击上传视频至华为云 VOD</p>
+                      <p className="text-sm font-medium text-slate-700 mb-1">点击或拖拽上传视频至华为云 VOD</p>
                       <p className="text-xs text-slate-400">支持 MP4, WebM, FLV 格式，最大 2GB</p>
                     </div>
                   )}
@@ -400,7 +466,14 @@ const TaskEditDrawer: React.FC<TaskEditDrawerProps> = ({ isOpen, onClose, task, 
                         onChange={(e) => setVideoUrl(e.target.value)}
                       />
                     </div>
-                    <button className="px-4 py-2 bg-slate-100 text-slate-600 border border-slate-300 rounded-lg text-sm hover:bg-slate-200 transition-colors">
+                    <button 
+                      onClick={() => {
+                        if (videoUrl) {
+                          setPreviewVideoUrl(videoUrl);
+                        }
+                      }}
+                      className="px-4 py-2 bg-slate-100 text-slate-600 border border-slate-300 rounded-lg text-sm hover:bg-slate-200 transition-colors"
+                    >
                       预览
                     </button>
                   </div>
@@ -408,12 +481,15 @@ const TaskEditDrawer: React.FC<TaskEditDrawerProps> = ({ isOpen, onClose, task, 
                 
                 {/* Video Metadata Mock (Shows when URL is present) */}
                 {videoUrl && (
-                  <div className="flex items-center gap-4 p-3 bg-white border border-slate-200 rounded-lg animate-fade-in">
-                    <div className="w-24 h-16 bg-slate-800 rounded flex items-center justify-center relative overflow-hidden">
-                      <img src="https://picsum.photos/seed/video/300/200" className="w-full h-full object-cover opacity-50" alt="thumbnail" />
+                  <div 
+                    className="flex items-center gap-4 p-3 bg-white border border-slate-200 rounded-lg animate-fade-in cursor-pointer hover:bg-slate-50 transition-colors"
+                    onClick={() => setPreviewVideoUrl(videoUrl)}
+                  >
+                    <div className="w-24 h-16 bg-slate-800 rounded flex items-center justify-center relative overflow-hidden group">
+                      <img src="https://picsum.photos/seed/video/300/200" className="w-full h-full object-cover opacity-50 group-hover:opacity-40 transition-opacity" alt="thumbnail" />
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-6 h-6 rounded-full bg-white/30 flex items-center justify-center backdrop-blur-sm">
-                          <div className="w-0 h-0 border-t-[4px] border-t-transparent border-l-[6px] border-l-white border-b-[4px] border-b-transparent ml-0.5"></div>
+                        <div className="w-8 h-8 rounded-full bg-white/30 flex items-center justify-center backdrop-blur-sm group-hover:bg-white/40 transition-colors">
+                          <PlayCircle className="w-5 h-5 text-white" />
                         </div>
                       </div>
                     </div>
@@ -926,6 +1002,31 @@ const TaskEditDrawer: React.FC<TaskEditDrawerProps> = ({ isOpen, onClose, task, 
               >
                 确认创建
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Video Preview Modal */}
+      {previewVideoUrl && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4">
+          <div className="bg-black rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden relative">
+            <div className="absolute top-4 right-4 z-10">
+              <button 
+                onClick={() => setPreviewVideoUrl('')}
+                className="w-10 h-10 bg-black/50 hover:bg-black/80 text-white rounded-full flex items-center justify-center transition-colors backdrop-blur-md"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="aspect-video w-full bg-black flex items-center justify-center">
+              <video 
+                src={previewVideoUrl} 
+                controls 
+                autoPlay 
+                className="w-full h-full object-contain"
+              >
+                您的浏览器不支持视频播放。
+              </video>
             </div>
           </div>
         </div>

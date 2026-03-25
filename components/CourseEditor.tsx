@@ -6,7 +6,9 @@ import {
   AlignLeft, AlignCenter, AlignRight, Quote, List, ListOrdered,
   Link as LinkIcon, Image as ImageIcon, Code, Table, Layout, Code2,
   Sparkles, Tag, Layers, Bookmark, GripVertical, CheckCircle2, AlertCircle,
-  UploadCloud, FileQuestion, FlaskConical, FileBarChart
+  UploadCloud, FileQuestion, FlaskConical, FileBarChart, Clock, BookOpen,
+  BarChart, GraduationCap, Users, Play, Cpu, Database, Box, MessageSquare,
+  User, ArrowUp
 } from 'lucide-react';
 import TaskEditDrawer, { Task, TaskType } from './TaskEditDrawer';
 
@@ -46,10 +48,18 @@ const initialChapters: Chapter[] = [
 const CourseEditor: React.FC<CourseEditorProps> = ({ onBack }) => {
   const [activeTab, setActiveTab] = useState('chapters');
   const [chapters, setChapters] = useState<Chapter[]>(initialChapters);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [previewTask, setPreviewTask] = useState<Task | null>(null);
+  const [activePreviewTab, setActivePreviewTab] = useState<'intro' | 'syllabus'>('intro');
+  const [previewView, setPreviewView] = useState<'detail' | 'learning'>('detail');
   
   // Drag and Drop State
   const [draggedChapterIdx, setDraggedChapterIdx] = useState<number | null>(null);
   const [draggedTaskInfo, setDraggedTaskInfo] = useState<{cIdx: number, tIdx: number} | null>(null);
+
+  // Multi-select state
+  const [selectedChapters, setSelectedChapters] = useState<Set<string>>(new Set());
+  const [selectedTasks, setSelectedTasks] = useState<Set<string>>(new Set());
 
   // Inline Edit State
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -83,6 +93,9 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ onBack }) => {
 
   // Dropdown State for Add Task
   const [addTaskDropdownIdx, setAddTaskDropdownIdx] = useState<number | null>(null);
+
+  // Delete Confirmation State
+  const [deleteConfirmInfo, setDeleteConfirmInfo] = useState<{ type: 'chapter' | 'task' | 'batch', cIdx?: number, tIdx?: number } | null>(null);
 
   const tabs = [
     { id: 'basic', label: '基本信息', icon: FileText },
@@ -184,19 +197,42 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ onBack }) => {
   };
 
   const handleDeleteChapter = (cIdx: number) => {
-    if(confirm('确定要删除该章节及其所有任务吗？')) {
-      const newChapters = [...chapters];
-      newChapters.splice(cIdx, 1);
-      setChapters(newChapters);
-    }
+    setDeleteConfirmInfo({ type: 'chapter', cIdx });
   };
 
   const handleDeleteTask = (cIdx: number, tIdx: number) => {
-    if(confirm('确定要删除该任务吗？')) {
+    setDeleteConfirmInfo({ type: 'task', cIdx, tIdx });
+  };
+
+  const handleBatchDelete = () => {
+    if (selectedChapters.size === 0 && selectedTasks.size === 0) return;
+    setDeleteConfirmInfo({ type: 'batch' });
+  };
+
+  const confirmDelete = () => {
+    if (!deleteConfirmInfo) return;
+
+    if (deleteConfirmInfo.type === 'chapter' && deleteConfirmInfo.cIdx !== undefined) {
       const newChapters = [...chapters];
-      newChapters[cIdx].tasks.splice(tIdx, 1);
+      newChapters.splice(deleteConfirmInfo.cIdx, 1);
       setChapters(newChapters);
+    } else if (deleteConfirmInfo.type === 'task' && deleteConfirmInfo.cIdx !== undefined && deleteConfirmInfo.tIdx !== undefined) {
+      const newChapters = [...chapters];
+      newChapters[deleteConfirmInfo.cIdx].tasks.splice(deleteConfirmInfo.tIdx, 1);
+      setChapters(newChapters);
+    } else if (deleteConfirmInfo.type === 'batch') {
+      const newChapters = chapters
+        .filter(c => !selectedChapters.has(c.id))
+        .map(c => ({
+          ...c,
+          tasks: c.tasks.filter(t => !selectedTasks.has(t.id))
+        }));
+      setChapters(newChapters);
+      setSelectedChapters(new Set());
+      setSelectedTasks(new Set());
     }
+
+    setDeleteConfirmInfo(null);
   };
 
   const toggleExpand = (cIdx: number) => {
@@ -294,7 +330,15 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ onBack }) => {
           <button onClick={onBack} className="px-4 py-2 border border-slate-200 text-slate-600 rounded-xl text-sm font-medium flex items-center gap-1.5 hover:bg-slate-50 transition-colors">
             <ArrowLeft className="w-4 h-4" /> 返回
           </button>
-          <button className="px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-sm font-medium flex items-center gap-1.5 hover:bg-blue-100 transition-colors">
+          <button 
+            onClick={() => {
+              setIsPreviewMode(true);
+              setPreviewView('detail');
+              setActivePreviewTab('intro');
+              setPreviewTask(null);
+            }}
+            className="px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-sm font-medium flex items-center gap-1.5 hover:bg-blue-100 transition-colors"
+          >
             <Eye className="w-4 h-4" /> 预览
           </button>
           <button className="px-4 py-2 bg-red-50 text-red-600 rounded-xl text-sm font-medium flex items-center gap-1.5 hover:bg-red-100 transition-colors">
@@ -462,6 +506,14 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ onBack }) => {
           <button onClick={handleAddChapter} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm flex items-center gap-1.5 hover:bg-blue-700 transition-colors shadow-sm font-medium">
             <Plus className="w-4 h-4" /> 新增章节
           </button>
+          {(selectedChapters.size > 0 || selectedTasks.size > 0) && (
+            <button 
+              onClick={handleBatchDelete} 
+              className="px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg text-sm flex items-center gap-1.5 hover:bg-red-100 transition-colors shadow-sm font-medium animate-fade-in"
+            >
+              <Trash2 className="w-4 h-4" /> 批量删除 ({selectedChapters.size + selectedTasks.size})
+            </button>
+          )}
           <div className="text-xs text-slate-500 flex items-center gap-1">
             <AlertCircle className="w-3.5 h-3.5" />
             支持拖拽排序，试学任务最多2个章节、6个任务
@@ -485,6 +537,17 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ onBack }) => {
             {/* Chapter Header */}
             <div className="flex items-center justify-between p-3.5 bg-slate-50/80 group">
               <div className="flex items-center gap-2 flex-1">
+                <input 
+                  type="checkbox" 
+                  className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer"
+                  checked={selectedChapters.has(chapter.id)}
+                  onChange={(e) => {
+                    const newSet = new Set(selectedChapters);
+                    if (e.target.checked) newSet.add(chapter.id);
+                    else newSet.delete(chapter.id);
+                    setSelectedChapters(newSet);
+                  }}
+                />
                 <div className="cursor-grab active:cursor-grabbing p-1 text-slate-400 hover:text-slate-600">
                   <GripVertical className="w-4 h-4" />
                 </div>
@@ -561,14 +624,30 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ onBack }) => {
                   chapter.tasks.map((task, tIdx) => (
                     <div 
                       key={task.id} 
-                      className={`flex items-center justify-between py-2.5 px-3 rounded-lg group transition-all border ${draggedTaskInfo?.cIdx === cIdx && draggedTaskInfo?.tIdx === tIdx ? 'opacity-50 border-blue-300 bg-blue-50' : 'border-transparent hover:border-slate-100 hover:bg-slate-50'}`}
+                      className={`flex items-center justify-between py-2.5 px-3 rounded-lg group transition-all border cursor-pointer ${draggedTaskInfo?.cIdx === cIdx && draggedTaskInfo?.tIdx === tIdx ? 'opacity-50 border-blue-300 bg-blue-50' : 'border-transparent hover:border-slate-100 hover:bg-slate-50'}`}
                       draggable
                       onDragStart={(e) => onTaskDragStart(e, cIdx, tIdx)}
                       onDragOver={(e) => onTaskDragOver(e, cIdx, tIdx)}
                       onDragEnd={onDragEnd}
+                      onClick={() => handleEditTask(cIdx, tIdx)}
                     >
                       <div className="flex items-center gap-3 flex-1">
-                        <div className="cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-500">
+                        <input 
+                          type="checkbox" 
+                          className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer"
+                          checked={selectedTasks.has(task.id)}
+                          onClick={(e) => e.stopPropagation()}
+                          onChange={(e) => {
+                            const newSet = new Set(selectedTasks);
+                            if (e.target.checked) newSet.add(task.id);
+                            else newSet.delete(task.id);
+                            setSelectedTasks(newSet);
+                          }}
+                        />
+                        <div 
+                          className="cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-500"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <GripVertical className="w-3.5 h-3.5" />
                         </div>
                         <div className={`p-1.5 rounded-md ${getTaskColor(task.type)}`}>
@@ -580,6 +659,7 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ onBack }) => {
                             autoFocus
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
                             onBlur={() => {
                               const newChapters = [...chapters];
                               newChapters[cIdx].tasks[tIdx].title = editValue || '未命名任务';
@@ -594,7 +674,7 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ onBack }) => {
                             {task.title}
                             <button 
                               className="text-slate-400 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity" 
-                              onClick={() => handleEditTask(cIdx, tIdx)}
+                              onClick={(e) => { e.stopPropagation(); handleEditTask(cIdx, tIdx); }}
                               title="编辑任务详情"
                             >
                               <Edit3 className="w-3.5 h-3.5" />
@@ -611,12 +691,12 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ onBack }) => {
                       
                       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button 
-                          onClick={() => handleToggleTrial(cIdx, tIdx)}
+                          onClick={(e) => { e.stopPropagation(); handleToggleTrial(cIdx, tIdx); }}
                           className={`text-xs px-2 py-1 rounded transition-colors ${task.isTrial ? 'text-orange-600 hover:bg-orange-50' : 'text-slate-500 hover:bg-slate-200 hover:text-slate-700'}`}
                         >
                           {task.isTrial ? '取消试学' : '设为试学'}
                         </button>
-                        <button onClick={() => handleDeleteTask(cIdx, tIdx)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                        <button onClick={(e) => { e.stopPropagation(); handleDeleteTask(cIdx, tIdx); }} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
@@ -749,20 +829,6 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ onBack }) => {
             <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
           </label>
         </div>
-
-        <div className="flex items-center gap-6">
-          <label className="w-24 text-sm font-medium text-slate-700">
-            <span className="text-red-500 mr-1">*</span>资源属性
-          </label>
-          <div className="flex items-center gap-6">
-            {['公开', '非公开'].map(attr => (
-              <label key={attr} className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="attribute" className="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500" defaultChecked={attr === '公开'} />
-                <span className="text-sm text-slate-700">{attr}</span>
-              </label>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -777,8 +843,434 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ onBack }) => {
     </div>
   );
 
+  const renderPreview = () => {
+    if (previewView === 'detail') {
+      return (
+        <div className="fixed inset-0 z-[100] bg-slate-50 overflow-y-auto animate-fade-in pb-20">
+          {/* Preview Top Bar */}
+          <div className="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-6 sticky top-0 z-50 shadow-sm">
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setIsPreviewMode(false)}
+                className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              <div className="h-6 w-px bg-slate-200"></div>
+              <span className="text-sm font-bold text-slate-700">预览模式：课程详情页</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-slate-400 italic">当前正在预览编辑中的内容</span>
+              <button 
+                onClick={() => setIsPreviewMode(false)}
+                className="px-4 py-1.5 bg-slate-800 text-white rounded-lg text-xs font-bold hover:bg-slate-900 transition-colors"
+              >
+                退出预览
+              </button>
+            </div>
+          </div>
+
+          {/* Header Banner */}
+          <div className="bg-white border-b border-slate-200 pt-8 pb-12 relative overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+              <div className="absolute top-0 left-0 w-full h-full" style={{ backgroundImage: 'radial-gradient(#3b82f6 1px, transparent 1px)', backgroundSize: '32px 32px' }}></div>
+            </div>
+
+            <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative">
+              <div className="flex justify-between items-start">
+                <div className="flex-1 pr-12">
+                  <h1 className="text-3xl font-bold text-slate-900 mb-4 tracking-tight">计算机视觉技术应用</h1>
+                  <p className="text-slate-500 mb-8">熟悉计算机视觉技术应用，掌握人工智能领域新技术。</p>
+                  
+                  <div className="flex flex-wrap items-center gap-6 text-sm text-slate-600">
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="w-4 h-4 text-blue-500" />
+                      <span>课时：<span className="font-medium text-slate-900">68</span></span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <BookOpen className="w-4 h-4 text-blue-500" />
+                      <span>课程类型：<span className="font-medium text-slate-900">{courseInfo.type}</span></span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Tag className="w-4 h-4 text-blue-500" />
+                      <span>课程标签：<span className="font-medium text-slate-900">{courseInfo.tag}</span></span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <BarChart className="w-4 h-4 text-blue-500" />
+                      <span>难度：<span className="font-medium text-slate-900">容易</span></span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <GraduationCap className="w-4 h-4 text-blue-500" />
+                      <span>专业：<span className="font-medium text-slate-900">{courseInfo.major}</span></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="hidden lg:block w-[400px] h-[220px] rounded-2xl overflow-hidden shadow-2xl shadow-blue-500/10 border border-slate-100">
+                  <img src={coverImage} alt="Course Cover" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
+            <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-6">
+                <div className="relative w-16 h-16 flex items-center justify-center">
+                  <svg className="w-full h-full -rotate-90">
+                    <circle cx="32" cy="32" r="28" fill="none" stroke="#f1f5f9" strokeWidth="4" />
+                    <circle cx="32" cy="32" r="28" fill="none" stroke="#3b82f6" strokeWidth="4" strokeDasharray={176} strokeDashoffset={176} strokeLinecap="round" />
+                  </svg>
+                  <span className="absolute text-sm font-bold text-slate-700">0%</span>
+                </div>
+                <div>
+                  <p className="text-slate-500 text-sm">已学 0 节 | 学完 0%</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-8">
+                <div className="text-right">
+                  <p className="text-slate-500 text-sm">已有 <span className="font-bold text-slate-900">0</span> 人在学</p>
+                </div>
+                <button 
+                  onClick={() => {
+                    setPreviewView('learning');
+                    if (chapters.length > 0 && chapters[0].tasks.length > 0) {
+                      setPreviewTask(chapters[0].tasks[0]);
+                    }
+                  }}
+                  className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/30 flex items-center gap-2"
+                >
+                  <Play className="w-4 h-4 fill-current" /> 开始学习
+                </button>
+                <div className="hidden xl:block w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">
+                  <BookOpen className="w-6 h-6 text-blue-500" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content Grid */}
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 mt-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Left Column: Content */}
+            <div className="lg:col-span-3 space-y-8">
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                {/* Tabs */}
+                <div className="flex border-b border-slate-100">
+                  <button 
+                    onClick={() => setActivePreviewTab('intro')}
+                    className={`px-8 py-4 text-sm font-bold transition-all relative ${activePreviewTab === 'intro' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+                  >
+                    介绍
+                    {activePreviewTab === 'intro' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600 rounded-t-full"></div>}
+                  </button>
+                  <button 
+                    onClick={() => setActivePreviewTab('syllabus')}
+                    className={`px-8 py-4 text-sm font-bold transition-all relative ${activePreviewTab === 'syllabus' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+                  >
+                    目录
+                    {activePreviewTab === 'syllabus' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600 rounded-t-full"></div>}
+                  </button>
+                </div>
+
+                {/* Tab Content */}
+                <div className="p-8">
+                  {activePreviewTab === 'intro' ? (
+                    <div className="prose prose-slate max-w-none">
+                      <p className="text-slate-600 leading-relaxed">
+                        本课程培养学生熟悉计算机视觉技术应用的相关操作，具备对人工智能技术领域出现的新技术、新思想进一步学习的能力。加深对计算机视觉技术的理解，为进一步研究和从事人工智能技术实践提供良好的基础 and 参考。
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-8">
+                      {chapters.map((chapter, idx) => (
+                        <div key={chapter.id} className="space-y-4">
+                          <h3 className="text-blue-600 font-bold flex items-center gap-2">
+                            <div className="w-1.5 h-4 bg-blue-600 rounded-full"></div>
+                            {chapter.title}
+                          </h3>
+                          <div className="space-y-2">
+                            {chapter.tasks.map((task) => (
+                              <div 
+                                key={task.id} 
+                                className="group flex items-center justify-between p-4 rounded-xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100 cursor-pointer"
+                                onClick={() => {
+                                  setPreviewView('learning');
+                                  setPreviewTask(task);
+                                }}
+                              >
+                                <div className="flex items-center gap-4">
+                                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${getTaskColor(task.type)}`}>
+                                    {getTaskIcon(task.type)}
+                                  </div>
+                                  <span className="text-slate-700 font-medium">{task.title}</span>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                  {task.isTrial && (
+                                    <span className="px-2 py-0.5 bg-orange-50 text-orange-600 text-[10px] font-bold rounded border border-orange-100">试学</span>
+                                  )}
+                                  <button className="px-4 py-1.5 bg-white border border-blue-200 text-blue-600 rounded-lg text-sm font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+                                    开始学习
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Sidebar */}
+            <div className="space-y-6">
+              {/* AI Tools */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <h3 className="text-sm font-bold text-slate-900 mb-6 flex items-center gap-2">
+                  <div className="w-1 h-4 bg-blue-600 rounded-full"></div>
+                  AI工具
+                </h3>
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-200 cursor-pointer hover:scale-105 transition-transform">
+                    <Sparkles className="w-8 h-8" />
+                  </div>
+                  <span className="text-sm font-bold text-slate-700">AI工具</span>
+                </div>
+              </div>
+
+              {/* Instructor */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <h3 className="text-sm font-bold text-slate-900 mb-6 flex items-center gap-2">
+                  <div className="w-1 h-4 bg-blue-600 rounded-full"></div>
+                  课程开发人员
+                </h3>
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center border-2 border-white shadow-md">
+                    <User className="w-8 h-8 text-slate-400" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-slate-900">管理员</span>
+                      <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded">讲师</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">课程负责人</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Lab Environment */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <h3 className="text-sm font-bold text-slate-900 mb-6 flex items-center gap-2">
+                  <div className="w-1 h-4 bg-blue-600 rounded-full"></div>
+                  实验环境
+                </h3>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-blue-500 border border-slate-100 hover:bg-blue-50 transition-colors cursor-pointer">
+                      <Cpu className="w-6 h-6" />
+                    </div>
+                    <span className="text-[10px] text-slate-500 text-center font-medium">视觉实训环境</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-blue-500 border border-slate-100 hover:bg-blue-50 transition-colors cursor-pointer">
+                      <Database className="w-6 h-6" />
+                    </div>
+                    <span className="text-[10px] text-slate-500 text-center font-medium">数据集管理</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-blue-500 border border-slate-100 hover:bg-blue-50 transition-colors cursor-pointer">
+                      <Box className="w-6 h-6" />
+                    </div>
+                    <span className="text-[10px] text-slate-500 text-center font-medium">模型部署</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Floating Buttons */}
+          <div className="fixed right-8 bottom-8 flex flex-col gap-4 z-50">
+            <button className="w-14 h-14 bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col items-center justify-center text-blue-600 hover:bg-blue-50 transition-all group">
+              <MessageSquare className="w-6 h-6 group-hover:scale-110 transition-transform" />
+              <span className="text-[10px] font-bold mt-1">申请试用</span>
+            </button>
+            <button 
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="w-14 h-14 bg-white rounded-2xl shadow-2xl border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-all group"
+            >
+              <ArrowUp className="w-6 h-6 group-hover:-translate-y-1 transition-transform" />
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // Learning View
+    return (
+      <div className="fixed inset-0 z-[100] bg-white flex flex-col animate-fade-in">
+        {/* Learning Header */}
+        <div className="h-16 bg-slate-900 text-white flex items-center justify-between px-6 shrink-0">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setPreviewView('detail')}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div className="h-6 w-px bg-white/20"></div>
+            <h2 className="text-lg font-bold truncate max-w-md">计算机视觉技术应用</h2>
+          </div>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-32 h-2 bg-white/20 rounded-full overflow-hidden">
+                <div className="w-0 h-full bg-emerald-500"></div>
+              </div>
+              <span className="text-xs font-medium text-white/60">进度 0%</span>
+            </div>
+            <button 
+              onClick={() => setIsPreviewMode(false)}
+              className="px-4 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-bold transition-colors"
+            >
+              退出预览
+            </button>
+          </div>
+        </div>
+
+        <div className="flex-1 flex overflow-hidden">
+          {/* Sidebar Catalog */}
+          <div className="w-80 border-r border-slate-200 flex flex-col bg-slate-50 shrink-0">
+            <div className="p-4 border-b border-slate-200 bg-white">
+              <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                <ListTree className="w-4 h-4 text-blue-500" />
+                课程目录
+              </h3>
+            </div>
+            <div className="flex-1 overflow-y-auto p-2 space-y-4">
+              {chapters.map((chapter, cIdx) => (
+                <div key={chapter.id} className="space-y-1">
+                  <div className="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    第 {cIdx + 1} 章：{chapter.title}
+                  </div>
+                  {chapter.tasks.map((task) => (
+                    <button
+                      key={task.id}
+                      onClick={() => setPreviewTask(task)}
+                      className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all text-left ${previewTask?.id === task.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'hover:bg-white text-slate-600 hover:text-slate-900'}`}
+                    >
+                      <div className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${previewTask?.id === task.id ? 'bg-white/20' : getTaskColor(task.type)}`}>
+                        {getTaskIcon(task.type)}
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <div className="text-sm font-medium truncate">{task.title}</div>
+                        <div className={`text-[10px] mt-0.5 ${previewTask?.id === task.id ? 'text-white/60' : 'text-slate-400'}`}>
+                          {task.type === 'video' ? '视频学习' : task.type === 'experiment' ? '实操练习' : '图文内容'}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Main Content Area */}
+          <div className="flex-1 flex flex-col bg-white overflow-hidden">
+            {previewTask ? (
+              <>
+                <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${getTaskColor(previewTask.type)}`}>
+                        {previewTask.type}
+                      </span>
+                      <span className="text-xs text-slate-400">任务 ID: {previewTask.id}</span>
+                    </div>
+                    <h1 className="text-xl font-bold text-slate-900">{previewTask.title}</h1>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors">
+                      <Bookmark className="w-5 h-5" />
+                    </button>
+                    <button className="px-4 py-2 bg-emerald-500 text-white rounded-lg text-sm font-bold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-200">
+                      完成并继续
+                    </button>
+                  </div>
+                </div>
+                <div className="flex-1 overflow-y-auto p-8">
+                  <div className="max-w-4xl mx-auto">
+                    {previewTask.type === 'video' ? (
+                      <div className="aspect-video bg-slate-900 rounded-3xl flex items-center justify-center group cursor-pointer relative overflow-hidden shadow-2xl">
+                        <img src="https://picsum.photos/seed/video/1280/720" alt="Video Placeholder" className="w-full h-full object-cover opacity-40" referrerPolicy="no-referrer" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center group-hover:scale-110 transition-transform border border-white/30">
+                            <Play className="w-8 h-8 text-white fill-current" />
+                          </div>
+                        </div>
+                        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+                          <div className="flex items-center gap-4 text-white/80 text-sm">
+                            <span>00:00 / 15:00</span>
+                            <div className="flex-1 h-1 bg-white/20 rounded-full"></div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : previewTask.type === 'experiment' ? (
+                      <div className="space-y-6">
+                        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 flex items-start gap-4">
+                          <div className="p-3 bg-blue-600 rounded-xl text-white shadow-lg shadow-blue-200">
+                            <Wrench className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-blue-900 mb-1">实验实训环境</h3>
+                            <p className="text-sm text-blue-700 mb-4">本任务包含在线实操环境，点击下方按钮进入实训。</p>
+                            <button className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 flex items-center gap-2">
+                              <Cpu className="w-4 h-4" /> 进入实训环境
+                            </button>
+                          </div>
+                        </div>
+                        <div className="prose prose-slate max-w-none">
+                          <h3>实验目标</h3>
+                          <ul>
+                            <li>掌握基础环境配置</li>
+                            <li>理解核心算法流程</li>
+                            <li>完成指定功能模块开发</li>
+                          </ul>
+                          <h3>实验步骤</h3>
+                          <p>1. 登录实训环境...</p>
+                          <p>2. 执行初始化脚本...</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="prose prose-slate max-w-none">
+                        <h2>任务详情</h2>
+                        <p>这里是图文学习内容的预览区域。在实际应用中，这里将展示富文本编辑器编辑后的内容。</p>
+                        <img src="https://picsum.photos/seed/content/800/400" alt="Content" className="rounded-2xl shadow-lg my-8" referrerPolicy="no-referrer" />
+                        <p>课程内容涵盖了对人工智能技术领域出现的新技术、新思想进一步学习的能力。</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
+                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-slate-100">
+                  <BookOpen className="w-10 h-10 text-slate-200" />
+                </div>
+                <p className="text-lg font-medium text-slate-500">请从左侧目录选择一个任务开始预览</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col h-full animate-fade-in relative">
+      {isPreviewMode && renderPreview()}
       {renderHeader()}
 
       {/* Main Editor Area */}
@@ -823,6 +1315,47 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ onBack }) => {
         task={editingTask}
         onSave={handleSaveTask}
       />
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmInfo && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-scale-in">
+            <div className="p-6">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-slate-800">
+                    {deleteConfirmInfo.type === 'chapter' ? '删除章节' : deleteConfirmInfo.type === 'task' ? '删除任务' : '批量删除'}
+                  </h3>
+                  <p className="text-slate-500 mt-1">
+                    {deleteConfirmInfo.type === 'chapter' 
+                      ? '确定要删除该章节及其所有任务吗？此操作不可恢复。' 
+                      : deleteConfirmInfo.type === 'task'
+                      ? '确定要删除该任务吗？此操作不可恢复。'
+                      : `确定要删除选中的 ${selectedChapters.size} 个章节和 ${selectedTasks.size} 个任务吗？此操作不可恢复。`}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="p-4 bg-slate-50 flex justify-end gap-3 border-t border-slate-100">
+              <button 
+                onClick={() => setDeleteConfirmInfo(null)} 
+                className="px-5 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 rounded-lg transition-colors"
+              >
+                取消
+              </button>
+              <button 
+                onClick={confirmDelete} 
+                className="px-5 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors shadow-sm"
+              >
+                确定删除
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

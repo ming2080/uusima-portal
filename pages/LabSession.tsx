@@ -48,13 +48,14 @@ const LabSession: React.FC<LabSessionProps> = ({ user }) => {
   const guide = LAB_GUIDES[id || '1'] || LAB_GUIDES['1'];
 
   // --- State: Layout & Resizing ---
-  const [leftWidth, setLeftWidth] = useState(320); // Initial width for Guide
-  const [rightWidth, setRightWidth] = useState(320); // Initial width for AI
+  const [leftWidth, setLeftWidth] = useState(360); // Initial width for Guide
+  const [rightWidth, setRightWidth] = useState(340); // Initial width for AI
   const [isLeftOpen, setIsLeftOpen] = useState(true);
   const [isRightOpen, setIsRightOpen] = useState(true);
   const [isLeftMaximized, setIsLeftMaximized] = useState(false);
   const [isRightMaximized, setIsRightMaximized] = useState(false);
   const [activeTab, setActiveTab] = useState<'guide' | 'toc'>('guide');
+  const [activeCenterTab, setActiveCenterTab] = useState<'terminal' | 'editor'>('terminal');
 
   // --- State: Lab Logic ---
   const [activeStep, setActiveStep] = useState(0);
@@ -66,6 +67,7 @@ const LabSession: React.FC<LabSessionProps> = ({ user }) => {
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportContent, setReportContent] = useState('');
   const [showGradeModal, setShowGradeModal] = useState(false);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [screenshotFlash, setScreenshotFlash] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -222,6 +224,12 @@ const LabSession: React.FC<LabSessionProps> = ({ user }) => {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
+  const submitResult = () => {
+    setShowSubmitModal(false);
+    setToastMessage("实验结果已提交！请等待系统评分。");
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
   // Rich Content Renderer
   const renderContent = (text: string) => {
     return text.split('```').map((part, index) => {
@@ -266,16 +274,16 @@ const LabSession: React.FC<LabSessionProps> = ({ user }) => {
       )}
 
       {/* --- TOP HEADER --- */}
-      <header className="h-14 bg-gray-800 border-b border-gray-700 flex items-center justify-between px-4 flex-shrink-0 z-20">
+      <header className="h-14 bg-[#18181b] border-b border-[#27272a] flex items-center justify-between px-4 flex-shrink-0 z-20">
         <div className="flex items-center space-x-4">
-          <button onClick={() => navigate('/labs')} className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-gray-700 rounded">
+          <button onClick={() => navigate('/labs')} className="text-gray-400 hover:text-white transition-colors p-1.5 hover:bg-[#27272a] rounded-md">
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <div className="h-6 w-px bg-gray-600 mx-2"></div>
+          <div className="h-6 w-px bg-[#27272a] mx-2"></div>
           <div>
-            <h1 className="font-bold text-sm md:text-base tracking-tight text-white">{guide.title}</h1>
-            <div className="flex items-center text-[10px] text-gray-400 mt-0.5 space-x-2">
-               <span className="flex items-center text-green-400"><div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5 animate-pulse"></div> 运行中</span>
+            <h1 className="font-bold text-sm md:text-base tracking-tight text-gray-100">{guide.title}</h1>
+            <div className="flex items-center text-[11px] text-gray-400 mt-0.5 space-x-2">
+               <span className="flex items-center text-emerald-400"><div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5 animate-pulse"></div> 运行中</span>
                <span>|</span>
                <span className="flex items-center"><Clock className="w-3 h-3 mr-1" /> {formatTime(elapsedTime)}</span>
             </div>
@@ -285,91 +293,99 @@ const LabSession: React.FC<LabSessionProps> = ({ user }) => {
         <div className="flex items-center space-x-2 md:space-x-4">
            {/* Toolbar */}
            <div className="hidden md:flex items-center space-x-1 mr-2">
-             <button onClick={handleScreenshot} className="p-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded tooltip-trigger" title="截图">
-               <Camera className="w-5 h-5" />
+             <button onClick={handleScreenshot} className="p-2 text-gray-400 hover:text-white hover:bg-[#27272a] rounded-md transition-colors" title="截图">
+               <Camera className="w-4 h-4" />
              </button>
-             <button onClick={() => setShowReportModal(true)} className="p-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded" title="填写报告">
-               <ClipboardList className="w-5 h-5" />
+             <button onClick={() => setShowReportModal(true)} className="p-2 text-gray-400 hover:text-white hover:bg-[#27272a] rounded-md transition-colors" title="填写报告">
+               <ClipboardList className="w-4 h-4" />
              </button>
-             <button onClick={() => setShowGradeModal(true)} className="p-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded" title="查看成绩">
-               <Award className="w-5 h-5" />
+             <button onClick={() => setShowGradeModal(true)} className="p-2 text-gray-400 hover:text-white hover:bg-[#27272a] rounded-md transition-colors" title="查看成绩">
+               <Award className="w-4 h-4" />
              </button>
            </div>
 
            {/* User Profile */}
-           <div className="h-8 w-px bg-gray-600 hidden md:block"></div>
+           <div className="h-8 w-px bg-[#27272a] hidden md:block"></div>
            <div className="flex items-center space-x-2 pl-2">
-             <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-sm font-bold shadow-sm border border-blue-400">
-                {user?.avatar ? <img src={user.avatar} className="w-full h-full rounded-full" alt="avatar"/> : <UserIcon className="w-4 h-4 text-white" />}
+             <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-bold shadow-sm border border-indigo-400 overflow-hidden">
+                {user?.avatar ? <img src={user.avatar} className="w-full h-full object-cover" alt="avatar"/> : <UserIcon className="w-4 h-4 text-white" />}
              </div>
-             <span className="text-sm font-medium hidden md:block">{user?.name || '游客'}</span>
+             <span className="text-sm font-medium hidden md:block text-gray-200">{user?.name || '游客'}</span>
            </div>
            
-           <button className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded text-sm font-medium transition-colors ml-2 shadow-sm">
+           <button 
+             onClick={() => setShowSubmitModal(true)}
+             className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors ml-2 shadow-sm border border-indigo-500/50"
+           >
              提交结果
            </button>
         </div>
       </header>
 
       {/* --- MAIN WORKSPACE --- */}
-      <div className="flex-1 flex overflow-hidden relative">
+      <div className="flex-1 flex overflow-hidden relative bg-[#09090b]">
         
         {/* --- LEFT PANEL: GUIDE --- */}
         {isLeftOpen && (
           <div 
             style={{ width: isLeftMaximized ? '100%' : leftWidth }} 
-            className={`bg-white border-r border-gray-200 flex flex-col transition-all duration-75 relative z-10 ${isLeftMaximized ? 'absolute inset-0' : ''}`}
+            className={`bg-[#18181b] border-r border-[#27272a] flex flex-col transition-all duration-75 relative z-10 ${isLeftMaximized ? 'absolute inset-0' : ''}`}
           >
             {/* Guide Header */}
-            <div className="h-10 border-b border-gray-200 bg-gray-50 flex items-center justify-between px-3 flex-shrink-0">
-               <div className="flex items-center space-x-1">
+            <div className="h-11 border-b border-[#27272a] bg-[#18181b] flex items-center justify-between px-2 flex-shrink-0">
+               <div className="flex items-center space-x-1 h-full pt-2">
                  <button 
                     onClick={() => setActiveTab('guide')}
-                    className={`px-3 py-1 text-xs font-medium rounded-t-lg transition-colors ${activeTab === 'guide' ? 'bg-white text-blue-600 border-t border-l border-r border-gray-200 shadow-sm relative top-[1px]' : 'text-gray-500 hover:text-gray-700'}`}
+                    className={`px-4 py-1.5 text-xs font-medium rounded-t-md transition-colors h-full flex items-center ${activeTab === 'guide' ? 'bg-[#27272a] text-gray-100 border-t border-l border-r border-[#3f3f46]' : 'text-gray-400 hover:text-gray-200 hover:bg-[#27272a]/50'}`}
                  >
-                    <BookOpen className="w-3 h-3 inline mr-1" /> 内容
+                    <BookOpen className="w-3.5 h-3.5 mr-1.5" /> 实验手册
                  </button>
                  <button 
                     onClick={() => setActiveTab('toc')}
-                    className={`px-3 py-1 text-xs font-medium rounded-t-lg transition-colors ${activeTab === 'toc' ? 'bg-white text-blue-600 border-t border-l border-r border-gray-200 shadow-sm relative top-[1px]' : 'text-gray-500 hover:text-gray-700'}`}
+                    className={`px-4 py-1.5 text-xs font-medium rounded-t-md transition-colors h-full flex items-center ${activeTab === 'toc' ? 'bg-[#27272a] text-gray-100 border-t border-l border-r border-[#3f3f46]' : 'text-gray-400 hover:text-gray-200 hover:bg-[#27272a]/50'}`}
                  >
-                    <List className="w-3 h-3 inline mr-1" /> 目录
+                    <List className="w-3.5 h-3.5 mr-1.5" /> 目录
                  </button>
                </div>
                <div className="flex items-center text-gray-400 space-x-1">
-                  <button onClick={() => setIsLeftMaximized(!isLeftMaximized)} className="p-1 hover:text-gray-600 hover:bg-gray-200 rounded">
+                  <button onClick={() => setIsLeftMaximized(!isLeftMaximized)} className="p-1.5 hover:text-gray-200 hover:bg-[#27272a] rounded-md transition-colors">
                     {isLeftMaximized ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
                   </button>
-                  <button onClick={() => setIsLeftOpen(false)} className="p-1 hover:text-gray-600 hover:bg-gray-200 rounded">
+                  <button onClick={() => setIsLeftOpen(false)} className="p-1.5 hover:text-gray-200 hover:bg-[#27272a] rounded-md transition-colors">
                     <PanelLeftClose className="w-3.5 h-3.5" />
                   </button>
                </div>
             </div>
 
             {/* Guide Content */}
-            <div className="flex-1 overflow-y-auto text-gray-900 bg-white">
+            <div className="flex-1 overflow-y-auto text-gray-300 bg-[#18181b] custom-scrollbar">
               {activeTab === 'guide' ? (
-                <div className="p-5">
-                   <h2 className="text-xl font-bold text-gray-900 mb-2">步骤 {activeStep + 1}: {guide.steps[activeStep].title}</h2>
-                   <div className="w-full h-px bg-gray-100 mb-4"></div>
-                   <div className="prose prose-sm prose-blue max-w-none">
-                     <div className="whitespace-pre-wrap leading-relaxed text-gray-700">
+                <div className="p-6">
+                   <div className="flex items-center space-x-3 mb-4">
+                     <div className="w-8 h-8 rounded bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm border border-indigo-500/30">
+                       {activeStep + 1}
+                     </div>
+                     <h2 className="text-lg font-bold text-gray-100">{guide.steps[activeStep].title}</h2>
+                   </div>
+                   <div className="w-full h-px bg-[#27272a] mb-6"></div>
+                   <div className="prose prose-sm prose-invert max-w-none">
+                     <div className="whitespace-pre-wrap leading-relaxed text-gray-300">
                         {renderContent(guide.steps[activeStep].content)}
                      </div>
                    </div>
                 </div>
               ) : (
-                <div className="p-2">
+                <div className="p-3">
                    {guide.steps.map((s, i) => (
                      <div 
                         key={i} 
                         onClick={() => { setActiveStep(i); setActiveTab('guide'); }}
-                        className={`p-3 rounded-lg cursor-pointer mb-1 text-sm flex items-center ${activeStep === i ? 'bg-blue-50 text-blue-700 font-medium' : 'hover:bg-gray-50 text-gray-600'}`}
+                        className={`p-3 rounded-lg cursor-pointer mb-2 text-sm flex items-center transition-colors ${activeStep === i ? 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 font-medium' : 'hover:bg-[#27272a] text-gray-400 border border-transparent'}`}
                      >
-                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs mr-3 border ${activeStep === i ? 'bg-blue-600 text-white border-blue-600' : 'bg-white border-gray-300 text-gray-500'}`}>
+                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs mr-3 flex-shrink-0 ${activeStep === i ? 'bg-indigo-500 text-white' : 'bg-[#27272a] text-gray-500'}`}>
                           {i + 1}
                         </span>
-                        {s.title}
+                        <span className="line-clamp-1">{s.title}</span>
                      </div>
                    ))}
                 </div>
@@ -378,21 +394,21 @@ const LabSession: React.FC<LabSessionProps> = ({ user }) => {
 
             {/* Guide Footer Navigation */}
             {activeTab === 'guide' && (
-              <div className="p-3 border-t border-gray-200 bg-gray-50 flex justify-between items-center flex-shrink-0">
+              <div className="p-4 border-t border-[#27272a] bg-[#18181b] flex justify-between items-center flex-shrink-0">
                  <button 
                     disabled={activeStep === 0}
                     onClick={() => setActiveStep(prev => prev - 1)}
-                    className="px-3 py-1.5 text-xs font-medium border border-gray-300 bg-white rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-gray-700"
+                    className="px-4 py-2 text-xs font-medium border border-[#3f3f46] bg-[#27272a] text-gray-300 rounded-md hover:bg-[#3f3f46] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                  >
                    上一页
                  </button>
-                 <span className="text-xs text-gray-500">
+                 <span className="text-xs text-gray-500 font-medium">
                     {activeStep + 1} / {guide.steps.length}
                  </span>
                  <button 
                     disabled={activeStep === guide.steps.length - 1}
                     onClick={() => setActiveStep(prev => prev + 1)}
-                    className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                    className="px-4 py-2 text-xs font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-colors"
                  >
                    下一页
                  </button>
@@ -404,84 +420,116 @@ const LabSession: React.FC<LabSessionProps> = ({ user }) => {
         {/* Resizer Handle (Left) */}
         {isLeftOpen && !isLeftMaximized && (
            <div 
-             className="w-1 hover:w-1.5 bg-gray-800 hover:bg-blue-500 cursor-col-resize transition-all z-20 flex flex-col justify-center items-center group select-none"
+             className="w-1 hover:w-1.5 bg-[#27272a] hover:bg-indigo-500 cursor-col-resize transition-all z-20 flex flex-col justify-center items-center group select-none"
              onMouseDown={startResizingLeft}
            >
-             <div className="h-8 w-0.5 bg-gray-600 group-hover:bg-white rounded"></div>
+             <div className="h-8 w-0.5 bg-gray-500 group-hover:bg-white rounded"></div>
            </div>
         )}
 
         {/* Collapsed Left Panel Placeholder */}
         {!isLeftOpen && (
-          <div className="w-10 bg-gray-800 border-r border-gray-700 flex flex-col items-center py-4 space-y-4">
-             <button onClick={() => setIsLeftOpen(true)} className="p-2 bg-gray-700 rounded text-gray-300 hover:text-white hover:bg-blue-600 transition">
-                <PanelLeftOpen className="w-5 h-5" />
+          <div className="w-12 bg-[#18181b] border-r border-[#27272a] flex flex-col items-center py-4 space-y-4">
+             <button onClick={() => setIsLeftOpen(true)} className="p-2.5 bg-[#27272a] rounded-md text-gray-400 hover:text-white hover:bg-indigo-600 transition-colors">
+                <PanelLeftOpen className="w-4 h-4" />
              </button>
-             <div className="h-px w-6 bg-gray-700"></div>
-             <button onClick={() => { setIsLeftOpen(true); setActiveTab('toc'); }} className="p-2 text-gray-400 hover:text-white" title="目录">
-                <List className="w-5 h-5" />
+             <div className="h-px w-6 bg-[#3f3f46]"></div>
+             <button onClick={() => { setIsLeftOpen(true); setActiveTab('toc'); }} className="p-2.5 text-gray-500 hover:text-gray-300 transition-colors" title="目录">
+                <List className="w-4 h-4" />
              </button>
           </div>
         )}
 
-        {/* --- CENTER PANEL: TERMINAL --- */}
-        <div className="flex-1 bg-[#1e1e1e] flex flex-col relative min-w-0">
-           {/* Terminal Tab Bar */}
-           <div className="h-9 bg-[#252526] flex items-center px-2 space-x-1 border-b border-[#333]">
-              <div className="px-3 py-1.5 bg-[#1e1e1e] text-gray-300 text-xs rounded-t border-t border-blue-500 flex items-center min-w-[100px]">
-                 <Terminal className="w-3 h-3 mr-2 text-blue-400" />
-                 root@lab-instance
-              </div>
-              <button className="p-1 hover:bg-[#333] rounded text-gray-500">
-                 <RefreshCw className="w-3 h-3" />
+        {/* --- CENTER PANEL: TERMINAL / EDITOR --- */}
+        <div className="flex-1 bg-[#09090b] flex flex-col relative min-w-0">
+           {/* Center Tab Bar */}
+           <div className="h-11 bg-[#18181b] flex items-center px-2 space-x-1 border-b border-[#27272a] pt-2">
+              <button 
+                onClick={() => setActiveCenterTab('terminal')}
+                className={`px-4 py-1.5 text-xs font-medium rounded-t-md transition-colors flex items-center ${activeCenterTab === 'terminal' ? 'bg-[#09090b] text-gray-200 border-t border-l border-r border-[#27272a]' : 'text-gray-500 hover:text-gray-300 hover:bg-[#27272a]/50'}`}
+              >
+                 <Terminal className="w-3.5 h-3.5 mr-1.5 text-emerald-400" />
+                 Terminal
+              </button>
+              <button 
+                onClick={() => setActiveCenterTab('editor')}
+                className={`px-4 py-1.5 text-xs font-medium rounded-t-md transition-colors flex items-center ${activeCenterTab === 'editor' ? 'bg-[#09090b] text-gray-200 border-t border-l border-r border-[#27272a]' : 'text-gray-500 hover:text-gray-300 hover:bg-[#27272a]/50'}`}
+              >
+                 <FileText className="w-3.5 h-3.5 mr-1.5 text-blue-400" />
+                 Editor
+              </button>
+              <div className="flex-1"></div>
+              <button 
+                onClick={() => {
+                  if (activeCenterTab === 'terminal') {
+                    setTerminalOutput(['Welcome to UUSIMA Cloud Shell 2.0', 'Initializing environment...', 'root@lab-instance:~# ']);
+                    setInputCmd('');
+                  }
+                }}
+                className="p-1.5 hover:bg-[#27272a] rounded-md text-gray-500 transition-colors"
+                title="重置环境"
+              >
+                 <RefreshCw className="w-3.5 h-3.5" />
               </button>
            </div>
            
            {/* Terminal Output */}
-           <div 
-             className="flex-1 p-4 font-mono text-sm overflow-y-auto custom-scrollbar" 
-             onClick={() => document.getElementById('term-input')?.focus()}
-             style={{ fontFamily: "'Fira Code', 'Courier New', monospace" }}
-           >
-              {terminalOutput.map((line, i) => (
-                 <div key={i} className="text-[#cccccc] min-h-[1.5em] whitespace-pre-wrap break-all leading-snug">{line}</div>
-              ))}
-              <form onSubmit={handleTerminalSubmit} className="flex mt-1">
-                 <span className="text-[#cccccc] mr-2">root@lab-instance:~#</span>
-                 <div className="flex-1 relative">
-                    <input 
-                      id="term-input"
-                      type="text" 
-                      value={inputCmd}
-                      onChange={(e) => setInputCmd(e.target.value)}
-                      className="bg-transparent border-none outline-none text-[#cccccc] w-full h-full p-0 m-0 font-inherit" 
-                      autoFocus
-                      autoComplete="off"
-                    />
-                 </div>
-              </form>
-           </div>
+           {activeCenterTab === 'terminal' && (
+             <div 
+               className="flex-1 p-4 font-mono text-[13px] overflow-y-auto custom-scrollbar" 
+               onClick={() => document.getElementById('term-input')?.focus()}
+               style={{ fontFamily: "'JetBrains Mono', 'Fira Code', 'Courier New', monospace" }}
+             >
+                {terminalOutput.map((line, i) => (
+                   <div key={i} className="text-[#d4d4d8] min-h-[1.5em] whitespace-pre-wrap break-all leading-relaxed">{line}</div>
+                ))}
+                <form onSubmit={handleTerminalSubmit} className="flex mt-1">
+                   <span className="text-emerald-400 mr-2 font-bold">root@lab-instance:~#</span>
+                   <div className="flex-1 relative">
+                      <input 
+                        id="term-input"
+                        type="text" 
+                        value={inputCmd}
+                        onChange={(e) => setInputCmd(e.target.value)}
+                        className="bg-transparent border-none outline-none text-[#d4d4d8] w-full h-full p-0 m-0 font-inherit" 
+                        autoFocus
+                        autoComplete="off"
+                      />
+                   </div>
+                </form>
+             </div>
+           )}
+
+           {/* Editor Mockup */}
+           {activeCenterTab === 'editor' && (
+             <div className="flex-1 p-4 font-mono text-[13px] text-gray-300 overflow-y-auto custom-scrollbar" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', 'Courier New', monospace" }}>
+                <div className="text-gray-500 mb-4">/* 这是一个代码编辑器示例 */</div>
+                <div className="text-blue-400">function <span className="text-yellow-200">helloWorld</span>() {'{'}</div>
+                <div className="pl-4">console.<span className="text-blue-300">log</span>(<span className="text-green-300">"Hello from UUSIMA Lab!"</span>);</div>
+                <div>{'}'}</div>
+             </div>
+           )}
         </div>
 
         {/* Resizer Handle (Right) */}
         {isRightOpen && !isRightMaximized && (
            <div 
-             className="w-1 hover:w-1.5 bg-gray-800 hover:bg-blue-500 cursor-col-resize transition-all z-20 flex flex-col justify-center items-center group select-none"
+             className="w-1 hover:w-1.5 bg-[#27272a] hover:bg-indigo-500 cursor-col-resize transition-all z-20 flex flex-col justify-center items-center group select-none"
              onMouseDown={startResizingRight}
            >
-             <div className="h-8 w-0.5 bg-gray-600 group-hover:bg-white rounded"></div>
+             <div className="h-8 w-0.5 bg-gray-500 group-hover:bg-white rounded"></div>
            </div>
         )}
 
         {/* Collapsed Right Panel Placeholder */}
         {!isRightOpen && (
-          <div className="w-10 bg-gray-800 border-l border-gray-700 flex flex-col items-center py-4 space-y-4">
-             <button onClick={() => setIsRightOpen(true)} className="p-2 bg-gray-700 rounded text-gray-300 hover:text-white hover:bg-blue-600 transition">
-                <PanelRightOpen className="w-5 h-5" />
+          <div className="w-12 bg-[#18181b] border-l border-[#27272a] flex flex-col items-center py-4 space-y-4">
+             <button onClick={() => setIsRightOpen(true)} className="p-2.5 bg-[#27272a] rounded-md text-gray-400 hover:text-white hover:bg-indigo-600 transition-colors">
+                <PanelRightOpen className="w-4 h-4" />
              </button>
-             <div className="h-px w-6 bg-gray-700"></div>
-             <button className="p-2 text-gray-400 hover:text-white" title="AI 助手">
-                <Bot className="w-5 h-5" />
+             <div className="h-px w-6 bg-[#3f3f46]"></div>
+             <button onClick={() => setIsRightOpen(true)} className="p-2.5 text-gray-500 hover:text-gray-300 transition-colors" title="AI 助手">
+                <Bot className="w-4 h-4" />
              </button>
           </div>
         )}
@@ -490,32 +538,39 @@ const LabSession: React.FC<LabSessionProps> = ({ user }) => {
         {isRightOpen && (
           <div 
             style={{ width: isRightMaximized ? '100%' : rightWidth }} 
-            className={`bg-white border-l border-gray-200 flex flex-col transition-all duration-75 relative z-10 ${isRightMaximized ? 'absolute inset-0' : ''}`}
+            className={`bg-[#18181b] border-l border-[#27272a] flex flex-col transition-all duration-75 relative z-10 ${isRightMaximized ? 'absolute inset-0' : ''}`}
           >
              {/* AI Header */}
-             <div className="h-10 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-blue-50 flex items-center justify-between px-3 flex-shrink-0">
+             <div className="h-14 border-b border-[#27272a] bg-[#18181b] flex items-center justify-between px-4 flex-shrink-0">
                <div className="flex items-center space-x-2">
-                 <Bot className="w-4 h-4 text-indigo-600" />
-                 <span className="font-bold text-gray-800 text-xs">AI 教学助手</span>
+                 <div className="w-7 h-7 rounded-lg bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
+                   <Bot className="w-4 h-4 text-indigo-400" />
+                 </div>
+                 <span className="font-bold text-gray-200 text-sm">AI 助教</span>
                </div>
                <div className="flex items-center text-gray-400 space-x-1">
-                  <button onClick={() => setIsRightMaximized(!isRightMaximized)} className="p-1 hover:text-gray-600 hover:bg-gray-200 rounded">
+                  <button onClick={() => setIsRightMaximized(!isRightMaximized)} className="p-1.5 hover:text-gray-200 hover:bg-[#27272a] rounded-md transition-colors">
                     {isRightMaximized ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
                   </button>
-                  <button onClick={() => setIsRightOpen(false)} className="p-1 hover:text-gray-600 hover:bg-gray-200 rounded">
+                  <button onClick={() => setIsRightOpen(false)} className="p-1.5 hover:text-gray-200 hover:bg-[#27272a] rounded-md transition-colors">
                     <PanelRightClose className="w-3.5 h-3.5" />
                   </button>
                </div>
             </div>
             
             {/* AI Messages */}
-            <div className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 bg-[#09090b] space-y-4 custom-scrollbar">
                {chatMessages.map((msg) => (
                  <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[90%] p-3 rounded-xl text-sm leading-relaxed ${
+                    {msg.role === 'model' && (
+                      <div className="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30 mr-2 flex-shrink-0 mt-1">
+                        <Bot className="w-3.5 h-3.5 text-indigo-400" />
+                      </div>
+                    )}
+                    <div className={`max-w-[85%] p-3 rounded-xl text-sm leading-relaxed ${
                         msg.role === 'user' 
-                        ? 'bg-indigo-600 text-white rounded-br-none shadow-md' 
-                        : 'bg-white border border-gray-200 text-gray-800 shadow-sm rounded-bl-none'
+                        ? 'bg-indigo-600 text-white rounded-tr-sm shadow-md' 
+                        : 'bg-[#18181b] border border-[#27272a] text-gray-300 shadow-sm rounded-tl-sm'
                     }`}>
                        {msg.text}
                     </div>
@@ -523,9 +578,12 @@ const LabSession: React.FC<LabSessionProps> = ({ user }) => {
                ))}
                {isChatLoading && (
                  <div className="flex justify-start">
-                    <div className="bg-white border border-gray-200 p-2.5 rounded-xl rounded-bl-none shadow-sm flex items-center space-x-2">
-                       <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-600" />
-                       <span className="text-xs text-gray-500">正在思考...</span>
+                    <div className="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30 mr-2 flex-shrink-0 mt-1">
+                        <Bot className="w-3.5 h-3.5 text-indigo-400" />
+                    </div>
+                    <div className="bg-[#18181b] border border-[#27272a] p-3 rounded-xl rounded-tl-sm shadow-sm flex items-center space-x-2">
+                       <Loader2 className="w-4 h-4 animate-spin text-indigo-500" />
+                       <span className="text-sm text-gray-400">正在思考...</span>
                     </div>
                  </div>
                )}
@@ -533,20 +591,25 @@ const LabSession: React.FC<LabSessionProps> = ({ user }) => {
             </div>
 
             {/* AI Input */}
-            <div className="p-3 border-t border-gray-200 bg-white">
-               <div className="flex items-center space-x-2">
-                 <input
-                   type="text"
+            <div className="p-4 border-t border-[#27272a] bg-[#18181b]">
+               <div className="flex items-end space-x-2 bg-[#09090b] border border-[#27272a] rounded-xl p-1 focus-within:border-indigo-500/50 focus-within:ring-1 focus-within:ring-indigo-500/50 transition-all">
+                 <textarea
                    value={chatInput}
                    onChange={(e) => setChatInput(e.target.value)}
-                   onKeyDown={(e) => e.key === 'Enter' && handleChatSend()}
-                   placeholder="有问题随时问我..."
-                   className="flex-1 bg-gray-100 border-none rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 text-gray-800 placeholder-gray-400"
+                   onKeyDown={(e) => {
+                     if (e.key === 'Enter' && !e.shiftKey) {
+                       e.preventDefault();
+                       handleChatSend();
+                     }
+                   }}
+                   placeholder="有问题随时问我... (Shift+Enter 换行)"
+                   className="flex-1 bg-transparent border-none outline-none resize-none max-h-32 min-h-[40px] px-3 py-2.5 text-sm text-gray-200 placeholder-gray-500 custom-scrollbar"
+                   rows={1}
                  />
                  <button 
                    onClick={handleChatSend}
                    disabled={!chatInput.trim() || isChatLoading}
-                   className="p-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 disabled:opacity-50 transition-colors shadow-sm"
+                   className="p-2.5 m-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 disabled:opacity-50 disabled:bg-[#27272a] disabled:text-gray-500 transition-colors shadow-sm flex-shrink-0"
                  >
                    <Send className="w-4 h-4" />
                  </button>
@@ -609,6 +672,28 @@ const LabSession: React.FC<LabSessionProps> = ({ user }) => {
                <p className="text-sm text-gray-600 leading-relaxed">
                  操作步骤规范，命令使用准确。特别是在文件权限配置环节，思路非常清晰。建议在后续实验中尝试使用脚本自动化部分重复操作。
                </p>
+             </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- MODAL: SUBMIT RESULT --- */}
+      {showSubmitModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 relative m-4">
+             <button onClick={() => setShowSubmitModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+               <PanelRightClose className="w-5 h-5" />
+             </button>
+             <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+               <CheckCircle className="w-6 h-6 text-indigo-600" />
+             </div>
+             <h2 className="text-xl font-bold text-gray-900 mb-2">确认提交实验结果？</h2>
+             <p className="text-gray-500 text-sm mb-6">
+               提交后，系统将自动评估您的实验环境状态和操作记录。您可以多次提交，系统将保留最高分。
+             </p>
+             <div className="flex justify-end space-x-3">
+                <button onClick={() => setShowSubmitModal(false)} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">取消</button>
+                <button onClick={submitResult} className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-sm">确认提交</button>
              </div>
           </div>
         </div>

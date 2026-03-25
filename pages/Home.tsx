@@ -1,15 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Monitor, BookOpen, Award, Cpu, ChevronLeft, ChevronRight, Star, Zap, Activity, Truck, Sprout, Building, Wallet, Radio, Code, BarChart3, Smartphone } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowRight, Monitor, BookOpen, Award, Cpu, ChevronLeft, ChevronRight, Star, Zap, BarChart3, Cloud, FileBadge, BrainCircuit } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { User, UserRole } from '../types';
+import StudentDashboard from './dashboards/StudentDashboard';
+import TeacherDashboard from './dashboards/TeacherDashboard';
+import SchoolAdminDashboard from './dashboards/SchoolAdminDashboard';
+import SystemAdminDashboard from './dashboards/SystemAdminDashboard';
 
-const Home: React.FC = () => {
+interface HomeProps {
+  user?: User | null;
+}
+
+const MarketingHome: React.FC = () => {
   // --- Hero Carousel State ---
   const [currentSlide, setCurrentSlide] = useState(0);
-
-  // --- Case Studies Carousel State ---
-  const [caseIndex, setCaseIndex] = useState(0);
-  const [itemsPerScreen, setItemsPerScreen] = useState(3);
-  const [isCaseHovered, setIsCaseHovered] = useState(false);
 
   const heroSlides = [
     {
@@ -24,12 +28,12 @@ const Home: React.FC = () => {
     },
     {
       id: 2,
-      title: "沉浸式虚拟实验室",
+      title: "沉浸式虚拟实训室",
       subtitle: "云端实训 · 即点即用",
-      description: "无需本地配置，基于 Docker 与 K8s 的高仿真实验环境，支持 Linux、网络拓扑、IoT 设备仿真，让实践触手可及。",
+      description: "校内专属虚拟仿真环境，深度集成课程资源，提供一站式理实一体化实训体验。",
       image: "https://images.unsplash.com/photo-1558494949-ef526b0042a0?q=80&w=1920&auto=format&fit=crop",
       link: "/labs",
-      cta: "进入实验室",
+      cta: "进入实训中心",
       color: "from-cyan-600 to-blue-900"
     },
     {
@@ -81,60 +85,60 @@ const Home: React.FC = () => {
     }
   ];
 
-  const cases = [
+  const featuredLabs = [
     {
       id: 1,
-      title: "智慧物流供应链",
-      category: "工业物联网",
-      icon: Truck,
-      description: "结合 RFID 与 AGV 技术的智能仓储实训系统，还原真实物流分拣场景。",
-      image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=800",
-      stats: "效率提升 40%"
+      title: "人工智能深度学习实验室",
+      category: "AI 实验室",
+      icon: BrainCircuit,
+      description: "预置 PyTorch/TensorFlow 环境，配备高性能 GPU 算力，支持图像识别与自然语言处理实战。",
+      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800",
+      status: "空闲可用"
     },
     {
       id: 2,
-      title: "工业 4.0 数字孪生",
-      category: "智能制造",
-      icon: Cpu,
-      description: "利用实时数据采集与 3D 可视化，构建生产线数字孪生教学环境。",
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800",
-      stats: "故障预警 99%"
+      title: "大数据分布式计算环境",
+      category: "大数据实验室",
+      icon: BarChart3,
+      description: "一键部署 Hadoop/Spark 集群，提供海量脱敏数据集，真实还原企业级数据处理场景。",
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
+      status: "资源充足"
     },
     {
       id: 3,
-      title: "智慧农业监测系统",
-      category: "农业物联网",
-      icon: Sprout,
-      description: "基于 NB-IoT 的土壤环境监测与自动灌溉系统，服务现代农业技术专业。",
-      image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&q=80&w=800",
-      stats: "节水 30%"
+      title: "云原生微服务架构实训",
+      category: "云计算实验室",
+      icon: Cloud,
+      description: "基于 Kubernetes 的容器化部署环境，支持 CI/CD 流水线搭建与微服务治理演练。",
+      image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800",
+      status: "推荐使用"
+    }
+  ];
+
+  const featuredExams = [
+    {
+      id: 1,
+      title: "UUSIMA 认证云架构师",
+      level: "专家级 (Expert)",
+      icon: Award,
+      description: "考察在复杂业务场景下的云原生架构设计、高可用部署与性能调优能力。",
+      date: "每月第三个周末"
     },
     {
-      id: 4,
-      title: "城市智慧交通大脑",
-      category: "人工智能",
-      icon: Radio,
-      description: "运用计算机视觉进行车流分析与信号灯智能调控的实战案例。",
-      image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=800",
-      stats: "拥堵降低 25%"
+      id: 2,
+      title: "UUSIMA 认证数据分析师",
+      level: "专业级 (Professional)",
+      icon: FileBadge,
+      description: "评估数据清洗、建模分析及可视化呈现的综合实战技能。",
+      date: "随到随考"
     },
     {
-      id: 5,
-      title: "金融科技区块链",
-      category: "大数据与区块链",
-      icon: Wallet,
-      description: "基于联盟链的供应链金融平台，保障数据不可篡改与透明溯源。",
-      image: "https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&q=80&w=800",
-      stats: "交易透明化"
-    },
-    {
-      id: 6,
-      title: "远程智慧医疗",
-      category: "数字医疗",
-      icon: Activity,
-      description: "结合 5G 与 VR 技术的手术示教与远程诊断系统，赋能护理与医学专业。",
-      image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=800",
-      stats: "响应速度 <10ms"
+      id: 3,
+      title: "UUSIMA 认证物联网工程师",
+      level: "基础级 (Associate)",
+      icon: Cpu,
+      description: "检验物联网基础理论、设备接入与边缘计算的入门掌握程度。",
+      date: "随到随考"
     }
   ];
 
@@ -146,52 +150,12 @@ const Home: React.FC = () => {
     return () => clearInterval(timer);
   }, [heroSlides.length]);
 
-  // --- Responsive Logic for Cases ---
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setItemsPerScreen(1);
-      } else if (window.innerWidth < 1024) {
-        setItemsPerScreen(2);
-      } else {
-        setItemsPerScreen(3);
-      }
-    };
-    handleResize(); // Init
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // --- Cases Auto-play ---
-  useEffect(() => {
-    if (isCaseHovered) return;
-    
-    const timer = setInterval(() => {
-      setCaseIndex((prev) => {
-        const maxIndex = cases.length - itemsPerScreen;
-        if (prev >= maxIndex) return 0;
-        return prev + 1;
-      });
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [itemsPerScreen, cases.length, isCaseHovered]);
-
   const nextHeroSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
   };
 
   const prevHeroSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-  };
-
-  const nextCase = () => {
-    const maxIndex = cases.length - itemsPerScreen;
-    setCaseIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-  };
-
-  const prevCase = () => {
-    const maxIndex = cases.length - itemsPerScreen;
-    setCaseIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
   };
 
   return (
@@ -273,7 +237,7 @@ const Home: React.FC = () => {
             {[
               { icon: BookOpen, label: '500+ 精品课程', sub: '教育部标准对齐' },
               { icon: Monitor, label: '云端实验室', sub: 'Docker/K8s 容器化' },
-              { icon: Award, label: '1+X 证书认证', sub: '行业龙头企业认可' },
+              { icon: Award, label: '认证体系', sub: '行业龙头企业认可' },
               { icon: Zap, label: 'AI 智慧教学', sub: '知识图谱 + 个性化' },
             ].map((stat, idx) => (
               <div key={idx} className="flex items-center space-x-3 md:space-x-4 group cursor-default">
@@ -326,67 +290,96 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-       {/* --- INDUSTRY CASES SLIDER --- */}
-       <section className="py-12 md:py-16 bg-white overflow-hidden" onMouseEnter={() => setIsCaseHovered(true)} onMouseLeave={() => setIsCaseHovered(false)}>
+      {/* --- PRACTICAL TRAINING CENTER --- */}
+      <section className="py-12 md:py-16 bg-white">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-           <div className="flex justify-between items-center mb-8 md:mb-10">
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">行业融合案例展示</h2>
-                <p className="mt-2 text-sm md:text-base text-gray-500">探索 UUSIMA 产品在各行各业的实际应用场景。</p>
+          <div className="flex justify-between items-end mb-8 md:mb-10">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">实训中心</h2>
+              <p className="mt-2 text-sm md:text-base text-gray-500">校内专属虚拟仿真环境，深度集成课程资源，提供一站式理实一体化实训体验。</p>
+            </div>
+            <Link to="/labs" className="hidden md:flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors">
+              进入中心 <ArrowRight className="w-4 h-4 ml-1" />
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {featuredLabs.map((lab) => (
+              <div key={lab.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group flex flex-col">
+                <div className="relative h-48 overflow-hidden">
+                  <img src={lab.image} alt={lab.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-blue-700 flex items-center">
+                    <lab.icon className="w-3.5 h-3.5 mr-1.5" />
+                    {lab.category}
+                  </div>
+                </div>
+                <div className="p-6 flex-1 flex flex-col">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">{lab.title}</h3>
+                  <p className="text-gray-500 text-sm mb-6 flex-1 line-clamp-3">{lab.description}</p>
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">{lab.status}</span>
+                    <Link to="/labs" className="text-sm font-semibold text-blue-600 hover:text-blue-800 flex items-center">
+                      开始实验 <ArrowRight className="w-4 h-4 ml-1" />
+                    </Link>
+                  </div>
+                </div>
               </div>
-              <div className="flex space-x-2">
-                 <button onClick={prevCase} className="p-2 rounded-full border border-gray-300 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                    <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
-                 </button>
-                 <button onClick={nextCase} className="p-2 rounded-full border border-gray-300 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                    <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
-                 </button>
+            ))}
+          </div>
+          <div className="mt-8 text-center md:hidden">
+            <Link to="/labs" className="inline-flex items-center justify-center w-full px-6 py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+              进入中心 <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* --- EXAM CERTIFICATION --- */}
+      <section className="py-12 md:py-16 bg-slate-50">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-end mb-8 md:mb-10">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">考试认证</h2>
+              <p className="mt-2 text-sm md:text-base text-gray-500">权威的技能认证体系，检验学习成果，提升职业竞争力。</p>
+            </div>
+            <Link to="/exams" className="hidden md:flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors">
+              查看全部 <ArrowRight className="w-4 h-4 ml-1" />
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {featuredExams.map((exam) => (
+              <div key={exam.id} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 group">
+                <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                  <exam.icon className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">{exam.title}</h3>
+                <div className="inline-block px-2.5 py-1 bg-purple-50 text-purple-700 text-xs font-semibold rounded-md mb-4">
+                  {exam.level}
+                </div>
+                <p className="text-gray-500 text-sm mb-6 line-clamp-2">{exam.description}</p>
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <span className="text-xs text-gray-400 font-medium">{exam.date}</span>
+                  <Link to="/exams" className="text-sm font-semibold text-blue-600 hover:text-blue-800">
+                    了解详情
+                  </Link>
+                </div>
               </div>
-           </div>
-           
-           <div className="relative">
-              <div 
-                className="flex transition-transform duration-500 ease-out will-change-transform"
-                style={{ transform: `translateX(-${caseIndex * (100 / itemsPerScreen)}%)` }}
-              >
-                 {cases.map((item) => (
-                    <div 
-                      key={item.id} 
-                      className="flex-shrink-0 px-2 md:px-3"
-                      style={{ width: `${100 / itemsPerScreen}%` }}
-                    >
-                       <div className="bg-gray-50 rounded-2xl overflow-hidden group hover:shadow-xl transition-all duration-300 h-full flex flex-col border border-gray-100">
-                          <div className="relative h-40 md:h-48 overflow-hidden">
-                             <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                             <div className="absolute bottom-3 left-4 text-white font-medium flex items-center text-xs md:text-sm">
-                                <item.icon className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5" />
-                                {item.category}
-                             </div>
-                          </div>
-                          <div className="p-5 md:p-6 flex-1 flex flex-col">
-                             <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{item.title}</h3>
-                             <p className="text-gray-500 text-xs md:text-sm mb-4 line-clamp-3 flex-1">
-                               {item.description}
-                             </p>
-                             <div className="pt-4 border-t border-gray-200 mt-auto flex items-center justify-between">
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] md:text-xs font-medium bg-green-100 text-green-800">
-                                   {item.stats}
-                                </span>
-                                <Link to="/products" className="text-blue-600 text-xs md:text-sm font-semibold hover:text-blue-800 flex items-center">
-                                   查看详情 <ArrowRight className="w-3 h-3 ml-1" />
-                                </Link>
-                             </div>
-                          </div>
-                       </div>
-                    </div>
-                 ))}
-              </div>
-           </div>
+            ))}
+          </div>
+          <div className="mt-8 text-center md:hidden">
+            <Link to="/exams" className="inline-flex items-center justify-center w-full px-6 py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+              查看全部 <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
+          </div>
         </div>
       </section>
     </div>
   );
+};
+
+const Home: React.FC<HomeProps> = ({ user }) => {
+  return <MarketingHome />;
 };
 
 export default Home;

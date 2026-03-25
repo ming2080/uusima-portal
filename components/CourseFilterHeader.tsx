@@ -8,7 +8,7 @@ interface CourseFilterHeaderProps {
 }
 
 const CourseFilterHeader: React.FC<CourseFilterHeaderProps> = ({ title, subtitle, icon }) => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [activeFilters, setActiveFilters] = useState({
     major: '人工智能',
     subCategory: '全部',
@@ -82,10 +82,13 @@ const CourseFilterHeader: React.FC<CourseFilterHeaderProps> = ({ title, subtitle
       </div>
 
       {/* Filter Area */}
-      <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
-        <div className="px-6 py-4 space-y-3 relative">
-          {filters.map(filterGroup => (
-            <div key={filterGroup.id} className="flex items-start">
+      <div className="px-6 py-4 space-y-3 relative transition-all duration-300 ease-in-out">
+        {filters.map(filterGroup => {
+          if (!isExpanded && filterGroup.id !== 'major' && filterGroup.id !== 'courseType') {
+            return null;
+          }
+          return (
+            <div key={filterGroup.id} className="flex items-start animate-fade-in">
               <span className="text-sm font-semibold text-slate-500 w-20 flex-shrink-0 pt-1">{filterGroup.label}：</span>
               <div className="flex flex-wrap gap-x-4 gap-y-1 flex-1 pr-16">
                 {filterGroup.options.map(opt => {
@@ -106,8 +109,10 @@ const CourseFilterHeader: React.FC<CourseFilterHeaderProps> = ({ title, subtitle
                 })}
               </div>
             </div>
-          ))}
-          
+          );
+        })}
+        
+        {isExpanded && (
           <div className="absolute bottom-4 right-6">
             <button 
               onClick={() => setIsExpanded(false)}
@@ -116,7 +121,7 @@ const CourseFilterHeader: React.FC<CourseFilterHeaderProps> = ({ title, subtitle
               收起 <ChevronUp className="w-3.5 h-3.5" />
             </button>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Sort Area */}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Course } from '../types';
 import { Clock, BarChart, BookOpen, Users, Star } from 'lucide-react';
 import CourseFilterHeader from '../components/CourseFilterHeader';
@@ -72,6 +73,7 @@ const COURSES_DATA: Course[] = [
 ];
 
 const Courses: React.FC<CoursesProps> = ({ onAccessTrigger }) => {
+  const navigate = useNavigate();
   return (
     <div className="bg-slate-50 min-h-screen py-8">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -83,7 +85,11 @@ const Courses: React.FC<CoursesProps> = ({ onAccessTrigger }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {COURSES_DATA.map((course) => (
-            <div key={course.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group">
+            <div 
+              key={course.id} 
+              onClick={() => navigate(`/course/${course.id}`)}
+              className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group cursor-pointer"
+            >
               <div className="h-44 relative overflow-hidden bg-slate-100">
                 <img
                   src={course.thumbnail}

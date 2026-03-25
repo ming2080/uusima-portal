@@ -21,7 +21,9 @@ import {
   Eye,
   Copy,
   Paperclip,
-  AlertCircle
+  AlertCircle,
+  ChevronDown,
+  ChevronRight
 } from "lucide-react";
 import TaskManagement from "../components/TaskManagement";
 import CourseEditor from "../components/CourseEditor";
@@ -35,6 +37,15 @@ const Config: React.FC = () => {
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
   const [courseToDelete, setCourseToDelete] = useState<string>("");
   const [publishedCourses, setPublishedCourses] = useState<number[]>([1, 2, 3, 4, 5, 6]);
+  const [expandedModules, setExpandedModules] = useState<string[]>(["course"]);
+
+  const toggleModule = (moduleId: string) => {
+    setExpandedModules(prev => 
+      prev.includes(moduleId) 
+        ? prev.filter(id => id !== moduleId) 
+        : [...prev, moduleId]
+    );
+  };
 
   const togglePublish = (id: number) => {
     setPublishedCourses(prev => 
@@ -347,50 +358,69 @@ const Config: React.FC = () => {
             <p className="text-sm text-slate-500 mt-1">系统设置与偏好</p>
           </div>
           <div className="flex-1 overflow-y-auto custom-scrollbar px-2">
-            <nav className="space-y-6">
-              {modules.map((module) => (
-                <div key={module.id}>
-                  <div
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 cursor-pointer transition-colors ${
-                      activeModule === module.id
-                        ? "bg-white shadow-sm text-blue-700 ring-1 ring-slate-200/50"
-                        : "text-slate-600 hover:bg-slate-200/50"
-                    }`}
-                    onClick={() => {
-                      setActiveModule(module.id);
-                      setActiveSubModule(module.subModules[0].id);
-                    }}
-                  >
+            <nav className="space-y-2">
+              {modules.map((module) => {
+                const isExpanded = expandedModules.includes(module.id);
+                const isActive = activeModule === module.id;
+                
+                return (
+                  <div key={module.id} className="space-y-1">
                     <div
-                      className={`p-1.5 rounded-lg ${activeModule === module.id ? "bg-blue-50 text-blue-600" : "bg-slate-100 text-slate-500"}`}
+                      className={`flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ${
+                        isActive
+                          ? "bg-white shadow-sm text-blue-700 ring-1 ring-slate-200/50"
+                          : "text-slate-600 hover:bg-slate-200/50"
+                      }`}
+                      onClick={() => {
+                        setActiveModule(module.id);
+                        toggleModule(module.id);
+                        if (!isExpanded && module.subModules.length > 0) {
+                          setActiveSubModule(module.subModules[0].id);
+                        }
+                      }}
                     >
-                      {module.icon}
-                    </div>
-                    <span className="font-semibold text-sm">{module.label}</span>
-                  </div>
-
-                  {activeModule === module.id && (
-                    <div className="ml-11 mt-1 space-y-1 relative before:absolute before:left-0 before:top-0 before:bottom-4 before:w-px before:bg-slate-200">
-                      {module.subModules.map((sub) => (
+                      <div className="flex items-center gap-3">
                         <div
-                          key={sub.id}
-                          className={`relative px-3 py-2 text-sm rounded-lg cursor-pointer transition-all ${
-                            activeSubModule === sub.id
-                              ? "text-blue-600 font-medium bg-blue-50/50"
-                              : "text-slate-500 hover:text-slate-900 hover:bg-slate-200/50"
-                          }`}
-                          onClick={() => setActiveSubModule(sub.id)}
+                          className={`p-1.5 rounded-lg ${isActive ? "bg-blue-50 text-blue-600" : "bg-slate-100 text-slate-500"}`}
                         >
-                          {activeSubModule === sub.id && (
-                            <div className="absolute left-[-17px] top-1/2 -translate-y-1/2 w-[16px] h-px bg-blue-300"></div>
-                          )}
-                          {sub.label}
+                          {module.icon}
                         </div>
-                      ))}
+                        <span className="font-semibold text-sm">{module.label}</span>
+                      </div>
+                      {module.subModules.length > 0 && (
+                        <div className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
+                          <ChevronDown className="w-4 h-4 text-slate-400" />
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              ))}
+
+                    {isExpanded && module.subModules.length > 0 && (
+                      <div className="ml-11 space-y-1 relative before:absolute before:left-0 before:top-0 before:bottom-4 before:w-px before:bg-slate-200 overflow-hidden animate-fade-in">
+                        {module.subModules.map((sub) => (
+                          <div
+                            key={sub.id}
+                            className={`relative px-3 py-2 text-sm rounded-lg cursor-pointer transition-all ${
+                              activeSubModule === sub.id
+                                ? "text-blue-600 font-medium bg-blue-50/50"
+                                : "text-slate-500 hover:text-slate-900 hover:bg-slate-200/50"
+                            }`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveSubModule(sub.id);
+                              setActiveModule(module.id);
+                            }}
+                          >
+                            {activeSubModule === sub.id && (
+                              <div className="absolute left-[-17px] top-1/2 -translate-y-1/2 w-[16px] h-px bg-blue-300"></div>
+                            )}
+                            {sub.label}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </nav>
           </div>
         </aside>
