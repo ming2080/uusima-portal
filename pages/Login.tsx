@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, BookOpen } from 'lucide-react';
 import { UserRole } from '../types';
 
 interface LoginProps {
@@ -75,9 +75,14 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           <div className="max-w-md w-full mx-auto lg:mx-0">
             {/* Title */}
             <div className="mb-12">
-              <h1 className={`text-5xl sm:text-6xl font-extrabold tracking-tight mb-3 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                UUSIMA
-              </h1>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+                  <BookOpen className="w-7 h-7 text-white" />
+                </div>
+                <span className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-500 tracking-tight">
+                  UUSIMA
+                </span>
+              </div>
               <h2 className={`text-2xl sm:text-3xl font-bold tracking-wide ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
                 智慧教学平台
               </h2>

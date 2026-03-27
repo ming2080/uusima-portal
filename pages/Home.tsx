@@ -269,7 +269,11 @@ const MarketingHome: React.FC = () => {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
              {featuredCourses.map((course) => (
-               <div key={course.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group">
+               <Link 
+                 key={course.id} 
+                 to={`/course/${course.id}`}
+                 className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group block"
+               >
                   <div className="h-40 md:h-48 bg-gray-200 relative overflow-hidden">
                      <img src={course.image} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                      <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-2 py-1 rounded text-xs font-bold text-blue-800 uppercase">
@@ -281,10 +285,10 @@ const MarketingHome: React.FC = () => {
                     <p className="text-gray-500 text-xs md:text-sm mb-4 line-clamp-2">{course.desc}</p>
                     <div className="flex items-center justify-between pt-4 border-t border-gray-50">
                        <span className="text-xs text-gray-500 flex items-center"><Monitor className="w-3 h-3 mr-1"/> {course.hours}</span>
-                       <span className="font-medium text-sm text-blue-600 hover:text-blue-800 cursor-pointer">开始学习</span>
+                       <span className="font-medium text-sm text-blue-600 group-hover:text-blue-800 transition-colors">开始学习</span>
                     </div>
                   </div>
-               </div>
+               </Link>
              ))}
           </div>
         </div>
@@ -305,7 +309,11 @@ const MarketingHome: React.FC = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {featuredLabs.map((lab) => (
-              <div key={lab.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group flex flex-col">
+              <Link 
+                key={lab.id} 
+                to={`/labs/${lab.id}`}
+                className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group flex flex-col"
+              >
                 <div className="relative h-48 overflow-hidden">
                   <img src={lab.image} alt={lab.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-blue-700 flex items-center">
@@ -318,12 +326,12 @@ const MarketingHome: React.FC = () => {
                   <p className="text-gray-500 text-sm mb-6 flex-1 line-clamp-3">{lab.description}</p>
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                     <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">{lab.status}</span>
-                    <Link to="/labs" className="text-sm font-semibold text-blue-600 hover:text-blue-800 flex items-center">
+                    <span className="text-sm font-semibold text-blue-600 group-hover:text-blue-800 flex items-center transition-colors">
                       开始实验 <ArrowRight className="w-4 h-4 ml-1" />
-                    </Link>
+                    </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
           <div className="mt-8 text-center md:hidden">
@@ -360,7 +368,7 @@ const MarketingHome: React.FC = () => {
                 <p className="text-gray-500 text-sm mb-6 line-clamp-2">{exam.description}</p>
                 <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                   <span className="text-xs text-gray-400 font-medium">{exam.date}</span>
-                  <Link to="/exams" className="text-sm font-semibold text-blue-600 hover:text-blue-800">
+                  <Link to="/exams" className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors">
                     了解详情
                   </Link>
                 </div>

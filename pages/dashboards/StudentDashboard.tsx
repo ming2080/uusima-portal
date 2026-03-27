@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { BookOpen, Monitor, Award, Clock, TrendingUp, Calendar } from 'lucide-react';
 import { User } from '../../types';
 
@@ -41,7 +42,7 @@ const StudentDashboard: React.FC<Props> = ({ user }) => {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-bold text-gray-900">最近学习</h2>
-              <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">查看全部</button>
+              <Link to="/my-home/learning" className="text-sm text-blue-600 hover:text-blue-700 font-medium">查看全部</Link>
             </div>
             <div className="space-y-4">
               {[
@@ -101,7 +102,10 @@ const StudentDashboard: React.FC<Props> = ({ user }) => {
         <div className="space-y-8">
           {/* Upcoming Exams/Tasks */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-6">待办事项</h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-lg font-bold text-gray-900">待办事项</h2>
+              <Link to="/my-home/exams" className="text-sm text-blue-600 hover:text-blue-700 font-medium">查看全部</Link>
+            </div>
             <div className="space-y-4">
               {[
                 { title: '期中测试：计算机网络', time: '明天 14:00', type: '考试', color: 'text-red-600 bg-red-50' },

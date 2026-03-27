@@ -11,25 +11,19 @@ const SchoolAdminDashboard: React.FC<Props> = ({ user }) => {
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">您好，{user.name} 院长！</h1>
-          <p className="text-gray-500 mt-1">这是本校本学期的教学运行概况。</p>
+          <h1 className="text-2xl font-bold text-gray-900">校级教学管理员控制台</h1>
+          <p className="text-gray-500 mt-1">监控全校教学运行数据，优化教学资源分配。</p>
         </div>
         <div className="flex gap-3">
-          <button className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors shadow-sm">
-            导出报告
-          </button>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm">
-            管理院系
-          </button>
         </div>
       </div>
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         {[
-          { label: '在校学生', value: '12,540', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', trend: '+5%' },
-          { label: '任课教师', value: '342', icon: ShieldCheck, color: 'text-indigo-600', bg: 'bg-indigo-50', trend: '+2%' },
-          { label: '开设课程', value: '1,205', icon: BookOpen, color: 'text-amber-600', bg: 'bg-amber-50', trend: '+15%' },
+          { label: '全校学生', value: '12,540', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', trend: '+5%' },
+          { label: '全校教师', value: '342', icon: ShieldCheck, color: 'text-indigo-600', bg: 'bg-indigo-50', trend: '+2%' },
+          { label: '活跃课程', value: '1,205', icon: BookOpen, color: 'text-amber-600', bg: 'bg-amber-50', trend: '+15%' },
           { label: '实验资源使用率', value: '85%', icon: Activity, color: 'text-emerald-600', bg: 'bg-emerald-50', trend: '+8%' },
         ].map((stat, idx) => (
           <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
@@ -94,7 +88,7 @@ const SchoolAdminDashboard: React.FC<Props> = ({ user }) => {
           {/* Resource Usage Trend */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold text-gray-900">云端实验资源监控</h2>
+              <h2 className="text-lg font-bold text-gray-900">校内实验资源负载</h2>
               <select className="text-sm border-gray-200 rounded-lg text-gray-600">
                 <option>本周</option>
                 <option>本月</option>
@@ -121,12 +115,12 @@ const SchoolAdminDashboard: React.FC<Props> = ({ user }) => {
         <div className="space-y-8">
           {/* System Alerts */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-6">系统预警</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-6">教学预警</h2>
             <div className="space-y-4">
               {[
-                { title: 'GPU 资源使用率过高', desc: '人工智能学院当前 GPU 资源分配达到 95%，建议扩容。', type: 'warning', color: 'text-amber-600 bg-amber-50 border-amber-200' },
-                { title: '存储空间不足', desc: '大数据学院 HDFS 集群存储空间剩余不足 10%。', type: 'error', color: 'text-red-600 bg-red-50 border-red-200' },
-                { title: '新学期课程导入完成', desc: '教务系统数据同步成功，共导入 1,205 门课程。', type: 'info', color: 'text-blue-600 bg-blue-50 border-blue-200' },
+                { title: 'GPU 算力资源告急', desc: '人工智能学院当前 GPU 资源分配达到 95%，建议协调空闲节点。', type: 'warning', color: 'text-amber-600 bg-amber-50 border-amber-200' },
+                { title: '实验存储空间预警', desc: '大数据学院 HDFS 集群存储空间剩余不足 10%。', type: 'error', color: 'text-red-600 bg-red-50 border-red-200' },
+                { title: '教务数据同步完成', desc: '本学期教务系统数据同步成功，共导入 1,205 门课程。', type: 'info', color: 'text-blue-600 bg-blue-50 border-blue-200' },
               ].map((alert, idx) => (
                 <div key={idx} className={`p-4 rounded-xl border ${alert.color}`}>
                   <h3 className="text-sm font-bold mb-1">{alert.title}</h3>

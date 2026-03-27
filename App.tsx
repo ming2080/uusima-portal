@@ -11,6 +11,7 @@ import Exams from "./pages/Exams";
 import About from "./pages/About";
 import Config from "./pages/Config";
 import CourseDetail from "./pages/CourseDetail";
+import AIInteraction from "./pages/AIInteraction";
 import Login from "./pages/Login";
 import SmartAssistant from "./components/SmartAssistant";
 import { User, UserRole } from "./types";
@@ -72,6 +73,9 @@ const AppContent: React.FC = () => {
     <Routes>
       {/* Independent Route for Lab Environment (Full Screen, No Navbar) */}
       <Route path="/lab-session/:id" element={<LabSession user={user} />} />
+      
+      {/* Independent Route for AI Interaction (Full Screen, No Navbar) */}
+      <Route path="/ai-interaction/:courseId" element={<AIInteraction />} />
       
       {/* Independent Route for Login Page */}
       <Route path="/login" element={<Login onLogin={handleLogin} />} />

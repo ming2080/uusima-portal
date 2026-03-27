@@ -119,7 +119,14 @@ const Courses: React.FC<CoursesProps> = ({ onAccessTrigger }) => {
                         <img src="https://api.iconify.design/logos:python.svg" alt="Python" className="w-4 h-4" />
                       </div>
                     </div>
-                    <div className="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center text-white text-xs font-bold italic shadow-sm">
+                    <div 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/ai-interaction/${course.id || 'default'}`);
+                      }}
+                      className="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center text-white text-xs font-bold italic shadow-sm cursor-pointer hover:scale-110 transition-transform"
+                      title="AI 互动"
+                    >
                       AI
                     </div>
                 </div>

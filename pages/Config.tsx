@@ -16,6 +16,7 @@ import {
   Clock,
   Users,
   Star,
+  FlaskConical,
   Send,
   Ban,
   Eye,
@@ -26,8 +27,23 @@ import {
   ChevronRight
 } from "lucide-react";
 import TaskManagement from "../components/TaskManagement";
+import QuestionManagement from "../components/QuestionManagement";
+import QuestionBankManagement from "../components/QuestionBankManagement";
+import PaperManagement from "../components/PaperManagement";
+import ExamManage from "../components/ExamManage";
+import SessionManage from "../components/SessionManage";
+import GradingManage from "../components/GradingManage";
+import ClassManagement from "../components/ClassManagement";
+import TeacherManagement from "../components/TeacherManagement";
+import StudentManagement from "../components/StudentManagement";
 import CourseEditor from "../components/CourseEditor";
 import CourseFilterHeader from "../components/CourseFilterHeader";
+import GradeRuleManagement from "../components/GradeRuleManagement";
+import GradeTemplateManagement from "../components/GradeTemplateManagement";
+import ExperimentList from "../components/ExperimentList";
+import ImageManagement from "../components/ImageManagement";
+import PluginManagement from "../components/PluginManagement";
+import ExperimentInstance from "../components/ExperimentInstance";
 
 const Config: React.FC = () => {
   const [activeModule, setActiveModule] = useState("course");
@@ -93,15 +109,24 @@ const Config: React.FC = () => {
       ],
     },
     {
-      id: "portal",
-      label: "门户管理",
-      icon: <LayoutTemplate className="w-5 h-5" />,
+      id: "member",
+      label: "成员管理",
+      icon: <Users className="w-5 h-5" />,
       subModules: [
-        { id: "announcement", label: "公告管理" },
-        { id: "article", label: "文章管理" },
-        { id: "template", label: "模板管理" },
-        { id: "column", label: "栏目管理" },
-        { id: "attribute", label: "属性管理" },
+        { id: "class-manage", label: "班级管理" },
+        { id: "teacher-manage", label: "教师管理" },
+        { id: "student-manage", label: "学生管理" },
+      ],
+    },
+    {
+      id: "experiment",
+      label: "实验管理",
+      icon: <FlaskConical className="w-5 h-5" />,
+      subModules: [
+        { id: "experiment-list", label: "实验列表" },
+        { id: "image-manage", label: "镜像管理" },
+        { id: "plugin-manage", label: "插件管理" },
+        { id: "experiment-instance", label: "实验实例" },
       ],
     },
     {
@@ -334,8 +359,40 @@ const Config: React.FC = () => {
       );
     }
 
-    if (activeModule === "exam" && activeSubModule === "task") {
-      return <TaskManagement />;
+    if (activeModule === "exam") {
+      switch (activeSubModule) {
+        case "task": return <TaskManagement />;
+        case "question": return <QuestionManagement />;
+        case "question-bank": return <QuestionBankManagement />;
+        case "paper": return <PaperManagement />;
+        case "exam-manage": return <ExamManage />;
+        case "session": return <SessionManage />;
+        case "grading": return <GradingManage />;
+      }
+    }
+
+    if (activeModule === "member") {
+      switch (activeSubModule) {
+        case "class-manage": return <ClassManagement />;
+        case "teacher-manage": return <TeacherManagement />;
+        case "student-manage": return <StudentManagement />;
+      }
+    }
+
+    if (activeModule === "auto-grade") {
+      switch (activeSubModule) {
+        case "grade-rule": return <GradeRuleManagement />;
+        case "grade-template": return <GradeTemplateManagement />;
+      }
+    }
+
+    if (activeModule === "experiment") {
+      switch (activeSubModule) {
+        case "experiment-list": return <ExperimentList />;
+        case "image-manage": return <ImageManagement />;
+        case "plugin-manage": return <PluginManagement />;
+        case "experiment-instance": return <ExperimentInstance />;
+      }
     }
 
     const currentModule = modules.find((m) => m.id === activeModule);
