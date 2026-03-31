@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, FileText, BookOpen, Settings, Users, BarChart2, ClipboardCheck, FileBadge, GraduationCap } from 'lucide-react';
+import { Home, FileText, BookOpen, Settings, Users, BarChart2, ClipboardCheck, FileBadge, GraduationCap, User as UserIcon } from 'lucide-react';
 import { UserRole } from '../types';
 
 interface SidebarProps {
@@ -11,6 +11,10 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
   const location = useLocation();
 
   const getMenuItems = () => {
+    const commonItems = [
+      { label: '个人中心', path: '/my-home/profile', icon: UserIcon, color: 'text-indigo-500' },
+    ];
+
     switch (role) {
       case UserRole.TEACHER:
         return [
@@ -18,15 +22,20 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
           { label: '评卷管理', path: '/my-home/grading', icon: FileBadge, color: 'text-amber-500' },
           { label: '我的课程', path: '/my-home/courses', icon: FileBadge, color: 'text-blue-500' },
           { label: '我的教学', path: '/my-home/teaching', icon: FileText, color: 'text-emerald-500' },
+          ...commonItems,
         ];
       case UserRole.STUDENT:
         return [
           { label: '首页', path: '/my-home', icon: Home, color: 'text-emerald-500' },
           { label: '我的考试', path: '/my-home/exams', icon: ClipboardCheck, color: 'text-amber-500' },
           { label: '我的学习', path: '/my-home/learning', icon: BookOpen, color: 'text-blue-500' },
+          ...commonItems,
         ];
       default:
-        return [{ label: '首页', path: '/my-home', icon: Home, color: 'text-emerald-500' }];
+        return [
+          { label: '首页', path: '/my-home', icon: Home, color: 'text-emerald-500' },
+          ...commonItems
+        ];
     }
   };
 

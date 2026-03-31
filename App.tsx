@@ -24,6 +24,7 @@ import MyCourses from "./pages/dashboards/teacher/MyCourses";
 import MyTeaching from "./pages/dashboards/teacher/MyTeaching";
 import MyExams from "./pages/dashboards/student/MyExams";
 import MyLearning from "./pages/dashboards/student/MyLearning";
+import Profile from "./pages/Profile";
 
 const AppContent: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -113,6 +114,7 @@ const AppContent: React.FC = () => {
                             <Route path="/learning" element={<MyLearning />} />
                           </>
                         )}
+                        <Route path="/profile" element={<Profile user={user} />} />
                         {/* Add more sub-routes here as needed */}
                       </Routes>
                     </MyHomeLayout>

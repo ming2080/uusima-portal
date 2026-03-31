@@ -59,6 +59,11 @@ const Layout: React.FC<LayoutProps> = ({
       path: "/about",
       icon: <Users className="w-5 h-5 mr-1.5" />,
     },
+    {
+      label: "配置管理",
+      path: "/config",
+      icon: <Settings className="w-5 h-5 mr-1.5" />,
+    },
   ];
 
   const getRoleName = (role: string) => {
@@ -116,51 +121,6 @@ const Layout: React.FC<LayoutProps> = ({
                   </Link>
                 );
               })}
-
-              {/* "More Features" Dropdown */}
-              <div className="relative group ml-1">
-                <button className="flex items-center px-4 py-2 rounded-full font-semibold text-slate-600 hover:text-blue-600 hover:bg-gray-50 transition-all text-base whitespace-nowrap outline-none group-hover:bg-gray-50">
-                  更多功能
-                  <ChevronDown className="w-4 h-4 ml-1 text-gray-400 group-hover:text-blue-500 group-hover:rotate-180 transition-all duration-300" />
-                </button>
-
-                <div className="absolute top-full right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100/80 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right translate-y-2 group-hover:translate-y-0 z-50 ring-1 ring-black/5">
-                  <div className="p-2 space-y-1">
-                    <Link
-                      to="/config"
-                      className="group/item flex items-center px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 rounded-xl transition-all"
-                    >
-                      <div className="mr-3 p-2 rounded-lg bg-slate-100 text-slate-600 group-hover/item:bg-white group-hover/item:shadow-sm group-hover/item:text-blue-600 transition-all">
-                        <Settings className="w-4 h-4" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-gray-900 group-hover/item:text-blue-700">
-                          配置管理
-                        </span>
-                        <span className="text-[10px] text-gray-400">
-                          系统设置与偏好
-                        </span>
-                      </div>
-                    </Link>
-                    <Link
-                      to="#"
-                      className="group/item flex items-center px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 rounded-xl transition-all"
-                    >
-                      <div className="mr-3 p-2 rounded-lg bg-blue-50 text-blue-600 group-hover/item:bg-white group-hover/item:shadow-sm group-hover/item:text-blue-700 transition-all">
-                        <UserIcon className="w-4 h-4" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-gray-900 group-hover/item:text-blue-700">
-                          个人中心
-                        </span>
-                        <span className="text-[10px] text-gray-400">
-                          账号信息与安全
-                        </span>
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              </div>
             </nav>
 
             {/* Right Side: Action Block (Icons Only) */}
@@ -317,53 +277,6 @@ const Layout: React.FC<LayoutProps> = ({
                   {item.label}
                 </Link>
               ))}
-
-              {/* Mobile "More Features" */}
-              <div className="pt-2 pb-2 border-t border-gray-50 mt-2">
-                <p className="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
-                  更多功能
-                </p>
-                <Link
-                  to="/config"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-4 py-3 rounded-xl text-base font-medium text-gray-600 hover:bg-gray-50 flex items-center group"
-                >
-                  <div className="p-1.5 bg-slate-100 rounded-lg mr-3 text-slate-500 group-hover:bg-white group-hover:text-blue-600 transition-colors">
-                    <Settings className="w-5 h-5" />
-                  </div>
-                  配置管理
-                </Link>
-                <Link
-                  to="#"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-4 py-3 rounded-xl text-base font-medium text-gray-600 hover:bg-gray-50 flex items-center group"
-                >
-                  <div className="p-1.5 bg-blue-50 rounded-lg mr-3 text-blue-500 group-hover:bg-white group-hover:text-blue-700 transition-colors">
-                    <UserIcon className="w-5 h-5" />
-                  </div>
-                  个人中心
-                </Link>
-              </div>
-
-              {/* Mobile External Links */}
-              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-gray-50 mt-2">
-                <a
-                  href="https://aistudio.google.com/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center justify-center px-4 py-3 bg-purple-50 text-purple-700 rounded-xl text-sm font-bold border border-purple-100"
-                >
-                  <BrainCircuit className="w-5 h-5 mr-2" />
-                  学科大模型
-                </a>
-                <a
-                  href="#"
-                  className="flex items-center justify-center px-4 py-3 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-bold border border-emerald-100"
-                >
-                  <BookOpenText className="w-5 h-5 mr-2" />
-                  帮助文档
-                </a>
-              </div>
 
               <div className="pt-6 mt-4 border-t border-gray-100">
                 {user ? (
