@@ -17,6 +17,7 @@ import {
   ChevronDown,
   Settings,
   Globe,
+  Activity,
 } from "lucide-react";
 import { User } from "../types";
 
@@ -127,6 +128,16 @@ const Layout: React.FC<LayoutProps> = ({
             <div className="hidden md:flex items-center gap-4 ml-auto pl-6 border-l border-gray-200 h-8 flex-shrink-0">
               {/* External Utility Links (Icons) */}
               <div className="flex items-center gap-1.5">
+                <Link
+                  to="/operations-dashboard"
+                  className="p-2.5 text-slate-400 hover:text-cyan-600 hover:bg-cyan-50 rounded-xl transition-all relative group/tooltip"
+                  aria-label="运营大屏"
+                >
+                  <Activity className="w-5 h-5 transition-transform group-hover/tooltip:scale-110" />
+                  <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] font-medium px-2 py-1 rounded-md opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-xl translate-y-1 group-hover/tooltip:translate-y-0">
+                    运营大屏
+                  </span>
+                </Link>
                 <button
                   onClick={() => setLanguage(lang => lang === "zh" ? "en" : "zh")}
                   className="p-2.5 flex items-center gap-1 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all relative group/tooltip"

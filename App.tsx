@@ -25,6 +25,8 @@ import MyTeaching from "./pages/dashboards/teacher/MyTeaching";
 import MyExams from "./pages/dashboards/student/MyExams";
 import MyLearning from "./pages/dashboards/student/MyLearning";
 import Profile from "./pages/Profile";
+import OperationsDashboard from "./pages/OperationsDashboard";
+import BigScreenDashboard from "./pages/BigScreenDashboard";
 
 const AppContent: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -80,6 +82,10 @@ const AppContent: React.FC = () => {
       
       {/* Independent Route for Login Page */}
       <Route path="/login" element={<Login onLogin={handleLogin} />} />
+
+      {/* Independent Route for Operations Dashboard */}
+      <Route path="/operations-dashboard" element={<OperationsDashboard />} />
+      <Route path="/big-screen-dashboard" element={<BigScreenDashboard />} />
 
       {/* Main Application Routes with Layout */}
       <Route
