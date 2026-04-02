@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Monitor, BookOpen, Award, Cpu, ChevronLeft, ChevronRight, Star, Zap, BarChart3, Cloud, FileBadge, BrainCircuit } from 'lucide-react';
+import { ArrowRight, Monitor, BookOpen, Award, Cpu, ChevronLeft, ChevronRight, Star, Zap, BarChart3, Cloud, FileBadge, BrainCircuit, PlayCircle, Clock, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { User, UserRole } from '../types';
 import StudentDashboard from './dashboards/StudentDashboard';
@@ -60,85 +60,109 @@ const MarketingHome: React.FC = () => {
 
   const featuredCourses = [
     {
-      id: 101,
-      title: "嵌入式系统开发",
-      category: "硬件开发",
-      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800", // Circuit board
-      desc: "深入理解ARM架构与实时操作系统，掌握底层驱动编写。",
-      hours: "48 课时"
+      id: 'ai-course-1-0',
+      title: '机器学习基础',
+      category: '人工智能',
+      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800',
+      desc: '掌握监督学习、无监督学习等核心算法及应用。',
+      hours: '15小时',
+      enrolled: 452
     },
     {
-      id: 102,
-      title: "移动端应用实战",
-      category: "软件工程",
-      image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=800", // Mobile phone
-      desc: "使用 React Native 构建跨平台移动应用，从UI设计到上架发布。",
-      hours: "32 课时"
+      id: 'ai-course-1-1',
+      title: '深度学习入门',
+      category: '人工智能',
+      image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=800',
+      desc: '基于 PyTorch/TensorFlow 构建神经网络模型。',
+      hours: '20小时',
+      enrolled: 385
     },
     {
-      id: 103,
-      title: "商业数据可视化",
-      category: "数据分析",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800", // Charts
-      desc: "学习 Tableau 与 ECharts，将复杂数据转化为直观的商业洞察。",
-      hours: "24 课时"
+      id: 'ai-course-1-2',
+      title: '自然语言处理实战',
+      category: '人工智能',
+      image: 'https://images.unsplash.com/photo-1555255707-c07966088b7b?auto=format&fit=crop&q=80&w=800',
+      desc: '文本分类、情感分析与机器翻译技术解析。',
+      hours: '18小时',
+      enrolled: 290
+    },
+    {
+      id: 'ai-course-1-3',
+      title: '计算机视觉与图像处理',
+      category: '人工智能',
+      image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800',
+      desc: '图像识别、目标检测与图像分割算法实战。',
+      hours: '22小时',
+      enrolled: 310
     }
   ];
 
   const featuredLabs = [
-    {
-      id: 1,
-      title: "人工智能深度学习实验室",
-      category: "AI 实验室",
-      icon: BrainCircuit,
-      description: "预置 PyTorch/TensorFlow 环境，配备高性能 GPU 算力，支持图像识别与自然语言处理实战。",
-      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800",
-      status: "空闲可用"
+    { 
+        id: '4', 
+        title: 'IoT 智能家居数据流实战', 
+        description: '模拟传感器数据流向 MQTT 代理。使用 Node-RED 构建可视化数据处理流水线。', 
+        category: '组合型',
+        image: 'https://images.unsplash.com/photo-1557324232-b8917d3c3dcb?auto=format&fit=crop&q=80&w=800', 
+        status: '运行中',
+        icon: Cpu
     },
-    {
-      id: 2,
-      title: "大数据分布式计算环境",
-      category: "大数据实验室",
-      icon: BarChart3,
-      description: "一键部署 Hadoop/Spark 集群，提供海量脱敏数据集，真实还原企业级数据处理场景。",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
-      status: "资源充足"
+    { 
+        id: '8', 
+        title: 'Jupyter 交互式数据分析', 
+        description: '在云端 Jupyter Notebook 环境中，使用 Python 进行数据清洗、探索性数据分析 (EDA) 与可视化。', 
+        category: '容器型',
+        image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800', 
+        status: '运行中',
+        icon: BarChart3
     },
-    {
-      id: 3,
-      title: "云原生微服务架构实训",
-      category: "云计算实验室",
-      icon: Cloud,
-      description: "基于 Kubernetes 的容器化部署环境，支持 CI/CD 流水线搭建与微服务治理演练。",
-      image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800",
-      status: "推荐使用"
+    { 
+        id: '9', 
+        title: '计算机视觉数据标注实战', 
+        description: '使用专业数据标注工具，完成图像分类、目标检测 (Bounding Box) 和语义分割的数据准备工作。', 
+        category: '平台型',
+        image: 'https://images.unsplash.com/photo-1561557944-6e7860d1a7eb?auto=format&fit=crop&q=80&w=800', 
+        status: '运行中',
+        icon: Eye
+    },
+    { 
+        id: '10', 
+        title: 'VSCode 云端深度学习开发', 
+        description: '在预装 PyTorch/TensorFlow 的云端 VSCode 环境中，构建、训练并评估深度神经网络模型。', 
+        category: '容器型',
+        image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800', 
+        status: '运行中',
+        icon: BrainCircuit
     }
   ];
 
   const featuredExams = [
     {
-      id: 1,
-      title: "UUSIMA 认证云架构师",
-      level: "专家级 (Expert)",
-      icon: Award,
-      description: "考察在复杂业务场景下的云原生架构设计、高可用部署与性能调优能力。",
-      date: "每月第三个周末"
+      id: 'e1',
+      title: '2026年春季学期期中考试 - 高等数学',
+      description: '本次考试涵盖微积分基础、极限与连续等核心知识点，请同学们提前做好准备，携带学生证入场。',
+      mode: 'exam',
+      status: 'upcoming',
+      date: '2026-04-10 09:00',
+      tags: ['期中考试', '必修课']
     },
     {
-      id: 2,
-      title: "UUSIMA 认证数据分析师",
-      level: "专业级 (Professional)",
-      icon: FileBadge,
-      description: "评估数据清洗、建模分析及可视化呈现的综合实战技能。",
-      date: "随到随考"
+      id: 'c1',
+      title: 'AWS Certified Solutions Architect',
+      description: '亚马逊AWS官方认证，验证您在AWS平台上设计分布式系统的能力，是云计算领域的黄金证书。',
+      mode: 'certification',
+      status: 'upcoming',
+      date: '2026-05-01 10:00',
+      tags: ['云计算', '国际认证']
     },
     {
-      id: 3,
-      title: "UUSIMA 认证物联网工程师",
-      level: "基础级 (Associate)",
-      icon: Cpu,
-      description: "检验物联网基础理论、设备接入与边缘计算的入门掌握程度。",
-      date: "随到随考"
+      id: 'comp1',
+      title: '第十五届蓝桥杯全国软件和信息技术专业人才大赛',
+      description: '全国性IT类学科竞赛，旨在推动软件开发技术的发展，培养创新型人才，含金量极高。',
+      mode: 'competition',
+      status: 'ongoing',
+      date: '报名中',
+      tags: ['学科竞赛', 'A类赛事']
     }
   ];
 
@@ -267,25 +291,36 @@ const MarketingHome: React.FC = () => {
             </Link>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
              {featuredCourses.map((course) => (
                <Link 
                  key={course.id} 
                  to={`/course/${course.id}`}
-                 className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group block"
+                 className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group block"
                >
-                  <div className="h-40 md:h-48 bg-gray-200 relative overflow-hidden">
-                     <img src={course.image} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                     <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-2 py-1 rounded text-xs font-bold text-blue-800 uppercase">
-                        {course.category}
+                  <div className="h-44 relative overflow-hidden bg-slate-100">
+                     <img src={course.image} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+                     <div className="absolute bottom-3 right-3 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-md flex items-center gap-1 shadow-sm">
+                        <Clock className="w-3 h-3" /> {course.hours}
                      </div>
                   </div>
-                  <div className="p-5 md:p-6">
-                    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{course.title}</h3>
-                    <p className="text-gray-500 text-xs md:text-sm mb-4 line-clamp-2">{course.desc}</p>
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-                       <span className="text-xs text-gray-500 flex items-center"><Monitor className="w-3 h-3 mr-1"/> {course.hours}</span>
-                       <span className="font-medium text-sm text-blue-600 group-hover:text-blue-800 transition-colors">开始学习</span>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <div className="flex items-center justify-between text-xs mb-3">
+                      <span className="text-blue-500 font-medium bg-blue-50 px-2 py-1 rounded">{course.category}/基础</span>
+                      <span className="text-blue-500 font-medium">{course.enrolled} 人在学</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-1">{course.title}</h3>
+                    <p className="text-gray-500 text-sm mb-4 line-clamp-2 flex-1">{course.desc}</p>
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                       <div className="flex items-center gap-1">
+                         {[1, 2, 3, 4, 5].map((star) => (
+                           <Star key={star} className="w-3.5 h-3.5 text-yellow-400 fill-current" />
+                         ))}
+                         <span className="text-xs text-gray-500 ml-1">5.0</span>
+                       </div>
+                       <span className="font-medium text-sm text-blue-600 group-hover:text-blue-800 transition-colors flex items-center">
+                         开始学习 <ArrowRight className="w-4 h-4 ml-1" />
+                       </span>
                     </div>
                   </div>
                </Link>
@@ -307,27 +342,38 @@ const MarketingHome: React.FC = () => {
             </Link>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredLabs.map((lab) => (
               <Link 
                 key={lab.id} 
                 to={`/labs/${lab.id}`}
-                className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group flex flex-col"
+                className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col group"
               >
-                <div className="relative h-48 overflow-hidden">
+                <div className="h-40 relative overflow-hidden">
                   <img src={lab.image} alt={lab.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-blue-700 flex items-center">
-                    <lab.icon className="w-3.5 h-3.5 mr-1.5" />
-                    {lab.category}
-                  </div>
                 </div>
-                <div className="p-6 flex-1 flex flex-col">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">{lab.title}</h3>
-                  <p className="text-gray-500 text-sm mb-6 flex-1 line-clamp-3">{lab.description}</p>
+                <div className="p-5 flex-1 flex flex-col">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                        <lab.icon className="w-4 h-4 text-blue-500" />
+                      </div>
+                      <h3 className="text-base font-semibold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">{lab.title}</h3>
+                    </div>
+                  </div>
+                  <p className="text-gray-500 text-sm mb-4 line-clamp-2 flex-1">{lab.description}</p>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">{lab.category}</span>
+                    <span className="px-2 py-1 bg-green-50 text-green-600 rounded text-xs">{lab.status}</span>
+                  </div>
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">{lab.status}</span>
+                    <div className="flex items-center text-xs text-gray-500">
+                      <Star className="w-3.5 h-3.5 text-yellow-400 fill-current mr-1" />
+                      <span className="font-medium text-gray-700 mr-1">4.8</span>
+                      <span>(500+)</span>
+                    </div>
                     <span className="text-sm font-semibold text-blue-600 group-hover:text-blue-800 flex items-center transition-colors">
-                      开始实验 <ArrowRight className="w-4 h-4 ml-1" />
+                      进入实验 <ArrowRight className="w-4 h-4 ml-1" />
                     </span>
                   </div>
                 </div>
@@ -355,24 +401,69 @@ const MarketingHome: React.FC = () => {
             </Link>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="space-y-4">
             {featuredExams.map((exam) => (
-              <div key={exam.id} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 group">
-                <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                  <exam.icon className="w-6 h-6" />
+              <Link 
+                key={exam.id} 
+                to="/exams"
+                className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex flex-col md:flex-row gap-6 hover:shadow-md transition-shadow group block"
+              >
+                {/* Left: Date/Status Block */}
+                <div className="flex-shrink-0 w-full md:w-32 flex flex-col items-center justify-center p-4 rounded-lg bg-gray-50 border border-gray-100">
+                  {exam.status === 'ongoing' ? (
+                    <>
+                      <div className="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center mb-2 animate-pulse">
+                        <PlayCircle className="w-5 h-5" />
+                      </div>
+                      <span className="text-xs font-bold text-green-600">进行中</span>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-2">
+                        <Clock className="w-5 h-5" />
+                      </div>
+                      <span className="text-xs font-bold text-blue-600">即将开始</span>
+                    </>
+                  )}
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{exam.title}</h3>
-                <div className="inline-block px-2.5 py-1 bg-purple-50 text-purple-700 text-xs font-semibold rounded-md mb-4">
-                  {exam.level}
+
+                {/* Middle: Content */}
+                <div className="flex-1 flex flex-col justify-center">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`px-2 py-0.5 text-[10px] font-bold rounded text-white ${
+                      exam.mode === 'exam' ? 'bg-blue-500' : 
+                      exam.mode === 'certification' ? 'bg-purple-500' : 'bg-orange-500'
+                    }`}>
+                      {exam.mode === 'exam' ? '考试' : exam.mode === 'certification' ? '认证' : '竞赛'}
+                    </span>
+                    <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{exam.title}</h3>
+                  </div>
+                  <p className="text-gray-500 text-sm mb-3 line-clamp-2">{exam.description}</p>
+                  <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5" />
+                      {exam.date}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {exam.tags?.map(tag => (
+                        <span key={tag} className="px-2 py-0.5 bg-gray-100 rounded-full text-gray-600">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <p className="text-gray-500 text-sm mb-6 line-clamp-2">{exam.description}</p>
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <span className="text-xs text-gray-400 font-medium">{exam.date}</span>
-                  <Link to="/exams" className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors">
-                    了解详情
-                  </Link>
+
+                {/* Right: Action */}
+                <div className="flex-shrink-0 flex items-center justify-end md:justify-center md:border-l border-gray-100 md:pl-6">
+                  <span className={`px-5 py-2 rounded-lg font-medium text-sm transition-colors flex items-center gap-2 ${
+                    exam.status === 'ongoing' 
+                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                      : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                  }`}>
+                    {exam.status === 'ongoing' ? '立即参与' : '查看详情'}
+                    <ArrowRight className="w-4 h-4" />
+                  </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
           <div className="mt-8 text-center md:hidden">

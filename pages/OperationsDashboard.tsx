@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "motion/react";
 import { 
   Activity, 
   Users, 
@@ -22,31 +23,70 @@ import {
   Sun,
   Trophy,
   Calendar,
-  Cloud
+  Cloud,
+  GraduationCap,
+  Wrench,
+  School,
+  Brain,
+  Factory,
+  Database
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   ResponsiveContainer,
   BarChart,
   Bar,
   Legend,
   ComposedChart,
-  Line
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  RadialBarChart,
+  RadialBar
 } from "recharts";
 
+const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#06B6D4', '#F43F5E', '#84CC16'];
+
 const formatChineseUnit = (num: number) => {
-  if (num >= 100000000) {
-    return (num / 100000000).toFixed(2).replace(/\.00$/, '') + '亿';
-  } else if (num >= 10000000) {
-    return (num / 10000000).toFixed(2).replace(/\.00$/, '') + '千万';
-  } else if (num >= 10000) {
-    return (num / 10000).toFixed(2).replace(/\.00$/, '') + '万';
-  }
   return num.toLocaleString();
+};
+
+const RollingDigit: React.FC<{ char: string }> = ({ char }) => {
+  if (!/^\d$/.test(char)) {
+    return <span className="inline-block">{char}</span>;
+  }
+  const num = parseInt(char);
+  return (
+    <div className="inline-block h-[1em] overflow-hidden relative" style={{ width: '0.65em' }}>
+      <motion.div
+        animate={{ y: `-${num * 10}%` }}
+        transition={{ type: "spring", stiffness: 50, damping: 15 }}
+        className="flex flex-col"
+      >
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
+          <div key={n} className="h-[1em] flex items-center justify-center">
+            {n}
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  );
+};
+
+const RollingNumber: React.FC<{ value: number }> = ({ value }) => {
+  const digits = value.toLocaleString().split("");
+  return (
+    <div className="flex items-baseline font-din overflow-hidden">
+      {digits.map((d, i) => (
+        <RollingDigit key={i} char={d} />
+      ))}
+    </div>
+  );
 };
 
 const salesDataMap: Record<string, any[]> = {
@@ -71,24 +111,51 @@ const salesDataMap: Record<string, any[]> = {
     { period: "Q4", onlinePlatform: 1200, privatePlatform: 350, onlineCourse: 8500, privateCourse: 1500 },
   ],
   year: [
-    { period: "2021", onlinePlatform: 800, privatePlatform: 150, onlineCourse: 5000, privateCourse: 600 },
-    { period: "2022", onlinePlatform: 1500, privatePlatform: 300, onlineCourse: 10000, privateCourse: 1200 },
     { period: "2023", onlinePlatform: 3400, privatePlatform: 950, onlineCourse: 23800, privateCourse: 3800 },
+    { period: "2024", onlinePlatform: 5200, privatePlatform: 1400, onlineCourse: 38000, privateCourse: 6200 },
+    { period: "2025", onlinePlatform: 7800, privatePlatform: 2100, onlineCourse: 58000, privateCourse: 9500 },
+    { period: "2026", onlinePlatform: 11500, privatePlatform: 3200, onlineCourse: 85000, privateCourse: 14500 },
   ],
   custom: [
     { period: "自定义区间", onlinePlatform: 500, privatePlatform: 120, onlineCourse: 3000, privateCourse: 400 },
   ]
 };
 
-const regionLeaderboard = [
-  { region: "华东战区", sales: 8500000, customers: 1200 },
-  { region: "华南战区", sales: 6200000, customers: 950 },
-  { region: "华北战区", sales: 5800000, customers: 880 },
-  { region: "华中战区", sales: 4500000, customers: 650 },
-  { region: "西南战区", sales: 3200000, customers: 480 },
-  { region: "西北战区", sales: 2100000, customers: 320 },
-  { region: "东北战区", sales: 1800000, customers: 280 },
-  { region: "海外战区", sales: 900000, customers: 150 },
+const provinceLeaderboard = [
+  { province: "广东省", sales: { online: 5500000, private: 3000000, total: 8500000 }, customers: { online: 800, private: 400, total: 1200 } },
+  { province: "江苏省", sales: { online: 4200000, private: 2000000, total: 6200000 }, customers: { online: 650, private: 300, total: 950 } },
+  { province: "浙江省", sales: { online: 3800000, private: 2000000, total: 5800000 }, customers: { online: 600, private: 280, total: 880 } },
+  { province: "山东省", sales: { online: 3000000, private: 1500000, total: 4500000 }, customers: { online: 450, private: 200, total: 650 } },
+  { province: "四川省", sales: { online: 2200000, private: 1000000, total: 3200000 }, customers: { online: 350, private: 130, total: 480 } },
+  { province: "河南省", sales: { online: 1500000, private: 600000, total: 2100000 }, customers: { online: 220, private: 100, total: 320 } },
+  { province: "湖北省", sales: { online: 1200000, private: 600000, total: 1800000 }, customers: { online: 180, private: 100, total: 280 } },
+  { province: "湖南省", sales: { online: 600000, private: 300000, total: 900000 }, customers: { online: 100, private: 50, total: 150 } },
+];
+
+const customerLineData = [
+  { name: '本科', online: 450, offline: 120, icon: GraduationCap },
+  { name: '高职', online: 380, offline: 95, icon: School },
+  { name: '技工', online: 220, offline: 45, icon: Wrench },
+  { name: '中职', online: 150, offline: 30, icon: BookOpen },
+];
+
+const majorData = [
+  { name: '物联网', online: 280, offline: 80, icon: Zap },
+  { name: '人工智能', online: 420, offline: 150, icon: Brain },
+  { name: '工业互联网', online: 210, offline: 60, icon: Factory },
+  { name: '大数据', online: 350, offline: 120, icon: Database },
+  { name: '其他专业', online: 120, offline: 40, icon: Layers },
+];
+
+const popularCourses = [
+  { name: "人工智能基础", sales: { online: 15000, private: 5000, total: 20000 } },
+  { name: "Python程序设计", sales: { online: 12000, private: 4000, total: 16000 } },
+  { name: "物联网导论", sales: { online: 10000, private: 3000, total: 13000 } },
+  { name: "大数据分析", sales: { online: 8000, private: 2500, total: 10500 } },
+  { name: "机器学习", sales: { online: 6000, private: 2000, total: 8000 } },
+  { name: "深度学习", sales: { online: 5000, private: 1500, total: 6500 } },
+  { name: "工业互联网", sales: { online: 4000, private: 1000, total: 5000 } },
+  { name: "云计算基础", sales: { online: 3000, private: 800, total: 3800 } },
 ];
 
 const DarkThemeStyles = () => (
@@ -262,40 +329,61 @@ const SpatialThemeStyles = () => (
   `}</style>
 );
 
+// 模拟数据
+const businessData = {
+  schoolSales: { total: 1570, online: 1250, private: 320 },
+  schoolSalesGrowth: "+15.2%",
+  courseSalesTotal: { total: 9700, online: 8500, private: 1200 },
+  courseSalesGrowth: "+28.4%",
+  aiCompanionSchools: 5,
+  huaweiCloud: { totalUsage: 1250000, monthUsage: 150000, balance: 350000 },
+  huaweiCloudTrend: "+5.4%",
+  aliCloud: { totalUsage: 2800000, monthUsage: 320000, balance: 850000 },
+  aliCloudTrend: "+8.1%",
+  renewalRate: "92.4%",
+  newContracts: 45,
+  platformSales: { online: 1250, private: 320 },
+  courseSales: { online: 8500, private: 1200 },
+  serverSales: 450,
+  tokenSales: 1800,
+  cac: 12500,
+};
+
 const OperationsDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [theme, setTheme] = useState<'light' | 'dark' | 'spatial'>('light');
   const [timeFilter, setTimeFilter] = useState<'week' | 'month' | 'quarter' | 'year' | 'custom'>('month');
 
+  const [liveTokenCount, setLiveTokenCount] = useState(businessData.tokenSales);
+  const [liveSkillAgent, setLiveSkillAgent] = useState(businessData.serverSales * 650);
+  const [liveHardwareAgent, setLiveHardwareAgent] = useState(businessData.serverSales * 350);
+
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
+    
+    // 模拟 Token 实时跳动 (以百万为单位)
+    const tokenTimer = setInterval(() => {
+      setLiveTokenCount(prev => prev + Math.floor(Math.random() * 5) + 1);
+    }, 2500);
+
+    // 模拟智能体调用次数实时跳动
+    const agentTimer = setInterval(() => {
+      setLiveSkillAgent(prev => prev + Math.floor(Math.random() * 7) + 3);
+      setLiveHardwareAgent(prev => prev + Math.floor(Math.random() * 4) + 2);
+    }, 3000);
+
+    return () => {
+      clearInterval(timer);
+      clearInterval(tokenTimer);
+      clearInterval(agentTimer);
+    };
   }, []);
 
   const toggleTheme = () => {
     if (theme === 'light') setTheme('dark');
     else if (theme === 'dark') setTheme('spatial');
     else setTheme('light');
-  };
-
-  // 模拟数据
-  const businessData = {
-    schoolSales: { total: 1570, online: 1250, private: 320 },
-    schoolSalesGrowth: "+15.2%",
-    courseSalesTotal: { total: 9700, online: 8500, private: 1200 },
-    courseSalesGrowth: "+28.4%",
-    huaweiCloud: { totalUsage: 1250000, monthUsage: 150000, balance: 350000 },
-    huaweiCloudTrend: "+5.4%",
-    aliCloud: { totalUsage: 2800000, monthUsage: 320000, balance: 850000 },
-    aliCloudTrend: "+8.1%",
-    renewalRate: "92.4%",
-    newContracts: 45,
-    platformSales: { online: 1250, private: 320 },
-    courseSales: { online: 8500, private: 1200 },
-    serverSales: 450,
-    tokenSales: 2500000000,
-    cac: 12500,
   };
 
   const opsData = {
@@ -323,11 +411,11 @@ const OperationsDashboard: React.FC = () => {
           </div>
           <div>
             <h1 className="text-xl font-bold text-slate-900 tracking-wide">UUSIMA 运营决策大屏</h1>
-            <p className="text-xs text-slate-500 font-mono mt-0.5">EXECUTIVE OPERATIONS DASHBOARD</p>
+            <p className="text-xs text-slate-500 font-din mt-0.5">EXECUTIVE OPERATIONS DASHBOARD</p>
           </div>
         </div>
         <div className="flex items-center gap-6">
-          <div className="text-right font-mono">
+          <div className="text-right font-din">
             <div className="text-blue-600 text-lg font-bold tracking-wider">
               {currentTime.toLocaleTimeString('en-US', { hour12: false })}
             </div>
@@ -362,20 +450,22 @@ const OperationsDashboard: React.FC = () => {
 
       <main className="p-8 max-w-[1920px] mx-auto space-y-10">
         
-        {/* ================= 区域 1: 经营数据 (Business Metrics) ================= */}
+        {/* ================= 区域 1: 运营数据 (Operations Metrics) ================= */}
         <section>
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 bg-blue-100 rounded-lg">
               <Briefcase className="w-5 h-5 text-blue-700" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-800">经营数据 <span className="text-sm font-normal text-slate-500 ml-2">Business Performance</span></h2>
+            <h2 className="text-2xl font-bold text-slate-800">运营数据 <span className="text-sm font-normal text-slate-500 ml-2">Operations Performance</span></h2>
             <div className="flex-1 h-px bg-slate-200 ml-4"></div>
           </div>
 
           <div className="grid grid-cols-12 gap-6 auto-rows-[minmax(160px,auto)]">
             
+          <div className="col-span-12 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            
             {/* 核心指标 1: 平台销售学校数量 */}
-            <div className="col-span-12 md:col-span-6 lg:col-span-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
               <div className="flex justify-between items-start mb-3 relative z-10">
                 <div className="p-2.5 bg-blue-50 rounded-xl">
                   <TrendingUp className="w-5 h-5 text-blue-600" />
@@ -387,7 +477,7 @@ const OperationsDashboard: React.FC = () => {
               </div>
               <div className="relative z-10">
                 <p className="text-xs text-slate-500 font-bold mb-1">平台销售学校数量</p>
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight font-mono">
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight font-din">
                   {businessData.schoolSales.total} 
                   <span className="text-sm text-slate-400 font-normal ml-1">所</span>
                 </h2>
@@ -399,7 +489,7 @@ const OperationsDashboard: React.FC = () => {
             </div>
 
             {/* 核心指标 2: 平台课程销售总量 */}
-            <div className="col-span-12 md:col-span-6 lg:col-span-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
               <div className="flex justify-between items-start mb-3 relative z-10">
                 <div className="p-2.5 bg-emerald-50 rounded-xl">
                   <BookOpen className="w-5 h-5 text-emerald-600" />
@@ -411,7 +501,7 @@ const OperationsDashboard: React.FC = () => {
               </div>
               <div className="relative z-10">
                 <p className="text-xs text-slate-500 font-bold mb-1">平台课程销售总量</p>
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight font-mono">
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight font-din">
                   {businessData.courseSalesTotal.total} 
                   <span className="text-sm text-slate-400 font-normal ml-1">套</span>
                 </h2>
@@ -422,8 +512,27 @@ const OperationsDashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* 核心指标 3: 华为云账户总用量 */}
-            <div className="col-span-12 md:col-span-6 lg:col-span-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+            {/* 核心指标 3: AI 学伴实施校 */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+              <div className="flex justify-between items-start mb-3 relative z-10">
+                <div className="p-2.5 bg-indigo-50 rounded-xl">
+                  <Brain className="w-5 h-5 text-indigo-600" />
+                </div>
+              </div>
+              <div className="relative z-10">
+                <p className="text-xs text-slate-500 font-bold mb-1">AI 学伴实施校</p>
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight font-din">
+                  {businessData.aiCompanionSchools} 
+                  <span className="text-sm text-slate-400 font-normal ml-1">所</span>
+                </h2>
+                <div className="text-[11px] mt-2 flex gap-3 font-medium">
+                  <span className="text-blue-600/80">状态: <span className="text-slate-700">实施中</span></span>
+                </div>
+              </div>
+            </div>
+
+            {/* 核心指标 4: 华为云账户总用量 */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
               <div className="flex justify-between items-start mb-3 relative z-10">
                 <div className="p-2.5 bg-purple-50 rounded-xl">
                   <Cloud className="w-5 h-5 text-purple-600" />
@@ -435,7 +544,7 @@ const OperationsDashboard: React.FC = () => {
               </div>
               <div className="relative z-10">
                 <p className="text-xs text-slate-500 font-bold mb-1">华为云账户总用量</p>
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight font-mono">
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight font-din">
                   ¥{formatChineseUnit(businessData.huaweiCloud.totalUsage)}
                 </h2>
                 <div className="text-[11px] mt-2 flex gap-3 font-medium">
@@ -445,8 +554,8 @@ const OperationsDashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* 核心指标 4: 阿里云账户总用量 */}
-            <div className="col-span-12 md:col-span-6 lg:col-span-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+            {/* 核心指标 5: 阿里云账户总用量 */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
               <div className="flex justify-between items-start mb-3 relative z-10">
                 <div className="p-2.5 bg-orange-50 rounded-xl">
                   <Cloud className="w-5 h-5 text-orange-600" />
@@ -458,7 +567,7 @@ const OperationsDashboard: React.FC = () => {
               </div>
               <div className="relative z-10">
                 <p className="text-xs text-slate-500 font-bold mb-1">阿里云账户总用量</p>
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight font-mono">
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight font-din">
                   ¥{formatChineseUnit(businessData.aliCloud.totalUsage)}
                 </h2>
                 <div className="text-[11px] mt-2 flex gap-3 font-medium">
@@ -467,6 +576,7 @@ const OperationsDashboard: React.FC = () => {
                 </div>
               </div>
             </div>
+          </div>
 
             {/* 平台与课程销售分析图表 (跨 8 列, 占 2 行) */}
             <div className="col-span-12 lg:col-span-8 row-span-2 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col">
@@ -512,7 +622,7 @@ const OperationsDashboard: React.FC = () => {
                     <XAxis dataKey="period" axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 12 }} dy={10} />
                     <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 12 }} />
                     <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 12 }} />
-                    <Tooltip 
+                    <RechartsTooltip 
                       contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                       cursor={{ fill: '#F1F5F9' }}
                     />
@@ -528,29 +638,6 @@ const OperationsDashboard: React.FC = () => {
 
             {/* 基础设施与 AI 消耗 (跨 4 列, 占 2 行) */}
             <div className="col-span-12 lg:col-span-4 row-span-2 flex flex-col gap-6">
-              {/* 服务器销量 */}
-              <div className="flex-1 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col justify-center relative overflow-hidden group hover:shadow-md transition-shadow">
-                <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
-                  <Server className="w-40 h-40 text-slate-900" />
-                </div>
-                <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 bg-slate-100 rounded-lg">
-                      <Server className="w-4 h-4 text-slate-600" />
-                    </div>
-                    <h3 className="text-xs font-bold text-slate-500">私有化服务器销量</h3>
-                  </div>
-                  <div className="flex items-end gap-2 mt-3">
-                    <span className="text-3xl font-bold text-slate-900 font-mono">{businessData.serverSales}</span>
-                    <span className="text-slate-400 mb-1 text-xs font-medium">台</span>
-                  </div>
-                  <div className="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-slate-800 rounded-full" style={{ width: '65%' }}></div>
-                  </div>
-                  <p className="text-[10px] text-slate-400 mt-2">年度目标完成率 <span className="text-blue-600 font-bold">65%</span></p>
-                </div>
-              </div>
-
               {/* Token 消耗 */}
               <div className="flex-1 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col justify-center relative overflow-hidden group hover:shadow-md transition-shadow">
                 <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
@@ -564,26 +651,315 @@ const OperationsDashboard: React.FC = () => {
                     <h3 className="text-xs font-bold text-slate-500">AI Token 消耗总量</h3>
                   </div>
                   <div className="flex items-end gap-2 mt-3">
-                    <span className="text-3xl font-bold text-slate-900 font-mono">{formatChineseUnit(businessData.tokenSales)}</span>
-                    <span className="text-slate-400 mb-1 text-xs font-medium">Tokens</span>
+                    <div className="text-3xl font-bold text-slate-900 tracking-tight font-din">
+                      <RollingNumber value={liveTokenCount} />
+                    </div>
+                    <span className="text-xl font-bold text-slate-900 font-sans mb-0.5 ml-2">百万</span>
+                    <span className="text-slate-400 mb-1 text-xs font-medium ml-1">Tokens</span>
                   </div>
                   <p className="text-[10px] text-indigo-600/70 mt-3 bg-indigo-50/50 inline-block px-2 py-0.5 rounded border border-indigo-100/50 font-medium">包含所有学校套餐内消耗</p>
                 </div>
               </div>
+
+              {/* 智能体使用情况 */}
+              <div className="flex-1 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col justify-center relative overflow-hidden group hover:shadow-md transition-shadow">
+                <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
+                  <Brain className="w-40 h-40 text-slate-900" />
+                </div>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-slate-100 rounded-lg">
+                      <Brain className="w-4 h-4 text-slate-600" />
+                    </div>
+                    <h3 className="text-xs font-bold text-slate-500">智能体使用情况</h3>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <div className="text-[10px] text-slate-400">AI 技能助手智能体</div>
+                      <div className="flex items-baseline gap-1">
+                        <div className="text-2xl font-bold text-slate-900 tracking-tight font-din">
+                          <RollingNumber value={liveSkillAgent} />
+                        </div>
+                        <span className="text-[10px] text-slate-400 font-din">次</span>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-[10px] text-slate-400">硬件智能体</div>
+                      <div className="flex items-baseline gap-1">
+                        <div className="text-2xl font-bold text-slate-900 tracking-tight font-din">
+                          <RollingNumber value={liveHardwareAgent} />
+                        </div>
+                        <span className="text-[10px] text-slate-400 font-din">次</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 pt-4 border-t border-slate-50">
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] text-slate-400">总计调用次数</span>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-sm font-bold text-blue-600 font-din">
+                          {(liveSkillAgent + liveHardwareAgent).toLocaleString()}
+                        </span>
+                        <span className="text-[9px] text-slate-400">次</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* 全国战区销售量排行榜 (跨 6 列) */}
-            <div className="col-span-12 lg:col-span-6 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+            {/* 专业分类 */}
+            <div className="col-span-12 lg:col-span-6 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-bl-full -z-10"></div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-1.5 bg-emerald-50 rounded-lg border border-emerald-100">
+                  <Activity className="w-4 h-4 text-emerald-600" />
+                </div>
+                <h3 className="text-base font-bold text-slate-900">专业分类</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* 在线版本 */}
+                <div className="bg-gradient-to-b from-slate-50 to-white rounded-xl p-4 border border-slate-100 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+                  <h4 className="text-sm font-bold text-slate-700 mb-4 text-center flex items-center justify-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>
+                    在线版本销量占比
+                  </h4>
+                  <div className="h-64 relative">
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="w-20 h-20 bg-emerald-50 rounded-full blur-xl opacity-60"></div>
+                    </div>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <defs>
+                          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="2" stdDeviation="4" floodOpacity="0.15" />
+                          </filter>
+                        </defs>
+                        <Pie
+                          data={[{ value: 1 }]}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          fill="#f8fafc"
+                          dataKey="value"
+                          isAnimationActive={false}
+                          stroke="none"
+                        />
+                        <Pie
+                          data={majorData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          paddingAngle={4}
+                          cornerRadius={6}
+                          dataKey="online"
+                          stroke="none"
+                          filter="url(#glow)"
+                        >
+                          {majorData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <RechartsTooltip 
+                          formatter={(value) => formatChineseUnit(value as number)}
+                          contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                        />
+                        <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '12px' }} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+                {/* 私有化版本 */}
+                <div className="bg-gradient-to-b from-slate-50 to-white rounded-xl p-4 border border-slate-100 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+                  <h4 className="text-sm font-bold text-slate-700 mb-4 text-center flex items-center justify-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]"></span>
+                    私有化版本销量占比
+                  </h4>
+                  <div className="h-64 relative">
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="w-20 h-20 bg-blue-50 rounded-full blur-xl opacity-60"></div>
+                    </div>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <defs>
+                          <filter id="glow-blue" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="2" stdDeviation="4" floodOpacity="0.15" />
+                          </filter>
+                        </defs>
+                        <Pie
+                          data={[{ value: 1 }]}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          fill="#f8fafc"
+                          dataKey="value"
+                          isAnimationActive={false}
+                          stroke="none"
+                        />
+                        <Pie
+                          data={majorData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          paddingAngle={4}
+                          cornerRadius={6}
+                          dataKey="offline"
+                          stroke="none"
+                          filter="url(#glow-blue)"
+                        >
+                          {majorData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <RechartsTooltip 
+                          formatter={(value) => formatChineseUnit(value as number)}
+                          contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                        />
+                        <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '12px' }} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 客户线分类 */}
+            <div className="col-span-12 lg:col-span-6 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-bl-full -z-10"></div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-1.5 bg-indigo-50 rounded-lg border border-indigo-100">
+                  <Briefcase className="w-4 h-4 text-indigo-600" />
+                </div>
+                <h3 className="text-base font-bold text-slate-900">客户线分类</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* 在线版本 */}
+                <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-transparent pointer-events-none"></div>
+                  <h4 className="text-sm font-bold text-slate-700 mb-4 text-center flex items-center justify-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]"></span>
+                    在线版本销量占比
+                  </h4>
+                  <div className="h-64 relative">
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="w-20 h-20 bg-indigo-50 rounded-full blur-xl opacity-60"></div>
+                    </div>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <defs>
+                          <filter id="glow-pie-indigo" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="2" stdDeviation="4" floodOpacity="0.15" />
+                          </filter>
+                        </defs>
+                        <Pie
+                          data={[{ value: 1 }]}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={0}
+                          outerRadius={80}
+                          fill="#f8fafc"
+                          dataKey="value"
+                          isAnimationActive={false}
+                          stroke="none"
+                        />
+                        <Pie
+                          data={customerLineData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={0}
+                          outerRadius={80}
+                          paddingAngle={2}
+                          dataKey="online"
+                          stroke="none"
+                          filter="url(#glow-pie-indigo)"
+                        >
+                          {customerLineData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <RechartsTooltip 
+                          formatter={(value) => formatChineseUnit(value as number)}
+                          contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                        />
+                        <Legend iconType="circle" verticalAlign="bottom" height={36} wrapperStyle={{ fontSize: '12px' }} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+                {/* 私有化版本 */}
+                <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-50/50 to-transparent pointer-events-none"></div>
+                  <h4 className="text-sm font-bold text-slate-700 mb-4 text-center flex items-center justify-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.6)]"></span>
+                    私有化版本销量占比
+                  </h4>
+                  <div className="h-64 relative">
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="w-20 h-20 bg-cyan-50 rounded-full blur-xl opacity-60"></div>
+                    </div>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <defs>
+                          <filter id="glow-pie-cyan" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="2" stdDeviation="4" floodOpacity="0.15" />
+                          </filter>
+                        </defs>
+                        <Pie
+                          data={[{ value: 1 }]}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={0}
+                          outerRadius={80}
+                          fill="#f8fafc"
+                          dataKey="value"
+                          isAnimationActive={false}
+                          stroke="none"
+                        />
+                        <Pie
+                          data={customerLineData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={0}
+                          outerRadius={80}
+                          paddingAngle={2}
+                          dataKey="offline"
+                          stroke="none"
+                          filter="url(#glow-pie-cyan)"
+                        >
+                          {customerLineData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <RechartsTooltip 
+                          formatter={(value) => formatChineseUnit(value as number)}
+                          contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                        />
+                        <Legend iconType="circle" verticalAlign="bottom" height={36} wrapperStyle={{ fontSize: '12px' }} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 全国各省客户量排行 (跨 4 列) */}
+            <div className="col-span-12 lg:col-span-4 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-orange-50 rounded-lg">
-                    <Trophy className="w-5 h-5 text-orange-500" />
+                  <div className="p-2 bg-blue-50 rounded-lg">
+                    <Users className="w-5 h-5 text-blue-500" />
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900">全国战区销售量排行榜</h3>
+                  <h3 className="text-lg font-bold text-slate-900">全国各省客户量排行</h3>
                 </div>
               </div>
               <div className="space-y-4">
-                {[...regionLeaderboard].sort((a, b) => b.sales - a.sales).map((item, idx) => (
+                {[...provinceLeaderboard].sort((a, b) => b.customers.total - a.customers.total).map((item, idx) => (
                   <div key={idx} className="flex items-center justify-between group">
                     <div className="flex items-center gap-4">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
@@ -594,34 +970,38 @@ const OperationsDashboard: React.FC = () => {
                       }`}>
                         {idx + 1}
                       </div>
-                      <span className="text-sm font-medium text-slate-700">{item.region}</span>
+                      <span className="text-sm font-medium text-slate-700">{item.province}</span>
                     </div>
                     <div className="flex items-center gap-4 w-1/2">
-                      <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full rounded-full ${idx < 3 ? 'bg-orange-400' : 'bg-slate-300'}`} 
-                          style={{ width: `${(item.sales / regionLeaderboard[0].sales) * 100}%` }}
-                        ></div>
+                      <div className="flex-1 flex flex-col gap-1">
+                        <div className="flex justify-between text-[10px]">
+                          <span className="text-blue-600">在线: {item.customers.online}</span>
+                          <span className="text-indigo-600">私有: {item.customers.private}</span>
+                        </div>
+                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
+                          <div className="h-full bg-blue-500" style={{ width: `${(item.customers.online / provinceLeaderboard[0].customers.total) * 100}%` }}></div>
+                          <div className="h-full bg-indigo-500" style={{ width: `${(item.customers.private / provinceLeaderboard[0].customers.total) * 100}%` }}></div>
+                        </div>
                       </div>
-                      <span className="text-xs font-bold text-blue-600 font-mono w-20 text-right">¥{formatChineseUnit(item.sales)}</span>
+                      <span className="text-xs font-bold text-slate-800 font-din w-16 text-right">{item.customers.total} <span className="text-[10px] font-normal text-slate-400">家</span></span>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* 全国战区客户量排行榜 (跨 6 列) */}
-            <div className="col-span-12 lg:col-span-6 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+            {/* 全国各省课程销量排行 (跨 4 列) */}
+            <div className="col-span-12 lg:col-span-4 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-50 rounded-lg">
-                    <Users className="w-5 h-5 text-blue-500" />
+                  <div className="p-2 bg-orange-50 rounded-lg">
+                    <Trophy className="w-5 h-5 text-orange-500" />
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900">全国战区客户量排行榜</h3>
+                  <h3 className="text-lg font-bold text-slate-900">全国各省课程销量排行</h3>
                 </div>
               </div>
               <div className="space-y-4">
-                {[...regionLeaderboard].sort((a, b) => b.customers - a.customers).map((item, idx) => (
+                {[...provinceLeaderboard].sort((a, b) => b.sales.total - a.sales.total).map((item, idx) => (
                   <div key={idx} className="flex items-center justify-between group">
                     <div className="flex items-center gap-4">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
@@ -632,16 +1012,62 @@ const OperationsDashboard: React.FC = () => {
                       }`}>
                         {idx + 1}
                       </div>
-                      <span className="text-sm font-medium text-slate-700">{item.region}</span>
+                      <span className="text-sm font-medium text-slate-700">{item.province}</span>
                     </div>
                     <div className="flex items-center gap-4 w-1/2">
-                      <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full rounded-full ${idx < 3 ? 'bg-blue-400' : 'bg-slate-300'}`} 
-                          style={{ width: `${(item.customers / regionLeaderboard[0].customers) * 100}%` }}
-                        ></div>
+                      <div className="flex-1 flex flex-col gap-1">
+                        <div className="flex justify-between text-[10px]">
+                          <span className="text-blue-600">在线: {formatChineseUnit(item.sales.online)}</span>
+                          <span className="text-indigo-600">私有: {formatChineseUnit(item.sales.private)}</span>
+                        </div>
+                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
+                          <div className="h-full bg-blue-500" style={{ width: `${(item.sales.online / provinceLeaderboard[0].sales.total) * 100}%` }}></div>
+                          <div className="h-full bg-indigo-500" style={{ width: `${(item.sales.private / provinceLeaderboard[0].sales.total) * 100}%` }}></div>
+                        </div>
                       </div>
-                      <span className="text-xs font-bold text-emerald-600 font-mono w-16 text-right">{item.customers} <span className="text-[10px] font-normal text-slate-400">家</span></span>
+                      <span className="text-xs font-bold text-slate-800 font-din w-20 text-right">{formatChineseUnit(item.sales.total)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 热门课程销量排行 (跨 4 列) */}
+            <div className="col-span-12 lg:col-span-4 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-purple-50 rounded-lg">
+                    <BookOpen className="w-5 h-5 text-purple-500" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900">热门课程销量排行</h3>
+                </div>
+              </div>
+              <div className="space-y-4">
+                {[...popularCourses].sort((a, b) => b.sales.total - a.sales.total).map((item, idx) => (
+                  <div key={idx} className="flex items-center justify-between group">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                        idx === 0 ? 'bg-yellow-100 text-yellow-600' :
+                        idx === 1 ? 'bg-slate-100 text-slate-600' :
+                        idx === 2 ? 'bg-orange-100 text-orange-600' :
+                        'bg-slate-50 text-slate-400'
+                      }`}>
+                        {idx + 1}
+                      </div>
+                      <span className="text-sm font-medium text-slate-700 truncate w-20" title={item.name}>{item.name}</span>
+                    </div>
+                    <div className="flex items-center gap-4 w-1/2">
+                      <div className="flex-1 flex flex-col gap-1">
+                        <div className="flex justify-between text-[10px]">
+                          <span className="text-blue-600">在线: {formatChineseUnit(item.sales.online)}</span>
+                          <span className="text-indigo-600">私有: {formatChineseUnit(item.sales.private)}</span>
+                        </div>
+                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
+                          <div className="h-full bg-blue-500" style={{ width: `${(item.sales.online / popularCourses[0].sales.total) * 100}%` }}></div>
+                          <div className="h-full bg-indigo-500" style={{ width: `${(item.sales.private / popularCourses[0].sales.total) * 100}%` }}></div>
+                        </div>
+                      </div>
+                      <span className="text-xs font-bold text-slate-800 font-din w-16 text-right">{formatChineseUnit(item.sales.total)}</span>
                     </div>
                   </div>
                 ))}
@@ -651,13 +1077,13 @@ const OperationsDashboard: React.FC = () => {
           </div>
         </section>
 
-        {/* ================= 区域 2: 平台运营数据 (Platform Operations) ================= */}
+        {/* ================= 区域 2: 平台运维情况 (Platform Maintenance) ================= */}
         <section>
           <div className="flex items-center gap-3 mb-6 mt-4">
             <div className="p-2 bg-cyan-100 rounded-lg">
               <Layers className="w-5 h-5 text-cyan-700" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-800">平台运营数据 <span className="text-sm font-normal text-slate-500 ml-2">Platform Operations</span></h2>
+            <h2 className="text-2xl font-bold text-slate-800">平台运维情况 <span className="text-sm font-normal text-slate-500 ml-2">Platform Maintenance</span></h2>
             <div className="flex-1 h-px bg-slate-200 ml-4"></div>
           </div>
 
@@ -677,7 +1103,7 @@ const OperationsDashboard: React.FC = () => {
               </div>
               <div className="relative z-10">
                 <p className="text-sm text-cyan-50 font-medium mb-1">实时并发在线人数</p>
-                <h2 className="text-3xl font-bold text-white tracking-tight font-mono">{opsData.concurrentUsers.toLocaleString()}</h2>
+                <h2 className="text-3xl font-bold text-white tracking-tight font-din">{opsData.concurrentUsers.toLocaleString()}</h2>
               </div>
             </div>
 
@@ -694,7 +1120,7 @@ const OperationsDashboard: React.FC = () => {
               </div>
               <div className="relative z-10">
                 <p className="text-sm text-slate-600 font-medium mb-1">离线/异常服务器预警</p>
-                <h2 className="text-3xl font-bold text-amber-600 tracking-tight font-mono">{opsData.offlineServers} <span className="text-lg text-amber-600/60 font-normal font-sans">台</span></h2>
+                <h2 className="text-3xl font-bold text-amber-600 tracking-tight font-din">{opsData.offlineServers} <span className="text-lg text-amber-600/60 font-normal font-sans">台</span></h2>
               </div>
             </div>
 
@@ -707,7 +1133,7 @@ const OperationsDashboard: React.FC = () => {
               </div>
               <div className="relative z-10">
                 <p className="text-sm text-slate-500 font-medium mb-1">在网学校总数</p>
-                <h2 className="text-3xl font-bold text-slate-900 tracking-tight font-mono">{opsData.activeSchools} <span className="text-lg text-slate-500 font-normal font-sans">所</span></h2>
+                <h2 className="text-3xl font-bold text-slate-900 tracking-tight font-din">{opsData.activeSchools} <span className="text-lg text-slate-500 font-normal font-sans">所</span></h2>
               </div>
             </div>
 
@@ -720,7 +1146,7 @@ const OperationsDashboard: React.FC = () => {
               </div>
               <div className="relative z-10">
                 <p className="text-sm text-slate-500 font-medium mb-1">累计注册用户</p>
-                <h2 className="text-3xl font-bold text-slate-900 tracking-tight font-mono">{formatChineseUnit(opsData.totalUsers)}</h2>
+                <h2 className="text-3xl font-bold text-slate-900 tracking-tight font-din">{formatChineseUnit(opsData.totalUsers)}</h2>
               </div>
             </div>
 
@@ -736,11 +1162,11 @@ const OperationsDashboard: React.FC = () => {
                 <div className="flex justify-between items-end">
                   <div>
                     <p className="text-sm text-slate-500 mb-1">日活跃用户 (DAU)</p>
-                    <h4 className="text-2xl font-bold text-slate-900 font-mono tracking-tight">{formatChineseUnit(opsData.dau)}</h4>
+                    <h4 className="text-2xl font-bold text-slate-900 font-din tracking-tight">{formatChineseUnit(opsData.dau)}</h4>
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-slate-500 mb-1">月活跃用户 (MAU)</p>
-                    <h4 className="text-2xl font-bold text-slate-900 font-mono tracking-tight">{formatChineseUnit(opsData.mau)}</h4>
+                    <h4 className="text-2xl font-bold text-slate-900 font-din tracking-tight">{formatChineseUnit(opsData.mau)}</h4>
                   </div>
                 </div>
                 <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex">
@@ -762,17 +1188,17 @@ const OperationsDashboard: React.FC = () => {
               <div className="space-y-6 flex-grow flex flex-col justify-center">
                 <div className="flex justify-between items-center border-b border-slate-100 pb-4">
                   <span className="text-slate-600">AI 助手累计调用</span>
-                  <span className="text-xl font-bold text-slate-900 font-mono tracking-tight">{formatChineseUnit(opsData.aiInvocations)} <span className="text-sm font-normal text-slate-500 font-sans">次</span></span>
+                  <span className="text-xl font-bold text-slate-900 font-din tracking-tight">{formatChineseUnit(opsData.aiInvocations)} <span className="text-sm font-normal text-slate-500 font-sans">次</span></span>
                 </div>
                 <div className="flex justify-between items-center border-b border-slate-100 pb-4">
                   <span className="text-slate-600">实训任务完成率</span>
-                  <span className="text-xl font-bold text-emerald-600 font-mono tracking-tight">{opsData.labCompletion}</span>
+                  <span className="text-xl font-bold text-emerald-600 font-din tracking-tight">{opsData.labCompletion}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-slate-600">平均单次实训时长</span>
                   <div className="flex items-center gap-1.5">
                     <Clock className="w-4 h-4 text-blue-500" />
-                    <span className="text-xl font-bold text-slate-900 font-mono tracking-tight">{opsData.avgSessionTime}</span>
+                    <span className="text-xl font-bold text-slate-900 font-din tracking-tight">{opsData.avgSessionTime}</span>
                   </div>
                 </div>
               </div>
@@ -790,7 +1216,7 @@ const OperationsDashboard: React.FC = () => {
                 <div>
                   <div className="flex justify-between text-sm mb-2">
                     <span className="text-slate-600 font-medium">GPU 算力集群利用率</span>
-                    <span className="text-slate-900 font-bold font-mono tracking-tight">{opsData.gpuUtilization}</span>
+                    <span className="text-slate-900 font-bold font-din tracking-tight">{opsData.gpuUtilization}</span>
                   </div>
                   <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
                     <div className="h-full bg-gradient-to-r from-blue-400 to-rose-500 rounded-full" style={{ width: '76%' }}></div>
@@ -799,7 +1225,7 @@ const OperationsDashboard: React.FC = () => {
                 <div>
                   <div className="flex justify-between text-sm mb-2">
                     <span className="text-slate-600 font-medium">存储空间使用率</span>
-                    <span className="text-slate-900 font-bold font-mono tracking-tight">42%</span>
+                    <span className="text-slate-900 font-bold font-din tracking-tight">42%</span>
                   </div>
                   <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
                     <div className="h-full bg-blue-500 rounded-full" style={{ width: '42%' }}></div>

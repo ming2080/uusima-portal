@@ -26,7 +26,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   ResponsiveContainer,
   BarChart,
   Bar,
@@ -113,13 +113,13 @@ const OperationsDashboard: React.FC = () => {
             <h1 className="text-xl font-bold text-gray-800 tracking-wide">
               UUSIMA 运营决策大屏
             </h1>
-            <p className="text-xs text-gray-500 font-mono mt-0.5">
+            <p className="text-xs text-gray-500 font-din mt-0.5">
               EXECUTIVE OPERATIONS DASHBOARD
             </p>
           </div>
         </div>
         <div className="flex items-center gap-6">
-          <div className="text-right font-mono">
+          <div className="text-right font-din">
             <div className="text-blue-600 text-lg font-bold tracking-wider">
               {currentTime.toLocaleTimeString("en-US", { hour12: false })}
             </div>
@@ -331,7 +331,7 @@ const OperationsDashboard: React.FC = () => {
                     tickLine={false}
                     tick={{ fill: "#9ca3af", fontSize: 12 }}
                   />
-                  <Tooltip
+                  <RechartsTooltip
                     contentStyle={{
                       borderRadius: "8px",
                       border: "none",
@@ -406,7 +406,7 @@ const OperationsDashboard: React.FC = () => {
                     tickLine={false}
                     tick={{ fill: "#9ca3af", fontSize: 12 }}
                   />
-                  <Tooltip
+                  <RechartsTooltip
                     cursor={{ fill: "#f3f4f6" }}
                     contentStyle={{
                       borderRadius: "8px",
