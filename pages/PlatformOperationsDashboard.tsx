@@ -367,7 +367,7 @@ const PlatformOperationsDashboard: React.FC = () => {
                   </div>
                   <div className={`text-xs font-medium ${s.subtext} tracking-wider`}>累计账号数</div>
                 </div>
-                <div className={`text-6xl font-bold ${theme === 'light' ? 'text-slate-900' : 'text-white'} mb-3 font-din tracking-tight`}>
+                <div className={`text-4xl font-bold ${theme === 'light' ? 'text-slate-900' : 'text-white'} mb-3 font-din tracking-tight`}>
                   <RollingNumber value={customerData.accounts.cumulative.total} />
                 </div>
                 <div className={`flex justify-between text-xs ${s.subtext} ${s.innerCard} px-3 py-1.5 rounded-lg font-din border`}>
@@ -388,7 +388,7 @@ const PlatformOperationsDashboard: React.FC = () => {
                   </div>
                   <div className={`text-xs font-medium ${s.subtext} tracking-wider`}>平台合作学校</div>
                 </div>
-                <div className={`text-6xl font-bold ${theme === 'light' ? 'text-slate-900' : 'text-white'} mb-3 font-din tracking-tight`}>
+                <div className={`text-4xl font-bold ${theme === 'light' ? 'text-slate-900' : 'text-white'} mb-3 font-din tracking-tight`}>
                   <RollingNumber value={platformData.schools.total} />
                 </div>
                 <div className={`flex justify-between text-xs ${s.subtext} ${s.innerCard} px-3 py-1.5 rounded-lg font-din border`}>
@@ -409,7 +409,7 @@ const PlatformOperationsDashboard: React.FC = () => {
                   </div>
                   <div className={`text-xs font-medium ${s.subtext} tracking-wider`}>最高并发 (月)</div>
                 </div>
-                <div className={`text-6xl font-bold ${theme === 'light' ? 'text-slate-900' : 'text-white'} mb-3 font-din tracking-tight`}>
+                <div className={`text-4xl font-bold ${theme === 'light' ? 'text-slate-900' : 'text-white'} mb-3 font-din tracking-tight`}>
                   <RollingNumber value={platformData.concurrency.monthlyMax} />
                 </div>
                 <div className={`flex justify-between text-xs ${s.subtext} ${s.innerCard} px-3 py-1.5 rounded-lg font-din border`}>
@@ -429,7 +429,7 @@ const PlatformOperationsDashboard: React.FC = () => {
                   </div>
                   <div className={`text-xs font-medium ${s.subtext} tracking-wider`}>累计使用时长</div>
                 </div>
-                <div className={`text-6xl font-bold ${theme === 'light' ? 'text-slate-900' : 'text-white'} mb-3 font-din tracking-tight`}>
+                <div className={`text-4xl font-bold ${theme === 'light' ? 'text-slate-900' : 'text-white'} mb-3 font-din tracking-tight`}>
                   <RollingNumber value={platformData.usageDuration.total} />
                 </div>
                 <div className={`flex justify-between text-xs ${s.subtext} ${s.innerCard} px-3 py-1.5 rounded-lg font-din border`}>
@@ -450,7 +450,7 @@ const PlatformOperationsDashboard: React.FC = () => {
                   </div>
                   <div className={`text-xs font-medium ${s.subtext} tracking-wider`}>智能体月提问数</div>
                 </div>
-                <div className={`text-6xl font-bold ${theme === 'light' ? 'text-slate-900' : 'text-white'} mb-3 font-din tracking-tight`}>
+                <div className={`text-4xl font-bold ${theme === 'light' ? 'text-slate-900' : 'text-white'} mb-3 font-din tracking-tight`}>
                   <RollingNumber value={agentData.questions.monthly} />
                 </div>
                 <div className={`flex justify-between text-xs ${s.subtext} ${s.innerCard} px-3 py-1.5 rounded-lg font-din border`}>
