@@ -56,11 +56,6 @@ const Layout: React.FC<LayoutProps> = ({
       icon: <FileBadge className="w-5 h-5 mr-1.5" />,
     },
     {
-      label: "关于 UUSIMA",
-      path: "/about",
-      icon: <Users className="w-5 h-5 mr-1.5" />,
-    },
-    {
       label: "配置管理",
       path: "/config",
       icon: <Settings className="w-5 h-5 mr-1.5" />,

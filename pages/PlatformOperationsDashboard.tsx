@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "motion/react";
 import {
   AreaChart,
   Area,
@@ -11,723 +10,797 @@ import {
   CartesianGrid,
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
   Legend,
-  LineChart,
-  Line
+  LabelList
 } from "recharts";
 import { 
   Clock, 
   ArrowLeft, 
-  Activity, 
   Users, 
-  Zap, 
-  GraduationCap, 
   School, 
-  Wrench, 
   BookOpen, 
-  Brain, 
-  Factory, 
-  Database, 
-  Layers, 
-  Briefcase,
+  Wrench, 
   Cpu,
   TrendingUp,
   BarChart3,
-  Moon,
-  Sun,
-  MonitorPlay,
-  MessageSquare,
-  PieChart as PieChartIcon,
-  Calendar
+  Flame,
+  Award,
+  ChevronDown,
+  X
 } from "lucide-react";
 
-// --- Utility Functions ---
-const formatChineseUnit = (num: number) => {
-  return num.toLocaleString();
-};
-
-const RollingDigit: React.FC<{ char: string }> = ({ char }) => {
-  if (!/^\d$/.test(char)) {
-    return <span className="inline-block">{char}</span>;
-  }
-  const num = parseInt(char);
-  return (
-    <div className="inline-block h-[1em] overflow-hidden relative" style={{ width: '0.65em' }}>
-      <motion.div
-        animate={{ y: `-${num * 10}%` }}
-        transition={{ type: "spring", stiffness: 50, damping: 15 }}
-        className="flex flex-col"
-      >
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
-          <div key={n} className="h-[1em] flex items-center justify-center">
-            {n}
-          </div>
-        ))}
-      </motion.div>
-    </div>
-  );
-};
-
-const RollingNumber: React.FC<{ value: number }> = ({ value }) => {
-  const digits = value.toLocaleString().split("");
-  return (
-    <div className="flex items-baseline font-din overflow-hidden">
-      {digits.map((d, i) => (
-        <RollingDigit key={i} char={d} />
-      ))}
-    </div>
-  );
-};
-
 // --- Mock Data ---
-const platformData = {
-  concurrency: {
-    monthlyMax: 158, // Reduced
-  },
-  usageDuration: {
-    total: 12580, // Reduced
-    avgPerUser: 12 
-  },
-  schools: { 
-    total: 15, // Reduced
-    online: 12, 
-    private: 3 
-  },
-  usageTypes: [
-    { name: '课程', value: 45 },
-    { name: '竞赛', value: 25 },
-    { name: '培训', value: 20 },
-    { name: '试用', value: 10 }
-  ],
-  annualChanges: [
-    { year: '2021', courses: 320, customers: 1200 },
-    { year: '2022', courses: 580, customers: 2500 },
-    { year: '2023', courses: 890, customers: 4800 },
-    { year: '2024', courses: 1250, customers: 8500 },
-    { year: '2025', courses: 1800, customers: 12500 }
-  ],
-  // New Trend Data for the comprehensive chart
-  trends: {
-    month: [
-      { date: '1日', concurrency: 120, accounts: 50, activations: 40, duration: 800 },
-      { date: '5日', concurrency: 135, accounts: 120, activations: 90, duration: 1200 },
-      { date: '10日', concurrency: 110, accounts: 180, activations: 150, duration: 1500 },
-      { date: '15日', concurrency: 158, accounts: 250, activations: 210, duration: 2100 },
-      { date: '20日', concurrency: 142, accounts: 310, activations: 260, duration: 2400 },
-      { date: '25日', concurrency: 165, accounts: 380, activations: 320, duration: 2800 },
-      { date: '30日', concurrency: 180, accounts: 450, activations: 390, duration: 3200 },
-    ],
-    quarter: [
-      { date: '第1周', concurrency: 140, accounts: 200, activations: 150, duration: 5000 },
-      { date: '第4周', concurrency: 155, accounts: 450, activations: 380, duration: 12000 },
-      { date: '第8周', concurrency: 180, accounts: 800, activations: 700, duration: 21000 },
-      { date: '第12周', concurrency: 210, accounts: 1200, activations: 1050, duration: 35000 },
-    ],
-    year: [
-      { date: '1月', concurrency: 120, accounts: 1500, activations: 1200, duration: 45000 },
-      { date: '3月', concurrency: 150, accounts: 3200, activations: 2800, duration: 95000 },
-      { date: '6月', concurrency: 180, accounts: 5800, activations: 5100, duration: 160000 },
-      { date: '9月', concurrency: 220, accounts: 8500, activations: 7600, duration: 240000 },
-      { date: '12月', concurrency: 280, accounts: 12500, activations: 11200, duration: 380000 },
-    ],
-    custom: [
-      { date: '2024-01', concurrency: 110, accounts: 1000, activations: 800, duration: 30000 },
-      { date: '2024-06', concurrency: 160, accounts: 4000, activations: 3500, duration: 120000 },
-      { date: '2024-12', concurrency: 210, accounts: 8000, activations: 7200, duration: 250000 },
-      { date: '2025-06', concurrency: 250, accounts: 11000, activations: 9800, duration: 340000 },
-    ]
-  }
+const overallData = {
+  users: { total: 12580, trial: 3200, official: 9380 },
+  schools: { total: 156, online: 128, private: 28 },
+  courseSales: { total: 2850, online: 2120, private: 730 },
+  toolUsage: { total: 45680 },
+  agentInvocations: { total: 128500, software: 95200, hardware: 33300 },
+  labDuration: { total: 68900, hours: 12580 }
 };
 
-const customerData = {
-  schoolTypes: {
-    currentYear: [
-      { name: '本科', value: 120 }, { name: '高职', value: 180 }, { name: '中职', value: 85 }, { name: '技工', value: 45 }
-    ],
-    cumulative: [
-      { name: '本科', value: 450 }, { name: '高职', value: 680 }, { name: '中职', value: 320 }, { name: '技工', value: 150 }
-    ]
-  },
-  accounts: {
-    currentYear: { total: 125, active: 85 }, // Reduced
-    cumulative: { total: 1258, active: 458 } // Reduced
-  },
-  usageTrends: [
-    { month: '1月', duration: 120000, activeUsers: 45000 },
-    { month: '2月', duration: 150000, activeUsers: 52000 },
-    { month: '3月', duration: 210000, activeUsers: 78000 },
-    { month: '4月', duration: 180000, activeUsers: 65000 },
-    { month: '5月', duration: 240000, activeUsers: 82000 },
-    { month: '6月', duration: 320000, activeUsers: 115000 }
+const trendData = {
+  courseLearning: [
+    { month: '9月', online: 12000, private: 22000 },
+    { month: '10月', online: 13000, private: 25000 },
+    { month: '11月', online: 14000, private: 28000 },
+    { month: '12月', online: 15000, private: 32000 },
+  ],
+  labDuration: [
+    { month: '9月', online: 15000, private: 35000 },
+    { month: '10月', online: 18000, private: 38000 },
+    { month: '11月', online: 20000, private: 42000 },
+    { month: '12月', online: 22000, private: 45000 },
+  ],
+  newSchools: [
+    { month: '9月', count: 12 },
+    { month: '10月', count: 15 },
+    { month: '11月', count: 18 },
+    { month: '12月', count: 22 },
   ]
 };
 
-const productData = {
-  coursePopularity: [
-    { name: 'Python程序设计', purchase: 720, usage: 15800 },
-    { name: '人工智能基础', purchase: 850, usage: 12500 },
-    { name: '物联网导论', purchase: 650, usage: 9800 },
-    { name: '大数据分析', purchase: 580, usage: 8500 },
-    { name: '工业机器人', purchase: 420, usage: 6200 }
+const activityData = {
+  activeSchools: [
+    { name: '深圳职业技术学院', lab: 6000, login: 7000, course: 5500 },
+    { name: '广州番禺职业技术学院', lab: 5500, login: 6500, course: 5000 },
+    { name: '广东轻工职业技术学院', lab: 5000, login: 6000, course: 4500 },
+    { name: '顺德职业技术学院', lab: 4500, login: 5500, course: 4000 },
+    { name: '广东科学技术职业学院', lab: 4000, login: 5000, course: 3500 },
   ],
-  subjects: [
-    { name: '计算机科学', value: 45 },
-    { name: '电子信息', value: 25 },
-    { name: '自动化', value: 15 },
-    { name: '机械工程', value: 10 },
-    { name: '其他', value: 5 }
+  activeCourses: [
+    { name: 'Python 程序设计', duration: 75000, visits: 40000 },
+    { name: '人工智能基础', duration: 65000, visits: 35000 },
+    { name: '物联网导论', duration: 55000, visits: 30000 },
+    { name: '大数据分析', duration: 45000, visits: 25000 },
+    { name: '工业互联网', duration: 35000, visits: 22000 },
+  ],
+  activeLabs: [
+    { name: 'AI 模型训练实验室', count: 9000, duration: 45000 },
+    { name: '物联网仿真实验室', count: 8000, duration: 40000 },
+    { name: '大数据处理实验室', count: 7000, duration: 35000 },
+    { name: '区块链开发实验室', count: 6000, duration: 28000 },
+    { name: '工业互联网实验室', count: 5000, duration: 25000 },
   ]
 };
 
-const agentData = {
-  questions: {
-    monthly: 1250, // Reduced
-  },
-  learningAnalysis: {
-    errors: [
-      { type: '语法错误', count: 4500 },
-      { type: '逻辑错误', count: 3200 },
-      { type: '概念混淆', count: 2800 },
-      { type: '计算错误', count: 1500 }
-    ],
-    scores: [
-      { range: '90-100', count: 15 },
-      { range: '80-89', count: 35 },
-      { range: '70-79', count: 30 },
-      { range: '60-69', count: 15 },
-      { range: '<60', count: 5 }
-    ]
-  }
+const leaderboardData = {
+  schools: [
+    { rank: 1, name: '深圳职业技术学院', duration: '45,800 分钟', token: '125,000' },
+    { rank: 2, name: '广州番禺职业技术学院', duration: '41,200 分钟', token: '112,000' },
+    { rank: 3, name: '广东轻工职业技术学院', duration: '37,500 分钟', token: '98,000' },
+    { rank: 4, name: '顺德职业技术学院', duration: '33,800 分钟', token: '88,000' },
+    { rank: 5, name: '广东科学技术职业学院', duration: '30,200 分钟', token: '78,000' },
+  ],
+  courses: [
+    { rank: 1, name: 'Python 程序设计', duration: '68,000 分钟' },
+    { rank: 2, name: '人工智能基础', duration: '62,000 分钟' },
+    { rank: 3, name: '物联网导论', duration: '53,000 分钟' },
+    { rank: 4, name: '大数据分析', duration: '46,000 分钟' },
+    { rank: 5, name: '工业互联网', duration: '39,000 分钟' },
+  ],
+  labs: [
+    { rank: 1, name: 'AI 模型训练实验室', duration: '45,000 分钟' },
+    { rank: 2, name: '物联网仿真实验室', duration: '39,500 分钟' },
+    { rank: 3, name: '大数据处理实验室', duration: '35,000 分钟' },
+    { rank: 4, name: '区块链开发实验室', duration: '28,500 分钟' },
+    { rank: 5, name: '工业互联网实验室', duration: '23,800 分钟' },
+  ]
 };
 
-const COLORS = ['#22D3EE', '#A78BFA', '#34D399', '#FBBF24', '#F87171'];
+// Generate mock data for "View All" modals
+const generateMockData = (type: string, count: number) => {
+  return Array.from({ length: count }, (_, i) => {
+    const rank = i + 1;
+    if (type === 'activeSchools') {
+      return { rank, name: `测试院校 ${rank}`, lab: Math.floor(Math.random() * 5000) + 1000, login: Math.floor(Math.random() * 6000) + 1000, course: Math.floor(Math.random() * 4000) + 1000 };
+    }
+    if (type === 'activeCourses') {
+      return { rank, name: `测试课程 ${rank}`, duration: Math.floor(Math.random() * 50000) + 10000, visits: Math.floor(Math.random() * 30000) + 5000 };
+    }
+    if (type === 'activeLabs') {
+      return { rank, name: `测试实验环境 ${rank}`, count: Math.floor(Math.random() * 8000) + 1000, duration: Math.floor(Math.random() * 40000) + 5000 };
+    }
+    if (type === 'leaderboardSchools') {
+      return { rank, name: `测试院校 ${rank}`, duration: `${(Math.floor(Math.random() * 40000) + 5000).toLocaleString()} 分钟`, token: (Math.floor(Math.random() * 100000) + 10000).toLocaleString() };
+    }
+    if (type === 'leaderboardCourses') {
+      return { rank, name: `测试课程 ${rank}`, duration: `${(Math.floor(Math.random() * 60000) + 10000).toLocaleString()} 分钟` };
+    }
+    if (type === 'leaderboardLabs') {
+      return { rank, name: `测试实验环境 ${rank}`, duration: `${(Math.floor(Math.random() * 40000) + 5000).toLocaleString()} 分钟` };
+    }
+    if (type === 'trendCourseDetails') {
+      return { rank, name: `测试院校 ${rank}`, duration: `${(Math.floor(Math.random() * 80000) + 10000).toLocaleString()} 分钟` };
+    }
+    if (type === 'trendLabDetails') {
+      return { rank, name: `测试院校 ${rank}`, duration: `${(Math.floor(Math.random() * 60000) + 5000).toLocaleString()} 分钟` };
+    }
+    if (type === 'trendNewSchoolsDetails') {
+      return { rank, name: `新合作院校 ${rank}`, accountCount: Math.floor(Math.random() * 500) + 50, duration: `${(Math.floor(Math.random() * 20000) + 1000).toLocaleString()} 分钟` };
+    }
+    return { rank, name: `Item ${rank}` };
+  });
+};
 
-// --- Components ---
-
-const CardHeader = ({ title, subtitle, icon: Icon, theme, s }: { title: string, subtitle?: string, icon?: any, theme: string, s: any }) => (
-  <div className={`flex items-center justify-between mb-4 border-b ${theme === 'light' ? 'border-slate-200' : 'border-white/10'} pb-3`}>
-    <div className="flex items-center gap-3">
-      {Icon && <Icon className={`w-5 h-5 ${theme === 'light' ? 'text-blue-500' : theme === 'neon' ? 'text-cyan-400' : theme === 'spatial' ? 'text-emerald-400' : 'text-violet-400'}`} />}
-      <h3 className={`text-base font-bold ${s.text} tracking-wider`}>{title}</h3>
-    </div>
-    {subtitle && <span className={`text-[10px] ${s.subtext} uppercase tracking-widest ${theme === 'light' ? 'bg-slate-100' : 'bg-white/5'} px-2 py-1 rounded-md`}>{subtitle}</span>}
-  </div>
-);
+const fullData = {
+  activeSchools: [...activityData.activeSchools.map((item, i) => ({ rank: i + 1, ...item })), ...generateMockData('activeSchools', 115)],
+  activeCourses: [...activityData.activeCourses.map((item, i) => ({ rank: i + 1, ...item })), ...generateMockData('activeCourses', 145)],
+  activeLabs: [...activityData.activeLabs.map((item, i) => ({ rank: i + 1, ...item })), ...generateMockData('activeLabs', 105)],
+  leaderboardSchools: [...leaderboardData.schools, ...generateMockData('leaderboardSchools', 125)],
+  leaderboardCourses: [...leaderboardData.courses, ...generateMockData('leaderboardCourses', 135)],
+  leaderboardLabs: [...leaderboardData.labs, ...generateMockData('leaderboardLabs', 120)],
+  trendCourseDetails: generateMockData('trendCourseDetails', 150),
+  trendLabDetails: generateMockData('trendLabDetails', 150),
+  trendNewSchoolsDetails: generateMockData('trendNewSchoolsDetails', 67),
+};
 
 const PlatformOperationsDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [theme, setTheme] = useState<'obsidian' | 'light' | 'neon' | 'spatial'>('obsidian');
-  const [timeFilter, setTimeFilter] = useState<'currentYear' | 'cumulative'>('currentYear');
+  const [isChartAnimationActive, setIsChartAnimationActive] = useState(true);
   
-  // New states for the comprehensive trend chart
-  const [trendMetrics, setTrendMetrics] = useState<string[]>(['concurrency', 'accounts', 'activations', 'duration']);
-  const [trendPeriod, setTrendPeriod] = useState<'month' | 'quarter' | 'year' | 'custom'>('month');
+  // Filters state
+  const [schoolFilter, setSchoolFilter] = useState('按日');
+  const [courseFilter, setCourseFilter] = useState('按日');
+  const [labFilter, setLabFilter] = useState('按日');
 
-  const toggleTrendMetric = (key: string) => {
-    setTrendMetrics(prev => 
-      prev.includes(key) ? prev.filter(m => m !== key) : [...prev, key]
-    );
-  };
-
-  const toggleTheme = () => {
-    const themes: ('obsidian' | 'light' | 'neon' | 'spatial')[] = ['obsidian', 'light', 'neon', 'spatial'];
-    const currentIndex = themes.indexOf(theme);
-    const nextIndex = (currentIndex + 1) % themes.length;
-    setTheme(themes[nextIndex]);
-  };
-
-  const getThemeStyles = () => {
-    switch (theme) {
-      case 'light':
-        return {
-          bg: 'bg-slate-50',
-          text: 'text-slate-900',
-          card: 'bg-white border-slate-200 shadow-sm',
-          header: 'bg-white border-slate-200',
-          accent: 'text-blue-600',
-          subtext: 'text-slate-500',
-          innerCard: 'bg-slate-100 border-slate-200',
-          chartGrid: '#E2E8F0',
-          chartText: '#64748B'
-        };
-      case 'neon':
-        return {
-          bg: 'bg-[#0B0F19]',
-          text: 'text-slate-100',
-          card: 'bg-[#131B2F] border-[#1E293B] shadow-[0_0_15px_rgba(0,240,255,0.1)]',
-          header: 'bg-[#131B2F] border-[#1E293B]',
-          accent: 'text-[#00f0ff]',
-          subtext: 'text-slate-400',
-          innerCard: 'bg-[#1E293B] border-[#334155]',
-          chartGrid: '#1E293B',
-          chartText: '#94A3B8'
-        };
-      case 'spatial':
-        return {
-          bg: 'bg-[#070B19]',
-          text: 'text-slate-100',
-          card: 'bg-white/5 backdrop-blur-2xl border-white/5 shadow-2xl',
-          header: 'bg-white/5 backdrop-blur-2xl border-white/5',
-          accent: 'text-emerald-400',
-          subtext: 'text-slate-400',
-          innerCard: 'bg-white/5 border-white/10',
-          chartGrid: 'rgba(255,255,255,0.05)',
-          chartText: '#94A3B8'
-        };
-      default: // obsidian
-        return {
-          bg: 'bg-[#0B1121]',
-          text: 'text-slate-200',
-          card: 'bg-white/5 backdrop-blur-xl border-white/10 shadow-sm',
-          header: 'bg-[#0B1121]/80 backdrop-blur-xl border-white/10',
-          accent: 'text-violet-400',
-          subtext: 'text-slate-400',
-          innerCard: 'bg-black/20 border-white/5',
-          chartGrid: 'rgba(255,255,255,0.05)',
-          chartText: '#94A3B8'
-        };
-    }
-  };
-
-  const s = getThemeStyles();
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    columns: string[];
+    data: any[];
+    type: string;
+  }>({
+    isOpen: false,
+    title: '',
+    columns: [],
+    data: [],
+    type: ''
+  });
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const metricConfig = {
-    concurrency: { label: '并发量', color: COLORS[0] },
-    accounts: { label: '账号数', color: COLORS[1] },
-    activations: { label: '激活量', color: COLORS[2] },
-    duration: { label: '使用时长', color: COLORS[3] },
+  useEffect(() => {
+    const timer = setTimeout(() => setIsChartAnimationActive(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleViewAll = (title: string, columns: string[], data: any[], type: string) => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      columns,
+      data,
+      type
+    });
   };
 
+  const closeModal = () => {
+    setModalConfig({ ...modalConfig, isOpen: false });
+  };
+
+  const getScaledData = (data: any[], filter: string) => {
+    const multiplier = filter === '按日' ? 1 : filter === '按周' ? 7 : filter === '按月' ? 30 : 365;
+    
+    const scaled = data.map(item => {
+      const newItem = { ...item };
+      // Generate a stable pseudo-random factor based on name and filter
+      const seedStr = item.name + filter;
+      let hash = 0;
+      for (let i = 0; i < seedStr.length; i++) {
+        hash = ((hash << 5) - hash) + seedStr.charCodeAt(i);
+        hash |= 0;
+      }
+      const randomFactor = 0.7 + (Math.abs(hash % 60) / 100); // 0.7 to 1.29
+      
+      for (const key in newItem) {
+        if (typeof newItem[key] === 'number' && key !== 'rank') {
+          newItem[key] = Math.floor(newItem[key] * multiplier * randomFactor);
+        }
+      }
+      return newItem;
+    });
+
+    // Sort by the first numeric key to maintain largest to smallest order
+    scaled.sort((a, b) => {
+      const key = Object.keys(a).find(k => typeof a[k] === 'number' && k !== 'rank');
+      if (key) {
+        return (b[key as keyof typeof b] as number) - (a[key as keyof typeof a] as number);
+      }
+      return 0;
+    });
+
+    // Update ranks after sorting
+    return scaled.map((item, index) => ({ ...item, rank: index + 1 }));
+  };
+
+  const StickyTooltip = ({ active, payload, label, setHasHovered }: any) => {
+    const [lastData, setLastData] = useState<{ payload: any, label: any } | null>(null);
+
+    useEffect(() => {
+      if (active && payload && payload.length) {
+        setLastData({ payload, label });
+        if (setHasHovered) setHasHovered(true);
+      }
+    }, [active, payload, label, setHasHovered]);
+
+    if (!lastData) return null;
+
+    return (
+      <div className="bg-white p-3 rounded-lg shadow-lg border border-slate-100 min-w-[150px]">
+        <p className="font-medium text-slate-800 mb-2">{lastData.label}</p>
+        {lastData.payload.map((entry: any, index: number) => (
+          <div key={index} className="flex items-center gap-2 text-sm mt-1">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+            <span className="text-slate-600">{entry.name}:</span>
+            <span className="font-medium text-slate-900">{entry.value.toLocaleString()}</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const [hoveredCharts, setHoveredCharts] = useState<Record<string, boolean>>({});
+
+  const SectionTitle = ({ icon: Icon, title, color }: { icon: any, title: string, color: string }) => (
+    <div className="flex items-center gap-2 mb-4 mt-8 first:mt-0">
+      <Icon className={`w-5 h-5 ${color}`} />
+      <h2 className="text-lg font-bold text-slate-800">{title}</h2>
+    </div>
+  );
+
+  const StatCard = ({ title, value, subtext, icon: Icon, iconColor }: any) => (
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between">
+      <div className="flex justify-between items-start mb-4">
+        <h3 className="text-sm font-medium text-slate-600">{title}</h3>
+        <div className={`p-2 rounded-lg bg-slate-50`}>
+          <Icon className={`w-5 h-5 ${iconColor}`} />
+        </div>
+      </div>
+      <div>
+        <div className="text-3xl font-bold text-slate-900 mb-2 font-din">{value.toLocaleString()}</div>
+        <div className="text-xs text-slate-500">{subtext}</div>
+      </div>
+    </div>
+  );
+
+  const ChartCard = ({ title, onViewAll, viewAllText = "查看全部", filter, onFilterChange, children }: any) => {
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+    return (
+      <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col h-[320px]">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-base font-bold text-slate-800">{title}</h3>
+          <div className="flex items-center gap-3">
+            {onViewAll && (
+              <button 
+                onClick={onViewAll}
+                className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+              >
+                {viewAllText}
+              </button>
+            )}
+            {filter && onFilterChange ? (
+              <div className="relative">
+                <button 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center gap-1 text-xs text-slate-600 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 hover:bg-slate-100 transition-colors"
+                >
+                  {filter} <ChevronDown className="w-3 h-3" />
+                </button>
+                {isDropdownOpen && (
+                  <>
+                    <div className="fixed inset-0 z-0" onClick={() => setIsDropdownOpen(false)}></div>
+                    <div className="absolute right-0 mt-1 w-24 bg-white border border-slate-200 rounded-md shadow-lg z-10">
+                      <div className="py-1">
+                        {['按日', '按周', '按月', '按年'].map(f => (
+                          <button 
+                            key={f}
+                            onClick={() => {
+                              onFilterChange(f);
+                              setIsDropdownOpen(false);
+                            }}
+                            className={`block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 ${filter === f ? 'bg-slate-50 font-medium' : ''}`}
+                          >
+                            {f}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+              <div className="relative group">
+                <button className="flex items-center gap-1 text-xs text-slate-600 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 hover:bg-slate-100 transition-colors">
+                  按月 <ChevronDown className="w-3 h-3" />
+                </button>
+                <div className="absolute right-0 mt-1 w-24 bg-white border border-slate-200 rounded-md shadow-lg hidden group-hover:block z-10">
+                  <div className="py-1">
+                    <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">按日</button>
+                    <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">按周</button>
+                    <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 bg-slate-50 font-medium">按月</button>
+                    <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">按年</button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="flex-1 w-full h-full min-h-0">
+          {children}
+        </div>
+      </div>
+    );
+  };
+
+  const LeaderboardCard = ({ title, icon: Icon, iconColor, columns, data, onViewAll }: any) => (
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2">
+          <Icon className={`w-5 h-5 ${iconColor}`} />
+          <h3 className="text-base font-bold text-slate-800">{title}</h3>
+        </div>
+        {onViewAll && (
+          <button 
+            onClick={onViewAll}
+            className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+          >
+            查看全部
+          </button>
+        )}
+      </div>
+      <div className="flex-1">
+        <table className="w-full text-sm text-left">
+          <thead className="text-xs text-slate-500 border-b border-slate-100">
+            <tr>
+              {columns.map((col: string, idx: number) => (
+                <th key={idx} className={`pb-3 font-medium ${idx > 0 ? 'text-right' : ''}`}>{col}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((row: any, idx: number) => (
+              <tr key={idx} className="border-b border-slate-50 last:border-0">
+                <td className="py-3">
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                    row.rank === 1 ? 'bg-amber-100 text-amber-600' :
+                    row.rank === 2 ? 'bg-slate-100 text-slate-600' :
+                    row.rank === 3 ? 'bg-orange-100 text-orange-600' :
+                    'bg-slate-50 text-slate-500'
+                  }`}>
+                    {row.rank}
+                  </div>
+                </td>
+                <td className="py-3 font-medium text-slate-700">{row.name}</td>
+                {row.duration && <td className="py-3 text-right text-slate-600">{row.duration}</td>}
+                {row.token && <td className="py-3 text-right text-slate-600">{row.token}</td>}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
   return (
-    <div className={`min-h-screen ${s.bg} ${s.text} font-sans overflow-hidden flex flex-col transition-colors duration-500`}>
+    <div className="min-h-screen bg-[#F8FAFC] font-sans overflow-y-auto pb-10">
+      <style>{`
+        .sticky-tooltip-wrapper {
+          visibility: visible !important;
+          opacity: 1 !important;
+          transition: transform 0.2s ease;
+          z-index: 50;
+        }
+        .sticky-tooltip-wrapper.hidden-initial {
+          visibility: hidden !important;
+          opacity: 0 !important;
+        }
+      `}</style>
       {/* Header */}
-      <header className={`h-20 ${s.header} flex items-center justify-between px-8 relative z-50`}>
-        <div className="flex items-center gap-6">
+      <header className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-50">
+        <div className="flex items-center gap-4">
           <button 
             onClick={() => navigate('/big-screen-dashboard')}
-            className={`p-2 rounded-full hover:bg-white/10 transition-colors ${theme === 'light' ? 'text-slate-600' : 'text-slate-300'}`}
+            className="p-2 rounded-full hover:bg-slate-100 transition-colors text-slate-600"
           >
-            <ArrowLeft className="w-6 h-6" />
+            <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-2xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-400">
-              平台运营数据展示
+            <h1 className="text-xl font-bold text-slate-900">
+              UUSIMA 平台运营数据看板
             </h1>
-            <div className={`text-xs ${s.subtext} tracking-widest mt-1 uppercase`}>
-              Platform Operations Data Display
+            <div className="text-xs text-slate-500 mt-0.5">
+              实时监测平台运营数据与使用情况
             </div>
           </div>
         </div>
-
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={toggleTheme}
-              className={`p-2.5 rounded-xl transition-all ${
-                theme === 'light' 
-                  ? 'bg-slate-100 text-slate-600 hover:bg-slate-200' 
-                  : 'bg-white/5 text-slate-300 hover:bg-white/10'
-              }`}
-            >
-              {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-            </button>
-          </div>
-          <div className={`flex items-center gap-3 ${s.innerCard} px-4 py-2 rounded-xl border`}>
-            <Clock className={`w-4 h-4 ${s.accent}`} />
-            <span className="font-din text-sm tracking-wider">
-              {currentTime.toLocaleTimeString('zh-CN', { hour12: false })}
-            </span>
-          </div>
+        <div className="text-sm text-slate-500 flex items-center gap-2">
+          最后更新: <span className="font-din font-medium text-slate-700">{currentTime.toLocaleTimeString('zh-CN', { hour12: false })}</span>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 p-6 overflow-y-auto overflow-x-hidden">
-        <div className="max-w-[1920px] mx-auto space-y-6">
-          
-          {/* Top Row: Key Metrics (5 Columns) */}
-          <div className="grid grid-cols-5 gap-6">
-            <div className={`${s.card} rounded-3xl p-6 relative overflow-hidden group transition-all bg-gradient-to-br from-blue-500/10 to-transparent`}>
-              <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500">
-                <Users className={`w-36 h-36 ${theme === 'light' ? 'text-blue-900' : 'text-cyan-400'}`} />
-              </div>
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className={`p-2 rounded-lg bg-blue-500/20`}>
-                    <Users className={`w-4 h-4 ${theme === 'light' ? 'text-blue-600' : 'text-blue-400'}`} />
-                  </div>
-                  <div className={`text-xs font-medium ${s.subtext} tracking-wider`}>累计账号数</div>
-                </div>
-                <div className={`text-4xl font-bold ${theme === 'light' ? 'text-slate-900' : 'text-white'} mb-3 font-din tracking-tight`}>
-                  <RollingNumber value={customerData.accounts.cumulative.total} />
-                </div>
-                <div className={`flex justify-between text-xs ${s.subtext} ${s.innerCard} px-3 py-1.5 rounded-lg font-din border`}>
-                  <span className={theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}>激活量: {customerData.accounts.cumulative.active.toLocaleString()}</span>
-                  <span>本年新增: {customerData.accounts.currentYear.total.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className={`${s.card} rounded-3xl p-6 relative overflow-hidden group transition-all bg-gradient-to-br from-indigo-500/10 to-transparent`}>
-              <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500">
-                <School className={`w-36 h-36 ${theme === 'light' ? 'text-blue-900' : 'text-cyan-400'}`} />
-              </div>
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className={`p-2 rounded-lg bg-indigo-500/20`}>
-                    <School className={`w-4 h-4 ${theme === 'light' ? 'text-indigo-600' : 'text-indigo-400'}`} />
-                  </div>
-                  <div className={`text-xs font-medium ${s.subtext} tracking-wider`}>平台合作学校</div>
-                </div>
-                <div className={`text-4xl font-bold ${theme === 'light' ? 'text-slate-900' : 'text-white'} mb-3 font-din tracking-tight`}>
-                  <RollingNumber value={platformData.schools.total} />
-                </div>
-                <div className={`flex justify-between text-xs ${s.subtext} ${s.innerCard} px-3 py-1.5 rounded-lg font-din border`}>
-                  <span className={theme === 'light' ? 'text-blue-600' : 'text-cyan-400'}>在线购买: {platformData.schools.online}</span>
-                  <span className={theme === 'light' ? 'text-indigo-600' : 'text-violet-400'}>私有化: {platformData.schools.private}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className={`${s.card} rounded-3xl p-6 relative overflow-hidden group transition-all bg-gradient-to-br from-emerald-500/10 to-transparent`}>
-              <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500">
-                <Activity className={`w-36 h-36 ${theme === 'light' ? 'text-blue-900' : 'text-cyan-400'}`} />
-              </div>
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className={`p-2 rounded-lg bg-emerald-500/20`}>
-                    <Activity className={`w-4 h-4 ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
-                  </div>
-                  <div className={`text-xs font-medium ${s.subtext} tracking-wider`}>最高并发 (月)</div>
-                </div>
-                <div className={`text-4xl font-bold ${theme === 'light' ? 'text-slate-900' : 'text-white'} mb-3 font-din tracking-tight`}>
-                  <RollingNumber value={platformData.concurrency.monthlyMax} />
-                </div>
-                <div className={`flex justify-between text-xs ${s.subtext} ${s.innerCard} px-3 py-1.5 rounded-lg font-din border`}>
-                  <span className={theme === 'light' ? 'text-blue-600' : 'text-cyan-400'}>课堂 & 竞赛</span>
-                </div>
-              </div>
-            </div>
-
-            <div className={`${s.card} rounded-3xl p-6 relative overflow-hidden group transition-all bg-gradient-to-br from-amber-500/10 to-transparent`}>
-              <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500">
-                <Clock className={`w-36 h-36 ${theme === 'light' ? 'text-blue-900' : 'text-cyan-400'}`} />
-              </div>
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className={`p-2 rounded-lg bg-amber-500/20`}>
-                    <Clock className={`w-4 h-4 ${theme === 'light' ? 'text-amber-600' : 'text-amber-400'}`} />
-                  </div>
-                  <div className={`text-xs font-medium ${s.subtext} tracking-wider`}>累计使用时长</div>
-                </div>
-                <div className={`text-4xl font-bold ${theme === 'light' ? 'text-slate-900' : 'text-white'} mb-3 font-din tracking-tight`}>
-                  <RollingNumber value={platformData.usageDuration.total} />
-                </div>
-                <div className={`flex justify-between text-xs ${s.subtext} ${s.innerCard} px-3 py-1.5 rounded-lg font-din border`}>
-                  <span className={theme === 'light' ? 'text-indigo-600' : 'text-violet-400'}>单位: 小时</span>
-                  <span>人均: {platformData.usageDuration.avgPerUser} 分钟</span>
-                </div>
-              </div>
-            </div>
-
-            <div className={`${s.card} rounded-3xl p-6 relative overflow-hidden group transition-all bg-gradient-to-br from-rose-500/10 to-transparent`}>
-              <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500">
-                <Brain className={`w-36 h-36 ${theme === 'light' ? 'text-blue-900' : 'text-cyan-400'}`} />
-              </div>
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className={`p-2 rounded-lg bg-rose-500/20`}>
-                    <Brain className={`w-4 h-4 ${theme === 'light' ? 'text-rose-600' : 'text-rose-400'}`} />
-                  </div>
-                  <div className={`text-xs font-medium ${s.subtext} tracking-wider`}>智能体月提问数</div>
-                </div>
-                <div className={`text-4xl font-bold ${theme === 'light' ? 'text-slate-900' : 'text-white'} mb-3 font-din tracking-tight`}>
-                  <RollingNumber value={agentData.questions.monthly} />
-                </div>
-                <div className={`flex justify-between text-xs ${s.subtext} ${s.innerCard} px-3 py-1.5 rounded-lg font-din border`}>
-                  <span className={theme === 'light' ? 'text-rose-600' : 'text-rose-400'}>AI 交互</span>
-                </div>
-              </div>
-            </div>
+      <main className="max-w-[1600px] mx-auto px-8 pt-6 space-y-8">
+        
+        {/* Section 1: 数据总览 */}
+        <section>
+          <SectionTitle icon={BarChart3} title="数据总览" color="text-blue-600" />
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <StatCard 
+              title="平台用户数" 
+              value={overallData.users.total} 
+              subtext={`体验账号: ${overallData.users.trial.toLocaleString()} | 正式账号: ${overallData.users.official.toLocaleString()}`}
+              icon={Users}
+              iconColor="text-blue-500"
+            />
+            <StatCard 
+              title="学校总数" 
+              value={overallData.schools.total} 
+              subtext={`线上: ${overallData.schools.online} | 私有化: ${overallData.schools.private}`}
+              icon={School}
+              iconColor="text-emerald-500"
+            />
+            <StatCard 
+              title="课程销量" 
+              value={overallData.courseSales.total} 
+              subtext={`线上: ${overallData.courseSales.online.toLocaleString()} | 私有化: ${overallData.courseSales.private.toLocaleString()}`}
+              icon={BookOpen}
+              iconColor="text-violet-500"
+            />
+            <StatCard 
+              title="教学工具使用量" 
+              value={overallData.toolUsage.total} 
+              subtext="AI 教学工具总使用次数"
+              icon={Wrench}
+              iconColor="text-orange-500"
+            />
+            <StatCard 
+              title="智能体调用次数" 
+              value={overallData.agentInvocations.total} 
+              subtext={`软件: ${overallData.agentInvocations.software.toLocaleString()} | 硬件: ${overallData.agentInvocations.hardware.toLocaleString()}`}
+              icon={Cpu}
+              iconColor="text-pink-500"
+            />
+            <StatCard 
+              title="实验使用时长" 
+              value={overallData.labDuration.total} 
+              subtext={`总时长: ${overallData.labDuration.hours.toLocaleString()} 小时`}
+              icon={Clock}
+              iconColor="text-cyan-500"
+            />
           </div>
+        </section>
 
-          {/* Row 2: Comprehensive Trends & Customer Data */}
-          <div className="grid grid-cols-12 gap-6">
-            {/* 平台运营指标趋势 */}
-            <div className={`col-span-8 ${s.card} rounded-3xl p-6 flex flex-col`}>
-              <div className="flex justify-between items-center mb-4 border-b pb-3" style={{ borderColor: theme === 'light' ? '#E2E8F0' : 'rgba(255,255,255,0.1)' }}>
-                <div className="flex items-center gap-3">
-                  <Activity className={`w-5 h-5 ${theme === 'light' ? 'text-blue-500' : 'text-cyan-400'}`} />
-                  <h3 className={`text-base font-bold ${s.text} tracking-wider`}>平台运营指标趋势</h3>
-                </div>
-                <div className="flex items-center gap-4">
-                  {/* Metric Selector */}
-                  <div className="flex gap-1 bg-black/5 dark:bg-white/5 p-1 rounded-lg">
-                    {Object.entries(metricConfig).map(([key, config]) => (
-                      <button 
-                        key={key} 
-                        onClick={() => toggleTrendMetric(key)} 
-                        className={`text-[10px] px-3 py-1.5 rounded-md transition-colors ${
-                          trendMetrics.includes(key) 
-                            ? (theme === 'light' ? 'bg-white text-blue-700 shadow-sm' : 'bg-white/10 text-cyan-400') 
-                            : s.subtext + ' hover:text-slate-700 dark:hover:text-slate-300'
-                        }`}
-                      >
-                        {config.label}
-                      </button>
-                    ))}
-                  </div>
-                  
-                  <div className={`w-px h-4 ${theme === 'light' ? 'bg-slate-300' : 'bg-white/20'}`}></div>
-                  
-                  {/* Period Selector */}
-                  <div className="flex items-center gap-1">
-                    {['month', 'quarter', 'year', 'custom'].map(period => (
-                      <button 
-                        key={period} 
-                        onClick={() => setTrendPeriod(period as any)} 
-                        className={`text-[10px] px-2 py-1.5 rounded-md transition-colors ${
-                          trendPeriod === period 
-                            ? (theme === 'light' ? 'bg-slate-200 text-slate-800' : 'bg-white/10 text-white') 
-                            : s.subtext + ' hover:text-slate-700 dark:hover:text-slate-300'
-                        }`}
-                      >
-                        {period === 'month' ? '月' : period === 'quarter' ? '季' : period === 'year' ? '年' : '自定义'}
-                      </button>
-                    ))}
-                    {trendPeriod === 'custom' && (
-                      <div className={`ml-2 flex items-center gap-1 text-[10px] ${s.subtext} ${s.innerCard} px-2 py-1 rounded border`}>
-                        <Calendar className="w-3 h-3" />
-                        <span>2024.01 - 2025.06</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className="flex-1 min-h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={platformData.trends[trendPeriod]} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                    <defs>
-                      <linearGradient id="colorConcurrency" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={metricConfig.concurrency.color} stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor={metricConfig.concurrency.color} stopOpacity={0}/>
-                      </linearGradient>
-                      <linearGradient id="colorAccounts" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={metricConfig.accounts.color} stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor={metricConfig.accounts.color} stopOpacity={0}/>
-                      </linearGradient>
-                      <linearGradient id="colorActivations" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={metricConfig.activations.color} stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor={metricConfig.activations.color} stopOpacity={0}/>
-                      </linearGradient>
-                      <linearGradient id="colorDuration" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={metricConfig.duration.color} stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor={metricConfig.duration.color} stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke={s.chartGrid} vertical={false} opacity={0.5} />
-                    <XAxis dataKey="date" stroke={s.chartText} fontSize={12} tickLine={false} axisLine={{ stroke: s.chartGrid }} dy={10} />
-                    <YAxis yAxisId="left" stroke={s.chartText} fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value} dx={-10} />
-                    <YAxis yAxisId="right" orientation="right" stroke={s.chartText} fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value} dx={10} />
-                    <RechartsTooltip 
-                      contentStyle={{ backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.95)', borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', color: theme === 'light' ? '#1E293B' : '#fff', padding: '12px' }}
-                      itemStyle={{ color: theme === 'light' ? '#1E293B' : '#fff', fontWeight: 500 }}
-                      cursor={{ stroke: theme === 'light' ? '#94A3B8' : '#475569', strokeWidth: 1, strokeDasharray: '3 3' }}
-                    />
-                    <Legend wrapperStyle={{ fontSize: '12px', color: s.chartText, paddingTop: '20px' }} iconType="circle" iconSize={8} />
-                    {trendMetrics.includes('concurrency') && <Area yAxisId="left" type="monotone" dataKey="concurrency" name={metricConfig.concurrency.label} stroke={metricConfig.concurrency.color} strokeWidth={3} fillOpacity={1} fill="url(#colorConcurrency)" dot={{ r: 4, strokeWidth: 2, fill: theme === 'light' ? '#fff' : '#131B2F' }} activeDot={{ r: 6, strokeWidth: 0 }} />}
-                    {trendMetrics.includes('accounts') && <Area yAxisId="left" type="monotone" dataKey="accounts" name={metricConfig.accounts.label} stroke={metricConfig.accounts.color} strokeWidth={3} fillOpacity={1} fill="url(#colorAccounts)" dot={{ r: 4, strokeWidth: 2, fill: theme === 'light' ? '#fff' : '#131B2F' }} activeDot={{ r: 6, strokeWidth: 0 }} />}
-                    {trendMetrics.includes('activations') && <Area yAxisId="left" type="monotone" dataKey="activations" name={metricConfig.activations.label} stroke={metricConfig.activations.color} strokeWidth={3} fillOpacity={1} fill="url(#colorActivations)" dot={{ r: 4, strokeWidth: 2, fill: theme === 'light' ? '#fff' : '#131B2F' }} activeDot={{ r: 6, strokeWidth: 0 }} />}
-                    {trendMetrics.includes('duration') && <Area yAxisId="right" type="monotone" dataKey="duration" name={metricConfig.duration.label} stroke={metricConfig.duration.color} strokeWidth={3} fillOpacity={1} fill="url(#colorDuration)" dot={{ r: 4, strokeWidth: 2, fill: theme === 'light' ? '#fff' : '#131B2F' }} activeDot={{ r: 6, strokeWidth: 0 }} />}
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+        {/* Section 2: 趋势分析 */}
+        <section>
+          <SectionTitle icon={TrendingUp} title="趋势分析" color="text-emerald-600" />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <ChartCard 
+              title="课程学习时长"
+              viewAllText="查看详情"
+              onViewAll={() => handleViewAll('课程学习时长排行', ['排名', '学校名称', '累计学习时长'], fullData.trendCourseDetails, 'trendCourseDetails')}
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={trendData.courseLearning} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorPrivateCourse" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#34D399" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#34D399" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorOnlineCourse" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#60A5FA" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#60A5FA" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} />
+                  <RechartsTooltip isAnimationActive={false} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
+                  <Area type="monotone" dataKey="private" name="私有化课程" stroke="#34D399" fillOpacity={1} fill="url(#colorPrivateCourse)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
+                    <LabelList dataKey="private" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
+                  </Area>
+                  <Area type="monotone" dataKey="online" name="线上课程" stroke="#60A5FA" fillOpacity={1} fill="url(#colorOnlineCourse)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
+                    <LabelList dataKey="online" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
+                  </Area>
+                </AreaChart>
+              </ResponsiveContainer>
+            </ChartCard>
+            
+            <ChartCard 
+              title="实验使用时长"
+              viewAllText="查看详情"
+              onViewAll={() => handleViewAll('实验环境使用时长排行', ['排名', '学校名称', '累计使用时长'], fullData.trendLabDetails, 'trendLabDetails')}
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={trendData.labDuration} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorPrivateLab" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#A78BFA" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorOnlineLab" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#FBBF24" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#FBBF24" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} />
+                  <RechartsTooltip isAnimationActive={false} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
+                  <Area type="monotone" dataKey="private" name="私有化实验" stroke="#A78BFA" fillOpacity={1} fill="url(#colorPrivateLab)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
+                    <LabelList dataKey="private" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
+                  </Area>
+                  <Area type="monotone" dataKey="online" name="线上实验" stroke="#FBBF24" fillOpacity={1} fill="url(#colorOnlineLab)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
+                    <LabelList dataKey="online" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
+                  </Area>
+                </AreaChart>
+              </ResponsiveContainer>
+            </ChartCard>
 
-            {/* 客户维度 - 学校类型 */}
-            <div className={`col-span-4 ${s.card} rounded-3xl p-6 flex flex-col`}>
-              <div className="flex justify-between items-center mb-4 border-b pb-3" style={{ borderColor: theme === 'light' ? '#E2E8F0' : 'rgba(255,255,255,0.1)' }}>
-                <div className="flex items-center gap-3">
-                  <School className={`w-5 h-5 ${theme === 'light' ? 'text-blue-500' : 'text-cyan-400'}`} />
-                  <h3 className={`text-base font-bold ${s.text} tracking-wider`}>学校类型分布</h3>
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={() => setTimeFilter('currentYear')} className={`text-[10px] px-2 py-1 rounded ${timeFilter === 'currentYear' ? (theme === 'light' ? 'bg-blue-100 text-blue-700' : 'bg-cyan-900/50 text-cyan-400') : s.subtext}`}>本年度</button>
-                  <button onClick={() => setTimeFilter('cumulative')} className={`text-[10px] px-2 py-1 rounded ${timeFilter === 'cumulative' ? (theme === 'light' ? 'bg-blue-100 text-blue-700' : 'bg-cyan-900/50 text-cyan-400') : s.subtext}`}>累计</button>
-                </div>
-              </div>
-              <div className="flex-1 min-h-[250px] relative">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
-                    <Pie
-                      data={customerData.schoolTypes[timeFilter]}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={65}
-                      outerRadius={90}
-                      paddingAngle={2}
-                      dataKey="value"
-                      stroke={theme === 'light' ? '#fff' : '#131B2F'}
-                      strokeWidth={2}
-                      cornerRadius={6}
-                    >
-                      {customerData.schoolTypes[timeFilter].map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <RechartsTooltip 
-                      contentStyle={{ backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.95)', borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', color: theme === 'light' ? '#1E293B' : '#fff', padding: '12px' }}
-                      itemStyle={{ color: theme === 'light' ? '#1E293B' : '#fff', fontWeight: 500 }}
-                    />
-                    <Legend verticalAlign="bottom" height={36} iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '12px', color: s.chartText, paddingTop: '10px' }} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+            <ChartCard 
+              title="新开通学校数"
+              viewAllText="查看详情"
+              onViewAll={() => handleViewAll('新开通学校详情', ['序号', '学校名称', '账号数', '累计时长'], fullData.trendNewSchoolsDetails, 'trendNewSchoolsDetails')}
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={trendData.newSchools} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} />
+                  <RechartsTooltip isAnimationActive={false} cursor={{ fill: '#F1F5F9' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
+                  <Bar dataKey="count" fill="#06B6D4" radius={[4, 4, 0, 0]} maxBarSize={40} isAnimationActive={isChartAnimationActive}>
+                    <LabelList dataKey="count" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartCard>
           </div>
+        </section>
 
-          {/* Row 3: Annual Trends & Usage Ratio */}
-          <div className="grid grid-cols-12 gap-6">
-            {/* 年度数据 */}
-            <div className={`col-span-8 ${s.card} rounded-3xl p-6 flex flex-col`}>
-              <CardHeader title="课程与客户使用年度变化" subtitle="ANNUAL TRENDS" icon={BarChart3} theme={theme} s={s} />
-              <div className="flex-1 min-h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={platformData.annualChanges} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={s.chartGrid} vertical={false} opacity={0.5} />
-                    <XAxis dataKey="year" stroke={s.chartText} fontSize={12} tickLine={false} axisLine={{ stroke: s.chartGrid }} dy={10} />
-                    <YAxis yAxisId="left" stroke={s.chartText} fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value / 1000}k`} dx={-10} />
-                    <YAxis yAxisId="right" orientation="right" stroke={s.chartText} fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value / 1000}k`} dx={10} />
-                    <RechartsTooltip 
-                      contentStyle={{ backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.95)', borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', color: theme === 'light' ? '#1E293B' : '#fff', padding: '12px' }}
-                      itemStyle={{ color: theme === 'light' ? '#1E293B' : '#fff', fontWeight: 500 }}
-                      cursor={{ fill: theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)' }}
-                    />
-                    <Legend wrapperStyle={{ fontSize: '12px', color: s.chartText, paddingTop: '20px' }} iconType="circle" iconSize={8} />
-                    <Bar yAxisId="left" dataKey="courses" name="课程使用量" fill={COLORS[0]} radius={[6, 6, 0, 0]} maxBarSize={30} />
-                    <Bar yAxisId="right" dataKey="customers" name="客户使用量" fill={COLORS[1]} radius={[6, 6, 0, 0]} maxBarSize={30} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+        {/* Section 3: 教学与实训活动情况 */}
+        <section>
+          <SectionTitle icon={Flame} title="教学与实训活动情况" color="text-red-500" />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <ChartCard 
+              title="活跃院校榜单"
+              filter={schoolFilter}
+              onFilterChange={setSchoolFilter}
+              onViewAll={() => handleViewAll('活跃院校榜单', ['排名', '学校名称', '实验环境调用量', '平台登录人次', '课程参与频次'], getScaledData(fullData.activeSchools, schoolFilter), 'activeSchools')}
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={getScaledData(activityData.activeSchools, schoolFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
+                  <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
+                  <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={100} />
+                  <RechartsTooltip 
+                    content={<StickyTooltip setHasHovered={(v: boolean) => setHoveredCharts(prev => ({...prev, activeSchools: v}))} />}
+                    wrapperClassName={hoveredCharts['activeSchools'] ? "sticky-tooltip-wrapper" : "sticky-tooltip-wrapper hidden-initial"}
+                    cursor={{ fill: '#F1F5F9' }} 
+                    isAnimationActive={false}
+                  />
+                  <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                  <Bar dataKey="lab" name="实验环境调用量" fill="#F59E0B" barSize={8} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
+                    <LabelList dataKey="lab" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
+                  </Bar>
+                  <Bar dataKey="login" name="平台登录人次" fill="#3B82F6" barSize={8} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
+                    <LabelList dataKey="login" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
+                  </Bar>
+                  <Bar dataKey="course" name="课程参与频次" fill="#10B981" barSize={8} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
+                    <LabelList dataKey="course" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartCard>
 
-            {/* 比例图 */}
-            <div className={`col-span-4 ${s.card} rounded-3xl p-6 flex flex-col`}>
-              <CardHeader title="平台业务场景占比" subtitle="SCENARIO RATIO" icon={PieChartIcon} theme={theme} s={s} />
-              <div className="flex-1 min-h-[250px] relative">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
-                    <Pie
-                      data={platformData.usageTypes}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={55}
-                      outerRadius={80}
-                      paddingAngle={2}
-                      dataKey="value"
-                      stroke={theme === 'light' ? '#fff' : '#131B2F'}
-                      strokeWidth={2}
-                      cornerRadius={6}
-                    >
-                      {platformData.usageTypes.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <RechartsTooltip 
-                      contentStyle={{ backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.95)', borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', color: theme === 'light' ? '#1E293B' : '#fff', padding: '12px' }}
-                      itemStyle={{ color: theme === 'light' ? '#1E293B' : '#fff', fontWeight: 500 }}
-                      formatter={(value: number) => [`${value}%`, '占比']}
-                    />
-                    <Legend verticalAlign="bottom" height={36} iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '12px', color: s.chartText, paddingTop: '10px' }} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+            <ChartCard 
+              title="课程热度榜单"
+              filter={courseFilter}
+              onFilterChange={setCourseFilter}
+              onViewAll={() => handleViewAll('课程热度榜单', ['排名', '课程名称', '累计学习时长', '累计访问人次'], getScaledData(fullData.activeCourses, courseFilter), 'activeCourses')}
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={getScaledData(activityData.activeCourses, courseFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
+                  <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
+                  <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={80} />
+                  <RechartsTooltip 
+                    content={<StickyTooltip setHasHovered={(v: boolean) => setHoveredCharts(prev => ({...prev, activeCourses: v}))} />}
+                    wrapperClassName={hoveredCharts['activeCourses'] ? "sticky-tooltip-wrapper" : "sticky-tooltip-wrapper hidden-initial"}
+                    cursor={{ fill: '#F1F5F9' }} 
+                    isAnimationActive={false}
+                  />
+                  <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                  <Bar dataKey="duration" name="累计学习时长" fill="#EC4899" barSize={12} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
+                    <LabelList dataKey="duration" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
+                  </Bar>
+                  <Bar dataKey="visits" name="累计访问人次" fill="#8B5CF6" barSize={12} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
+                    <LabelList dataKey="visits" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartCard>
+
+            <ChartCard 
+              title="实验环境使用榜单"
+              filter={labFilter}
+              onFilterChange={setLabFilter}
+              onViewAll={() => handleViewAll('实验环境使用榜单', ['排名', '实验环境名称', '资源并发数', '累计运行时长'], getScaledData(fullData.activeLabs, labFilter), 'activeLabs')}
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={getScaledData(activityData.activeLabs, labFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
+                  <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
+                  <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={100} />
+                  <RechartsTooltip 
+                    content={<StickyTooltip setHasHovered={(v: boolean) => setHoveredCharts(prev => ({...prev, activeLabs: v}))} />}
+                    wrapperClassName={hoveredCharts['activeLabs'] ? "sticky-tooltip-wrapper" : "sticky-tooltip-wrapper hidden-initial"}
+                    cursor={{ fill: '#F1F5F9' }} 
+                    isAnimationActive={false}
+                  />
+                  <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                  <Bar dataKey="count" name="资源并发数" fill="#06B6D4" barSize={12} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
+                    <LabelList dataKey="count" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
+                  </Bar>
+                  <Bar dataKey="duration" name="累计运行时长" fill="#F97316" barSize={12} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
+                    <LabelList dataKey="duration" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartCard>
           </div>
+        </section>
 
-          {/* Bottom Row: Product & Agent Data */}
-          <div className="grid grid-cols-12 gap-6">
-            {/* 产品维度 - 课程热度 */}
-            <div className={`col-span-4 ${s.card} rounded-3xl p-6 flex flex-col`}>
-              <CardHeader title="课程购买与使用热度" subtitle="COURSE POPULARITY" icon={BookOpen} theme={theme} s={s} />
-              <div className="flex-1 min-h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={productData.coursePopularity} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={s.chartGrid} horizontal={false} opacity={0.5} />
-                    <XAxis type="number" stroke={s.chartText} fontSize={10} axisLine={{ stroke: s.chartGrid }} tickLine={false} />
-                    <YAxis dataKey="name" type="category" stroke={s.chartText} fontSize={10} width={80} axisLine={false} tickLine={false} />
-                    <RechartsTooltip 
-                      contentStyle={{ backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.95)', borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', color: theme === 'light' ? '#1E293B' : '#fff', padding: '12px' }}
-                      itemStyle={{ color: theme === 'light' ? '#1E293B' : '#fff', fontWeight: 500 }}
-                      cursor={{ fill: theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)' }}
-                    />
-                    <Legend wrapperStyle={{ fontSize: '10px', color: s.chartText, paddingTop: '10px' }} iconType="circle" iconSize={8} />
-                    <Bar dataKey="usage" name="使用量" fill={COLORS[0]} radius={[0, 4, 4, 0]} barSize={12} />
-                    <Bar dataKey="purchase" name="购买量" fill={COLORS[1]} radius={[0, 4, 4, 0]} barSize={12} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* 客户维度 - 使用趋势 */}
-            <div className={`col-span-4 ${s.card} rounded-3xl p-6 flex flex-col`}>
-              <CardHeader title="月度使用趋势" subtitle="USAGE TRENDS" icon={TrendingUp} theme={theme} s={s} />
-              <div className="flex-1 min-h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={customerData.usageTrends} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={s.chartGrid} vertical={false} opacity={0.5} />
-                    <XAxis dataKey="month" stroke={s.chartText} fontSize={12} tickLine={false} axisLine={{ stroke: s.chartGrid }} dy={10} />
-                    <YAxis yAxisId="left" stroke={s.chartText} fontSize={10} tickLine={false} axisLine={false} tickFormatter={(value) => `${value / 1000}k`} dx={-10} />
-                    <YAxis yAxisId="right" orientation="right" stroke={s.chartText} fontSize={10} tickLine={false} axisLine={false} tickFormatter={(value) => `${value / 1000}k`} dx={10} />
-                    <RechartsTooltip 
-                      contentStyle={{ backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.95)', borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', color: theme === 'light' ? '#1E293B' : '#fff', padding: '12px' }}
-                      itemStyle={{ color: theme === 'light' ? '#1E293B' : '#fff', fontWeight: 500 }}
-                      cursor={{ stroke: theme === 'light' ? '#94A3B8' : '#475569', strokeWidth: 1, strokeDasharray: '3 3' }}
-                    />
-                    <Legend wrapperStyle={{ fontSize: '10px', color: s.chartText, paddingTop: '20px' }} iconType="circle" iconSize={8} />
-                    <Line yAxisId="left" type="monotone" dataKey="duration" name="使用时长(h)" stroke={COLORS[2]} strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: theme === 'light' ? '#fff' : '#131B2F' }} activeDot={{ r: 6, strokeWidth: 0 }} />
-                    <Line yAxisId="right" type="monotone" dataKey="activeUsers" name="活跃用户" stroke={COLORS[3]} strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: theme === 'light' ? '#fff' : '#131B2F' }} activeDot={{ r: 6, strokeWidth: 0 }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* 智能体 - 学情分析 */}
-            <div className={`col-span-4 ${s.card} rounded-3xl p-6 flex flex-col`}>
-              <CardHeader title="智能体学情分析 (错误类型)" subtitle="LEARNING ANALYSIS" icon={Brain} theme={theme} s={s} />
-              <div className="flex-1 min-h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={agentData.learningAnalysis.errors} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={s.chartGrid} vertical={false} opacity={0.5} />
-                    <XAxis dataKey="type" stroke={s.chartText} fontSize={12} tickLine={false} axisLine={{ stroke: s.chartGrid }} dy={10} />
-                    <YAxis stroke={s.chartText} fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value / 1000}k`} dx={-10} />
-                    <RechartsTooltip 
-                      contentStyle={{ backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.95)', borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', color: theme === 'light' ? '#1E293B' : '#fff', padding: '12px' }}
-                      itemStyle={{ color: theme === 'light' ? '#1E293B' : '#fff', fontWeight: 500 }}
-                      cursor={{ fill: theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)' }}
-                    />
-                    <Bar dataKey="count" name="错误次数" fill={COLORS[4]} radius={[6, 6, 0, 0]} maxBarSize={30}>
-                      {agentData.learningAnalysis.errors.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+        {/* Section 4: 核心业务排行 */}
+        <section>
+          <SectionTitle icon={Award} title="核心业务排行" color="text-amber-500" />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <LeaderboardCard 
+              title="院校资源用量排行 Top5" 
+              icon={School} 
+              iconColor="text-blue-500"
+              columns={['排名', '学校名称', '累计实训时长', 'AI 算力消耗']}
+              data={leaderboardData.schools}
+              onViewAll={() => handleViewAll('院校资源用量排行', ['排名', '学校名称', '累计实训时长', 'AI 算力消耗'], fullData.leaderboardSchools, 'leaderboardSchools')}
+            />
+            <LeaderboardCard 
+              title="热门课程学时榜单 Top5" 
+              icon={BookOpen} 
+              iconColor="text-emerald-500"
+              columns={['排名', '课程名称', '累计学时']}
+              data={leaderboardData.courses}
+              onViewAll={() => handleViewAll('热门课程学时榜单', ['排名', '课程名称', '累计学时'], fullData.leaderboardCourses, 'leaderboardCourses')}
+            />
+            <LeaderboardCard 
+              title="实训环境调用排行 Top5" 
+              icon={Wrench} 
+              iconColor="text-purple-500"
+              columns={['排名', '实验环境名称', '环境运行总时长']}
+              data={leaderboardData.labs}
+              onViewAll={() => handleViewAll('实训环境调用排行', ['排名', '实验环境名称', '环境运行总时长'], fullData.leaderboardLabs, 'leaderboardLabs')}
+            />
           </div>
+        </section>
 
-        </div>
       </main>
+
+      {/* Data Modal */}
+      {modalConfig.isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+              <h2 className="text-lg font-bold text-slate-800">{modalConfig.title}</h2>
+              <button 
+                onClick={closeModal}
+                className="p-2 rounded-full hover:bg-slate-100 text-slate-500 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-slate-500 border-b border-slate-200 sticky top-0 bg-white z-10">
+                  <tr>
+                    {modalConfig.columns.map((col: string, idx: number) => (
+                      <th key={idx} className={`pb-3 pt-2 font-medium ${idx > 1 ? 'text-right' : ''}`}>{col}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {modalConfig.data.map((row: any, idx: number) => (
+                    <tr key={idx} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                      <td className="py-3 w-16">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                          row.rank === 1 ? 'bg-amber-100 text-amber-600' :
+                          row.rank === 2 ? 'bg-slate-100 text-slate-600' :
+                          row.rank === 3 ? 'bg-orange-100 text-orange-600' :
+                          'bg-slate-50 text-slate-500'
+                        }`}>
+                          {row.rank}
+                        </div>
+                      </td>
+                      <td className="py-3 font-medium text-slate-700">{row.name}</td>
+                      
+                      {/* Dynamic columns based on type */}
+                      {modalConfig.type === 'activeSchools' && (
+                        <>
+                          <td className="py-3 text-right text-slate-600">{row.lab?.toLocaleString()}</td>
+                          <td className="py-3 text-right text-slate-600">{row.login?.toLocaleString()}</td>
+                          <td className="py-3 text-right text-slate-600">{row.course?.toLocaleString()}</td>
+                        </>
+                      )}
+                      {modalConfig.type === 'activeCourses' && (
+                        <>
+                          <td className="py-3 text-right text-slate-600">{row.duration?.toLocaleString()}</td>
+                          <td className="py-3 text-right text-slate-600">{row.visits?.toLocaleString()}</td>
+                        </>
+                      )}
+                      {modalConfig.type === 'activeLabs' && (
+                        <>
+                          <td className="py-3 text-right text-slate-600">{row.count?.toLocaleString()}</td>
+                          <td className="py-3 text-right text-slate-600">{row.duration?.toLocaleString()}</td>
+                        </>
+                      )}
+                      {modalConfig.type === 'leaderboardSchools' && (
+                        <>
+                          <td className="py-3 text-right text-slate-600">{row.duration}</td>
+                          <td className="py-3 text-right text-slate-600">{row.token}</td>
+                        </>
+                      )}
+                      {modalConfig.type === 'leaderboardCourses' && (
+                        <td className="py-3 text-right text-slate-600">{row.duration}</td>
+                      )}
+                      {modalConfig.type === 'leaderboardLabs' && (
+                        <td className="py-3 text-right text-slate-600">{row.duration}</td>
+                      )}
+                      {modalConfig.type === 'trendCourseDetails' && (
+                        <td className="py-3 text-right text-slate-600">{row.duration}</td>
+                      )}
+                      {modalConfig.type === 'trendLabDetails' && (
+                        <td className="py-3 text-right text-slate-600">{row.duration}</td>
+                      )}
+                      {modalConfig.type === 'trendNewSchoolsDetails' && (
+                        <>
+                          <td className="py-3 text-right text-slate-600">{row.accountCount}</td>
+                          <td className="py-3 text-right text-slate-600">{row.duration}</td>
+                        </>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 text-xs text-slate-500 text-right">
+              共 {modalConfig.data.length} 条记录
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
