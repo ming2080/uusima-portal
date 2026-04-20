@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "motion/react";
 import {
   AreaChart,
@@ -208,10 +208,13 @@ const CardHeader = ({ title, subtitle, icon: Icon, theme, s }: { title: string, 
 
 const BigScreenDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [tooltipContent, setTooltipContent] = useState("");
-  const [theme, setTheme] = useState<'obsidian' | 'light' | 'neon' | 'spatial'>('obsidian');
-  const [activeTab, setActiveTab] = useState<'business' | 'operations'>('business');
+  const [theme, setTheme] = useState<'obsidian' | 'light' | 'neon' | 'spatial'>('light');
+  const [activeTab, setActiveTab] = useState<'business' | 'operations'>(
+    location.state?.activeTab || 'business'
+  );
 
   const toggleTheme = () => {
     const themes: ('obsidian' | 'light' | 'neon' | 'spatial')[] = ['obsidian', 'light', 'neon', 'spatial'];
@@ -375,22 +378,14 @@ const BigScreenDashboard: React.FC = () => {
           {/* Tab Switcher */}
           <div className={`flex ${theme === 'light' ? 'bg-slate-100 border-slate-200' : 'bg-white/5 border-white/10'} p-1 rounded-2xl border ml-8`}>
             <button
-              onClick={() => setActiveTab('business')}
+              onClick={() => navigate('/platform-operations-dashboard')}
               className={`px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all ${
-                activeTab === 'business' 
-                  ? theme === 'light'
-                    ? 'bg-white text-blue-600 shadow-sm'
-                    : theme === 'neon'
-                    ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/20'
-                    : theme === 'spatial'
-                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
-                    : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow-lg shadow-violet-500/20' 
-                  : theme === 'light'
+                theme === 'light'
                   ? 'text-slate-500 hover:text-slate-700'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              运营情况
+              平台运营
             </button>
             <button
               onClick={() => setActiveTab('operations')}
@@ -411,14 +406,22 @@ const BigScreenDashboard: React.FC = () => {
               平台运维
             </button>
             <button
-              onClick={() => navigate('/platform-operations-dashboard')}
+              onClick={() => setActiveTab('business')}
               className={`px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all ${
-                theme === 'light'
+                activeTab === 'business' 
+                  ? theme === 'light'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : theme === 'neon'
+                    ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/20'
+                    : theme === 'spatial'
+                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
+                    : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow-lg shadow-violet-500/20' 
+                  : theme === 'light'
                   ? 'text-slate-500 hover:text-slate-700'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              平台运营
+              运营情况
             </button>
           </div>
         </div>

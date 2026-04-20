@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Menu,
@@ -20,6 +20,7 @@ import {
   Activity,
 } from "lucide-react";
 import { User } from "../types";
+import { AppConfigItem } from "./AppConfigManagement";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -27,6 +28,39 @@ interface LayoutProps {
   onLoginClick: () => void;
   onLogoutClick: () => void;
 }
+
+const defaultApps: AppConfigItem[] = [
+  {
+    id: '1',
+    title: 'UUSIMA·智慧教学实验平台',
+    code: 'aiot-app',
+    logo: 'https://api.iconify.design/logos:react.svg',
+    favicon: '',
+    loginBg: '',
+    showLoginText: true,
+    showOnHome: true,
+  },
+  {
+    id: '2',
+    title: 'AI智能辅助大模型',
+    code: 'subject-llm',
+    logo: 'https://api.iconify.design/logos:openai-icon.svg',
+    favicon: '',
+    loginBg: '',
+    showLoginText: true,
+    showOnHome: true,
+  },
+  {
+    id: '3',
+    title: '工业互联网平台',
+    code: 'industrial-internet',
+    logo: 'https://api.iconify.design/logos:docker.svg',
+    favicon: '',
+    loginBg: '',
+    showLoginText: true,
+    showOnHome: false,
+  }
+];
 
 const Layout: React.FC<LayoutProps> = ({
   children,
@@ -36,7 +70,23 @@ const Layout: React.FC<LayoutProps> = ({
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [language, setLanguage] = useState<"zh" | "en">("zh");
+  const [appConfigs, setAppConfigs] = useState<AppConfigItem[]>([]);
   const location = useLocation();
+
+  useEffect(() => {
+    const loadApps = () => {
+      const stored = localStorage.getItem('appConfigs');
+      if (stored) {
+        setAppConfigs(JSON.parse(stored));
+      } else {
+        setAppConfigs(defaultApps);
+        localStorage.setItem('appConfigs', JSON.stringify(defaultApps));
+      }
+    };
+    loadApps();
+    window.addEventListener('appConfigsChanged', loadApps);
+    return () => window.removeEventListener('appConfigsChanged', loadApps);
+  }, []);
 
   const navItems = [
     { label: "首页", path: "/", icon: null },
@@ -59,8 +109,15 @@ const Layout: React.FC<LayoutProps> = ({
       label: "配置管理",
       path: "/config",
       icon: <Settings className="w-5 h-5 mr-1.5" />,
+      roles: ["TEACHER", "ADMIN_SCHOOL", "ADMIN_PLATFORM"]
     },
   ];
+
+  const visibleNavItems = navItems.filter(item => {
+    if (!item.roles) return true;
+    if (!user) return false;
+    return item.roles.includes(user.role);
+  });
 
   const getRoleName = (role: string) => {
     switch (role) {
@@ -98,7 +155,7 @@ const Layout: React.FC<LayoutProps> = ({
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center space-x-4 flex-1">
-              {navItems.map((item) => {
+              {visibleNavItems.map((item) => {
                 const isActive = location.pathname === item.path;
                 return (
                   <Link
@@ -121,6 +178,23 @@ const Layout: React.FC<LayoutProps> = ({
 
             {/* Right Side: Action Block (Icons Only) */}
             <div className="hidden md:flex items-center gap-4 ml-auto pl-6 border-l border-gray-200 h-8 flex-shrink-0">
+              {/* Dynamic App Utility Links */}
+              <div className="flex items-center gap-1.5 border-r border-gray-200 pr-4">
+                {appConfigs.filter(app => app.showOnHome).map(app => (
+                  <a
+                    key={app.id}
+                    href="#"
+                    className="p-2 flex items-center justify-center hover:bg-slate-50 rounded-xl transition-all relative group/tooltip"
+                    aria-label={app.title}
+                  >
+                    <img src={app.logo} alt={app.title} className="w-5 h-5 object-contain transition-transform group-hover/tooltip:scale-110" />
+                    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] font-medium px-2 py-1 rounded-md opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-xl translate-y-1 group-hover/tooltip:translate-y-0">
+                      {app.title}
+                    </span>
+                  </a>
+                ))}
+              </div>
+
               {/* External Utility Links (Icons) */}
               <div className="flex items-center gap-1.5">
                 <Link
@@ -268,7 +342,7 @@ const Layout: React.FC<LayoutProps> = ({
         {isMobileMenuOpen && (
           <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-gray-100 animate-fade-in-down shadow-2xl absolute w-full z-50 max-h-[90vh] overflow-y-auto rounded-b-2xl">
             <div className="px-4 pt-4 pb-6 space-y-2">
-              {navItems.map((item) => (
+              {visibleNavItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}

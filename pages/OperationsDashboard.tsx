@@ -433,7 +433,7 @@ const OperationsDashboard: React.FC = () => {
           </button>
 
           <button 
-            onClick={() => navigate('/big-screen-dashboard')}
+            onClick={() => navigate('/platform-operations-dashboard')}
             className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-sm shadow-blue-500/20 transition-all"
           >
             大屏模式

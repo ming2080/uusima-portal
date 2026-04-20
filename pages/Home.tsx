@@ -29,11 +29,11 @@ const MarketingHome: React.FC = () => {
     {
       id: 2,
       title: "沉浸式虚拟实训室",
-      subtitle: "云端实训 · 即点即用",
-      description: "校内专属虚拟仿真环境，深度集成课程资源，提供一站式理实一体化实训体验。",
+      subtitle: "云端实验 · 即点即用",
+      description: "校内专属虚拟仿真环境，深度集成课程资源，提供一站式理实一体化实验大厅体验。",
       image: "https://images.unsplash.com/photo-1558494949-ef526b0042a0?q=80&w=1920&auto=format&fit=crop",
       link: "/labs",
-      cta: "进入实训中心",
+      cta: "进入实验大厅",
       color: "from-cyan-600 to-blue-900"
     },
     {
@@ -103,6 +103,7 @@ const MarketingHome: React.FC = () => {
         title: 'IoT 智能家居数据流实战', 
         description: '模拟传感器数据流向 MQTT 代理。使用 Node-RED 构建可视化数据处理流水线。', 
         category: '组合型',
+        courseName: 'AIoT系统实战',
         image: 'https://images.unsplash.com/photo-1557324232-b8917d3c3dcb?auto=format&fit=crop&q=80&w=800', 
         status: '运行中',
         icon: Cpu
@@ -112,6 +113,7 @@ const MarketingHome: React.FC = () => {
         title: 'Jupyter 交互式数据分析', 
         description: '在云端 Jupyter Notebook 环境中，使用 Python 进行数据清洗、探索性数据分析 (EDA) 与可视化。', 
         category: '容器型',
+        courseName: '数据分析基础',
         image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800', 
         status: '运行中',
         icon: BarChart3
@@ -121,6 +123,7 @@ const MarketingHome: React.FC = () => {
         title: '计算机视觉数据标注实战', 
         description: '使用专业数据标注工具，完成图像分类、目标检测 (Bounding Box) 和语义分割的数据准备工作。', 
         category: '平台型',
+        courseName: '计算机视觉',
         image: 'https://images.unsplash.com/photo-1561557944-6e7860d1a7eb?auto=format&fit=crop&q=80&w=800', 
         status: '运行中',
         icon: Eye
@@ -130,6 +133,7 @@ const MarketingHome: React.FC = () => {
         title: 'VSCode 云端深度学习开发', 
         description: '在预装 PyTorch/TensorFlow 的云端 VSCode 环境中，构建、训练并评估深度神经网络模型。', 
         category: '容器型',
+        courseName: '深度学习',
         image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800', 
         status: '运行中',
         icon: BrainCircuit
@@ -306,17 +310,15 @@ const MarketingHome: React.FC = () => {
                   </div>
                   <div className="p-5 flex-1 flex flex-col">
                     <div className="flex items-center justify-between text-xs mb-3">
-                      <span className="text-blue-500 font-medium bg-blue-50 px-2 py-1 rounded">{course.category}/基础</span>
+                      <span className="text-blue-500 font-medium bg-blue-50 px-2 py-1 rounded">实验环境:提供</span>
                       <span className="text-blue-500 font-medium">{course.enrolled} 人在学</span>
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-1">{course.title}</h3>
                     <p className="text-gray-500 text-sm mb-4 line-clamp-2 flex-1">{course.desc}</p>
                     <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                       <div className="flex items-center gap-1">
-                         {[1, 2, 3, 4, 5].map((star) => (
-                           <Star key={star} className="w-3.5 h-3.5 text-yellow-400 fill-current" />
-                         ))}
-                         <span className="text-xs text-gray-500 ml-1">5.0</span>
+                       <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                         <Monitor className="w-3.5 h-3.5 text-blue-500" />
+                         <span>提供专属实验环境</span>
                        </div>
                        <span className="font-medium text-sm text-blue-600 group-hover:text-blue-800 transition-colors flex items-center">
                          开始学习 <ArrowRight className="w-4 h-4 ml-1" />
@@ -334,11 +336,11 @@ const MarketingHome: React.FC = () => {
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-end mb-8 md:mb-10">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">实训中心</h2>
-              <p className="mt-2 text-sm md:text-base text-gray-500">校内专属虚拟仿真环境，深度集成课程资源，提供一站式理实一体化实训体验。</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">实验大厅</h2>
+              <p className="mt-2 text-sm md:text-base text-gray-500">校内专属虚拟仿真环境，深度集成课程资源，提供一站式理实一体化实操体验。</p>
             </div>
             <Link to="/labs" className="hidden md:flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors">
-              进入中心 <ArrowRight className="w-4 h-4 ml-1" />
+              进入大厅 <ArrowRight className="w-4 h-4 ml-1" />
             </Link>
           </div>
           
@@ -364,15 +366,17 @@ const MarketingHome: React.FC = () => {
                   <p className="text-gray-500 text-sm mb-4 line-clamp-2 flex-1">{lab.description}</p>
                   <div className="flex items-center gap-2 mb-4">
                     <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">{lab.category}</span>
-                    <span className="px-2 py-1 bg-green-50 text-green-600 rounded text-xs">{lab.status}</span>
+                    <span className="flex items-center gap-1 text-xs font-medium text-yellow-600 bg-yellow-50 px-2 py-1 rounded">
+                      <span>4.8</span>
+                      <Star className="w-3 h-3 fill-current" />
+                    </span>
                   </div>
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div className="flex items-center text-xs text-gray-500">
-                      <Star className="w-3.5 h-3.5 text-yellow-400 fill-current mr-1" />
-                      <span className="font-medium text-gray-700 mr-1">4.8</span>
-                      <span>(500+)</span>
+                    <div className="flex items-center text-xs text-gray-500 line-clamp-1 flex-1 pr-2">
+                      <BookOpen className="w-3.5 h-3.5 text-blue-500 mr-1.5 flex-shrink-0" />
+                      <span className="truncate">关联课程: {lab.courseName}</span>
                     </div>
-                    <span className="text-sm font-semibold text-blue-600 group-hover:text-blue-800 flex items-center transition-colors">
+                    <span className="text-sm font-semibold text-blue-600 group-hover:text-blue-800 flex items-center transition-colors flex-shrink-0">
                       进入实验 <ArrowRight className="w-4 h-4 ml-1" />
                     </span>
                   </div>
@@ -382,7 +386,7 @@ const MarketingHome: React.FC = () => {
           </div>
           <div className="mt-8 text-center md:hidden">
             <Link to="/labs" className="inline-flex items-center justify-center w-full px-6 py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-              进入中心 <ArrowRight className="w-4 h-4 ml-2" />
+              进入大厅 <ArrowRight className="w-4 h-4 ml-2" />
             </Link>
           </div>
         </div>

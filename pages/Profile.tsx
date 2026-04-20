@@ -93,7 +93,7 @@ const Profile: React.FC<Props> = ({ user }) => {
   };
 
   return (
-    <div className="max-w-[1440px] mx-auto">
+    <div>
       {/* Header Section with Banner */}
       <div className="relative bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden mb-8">
         {/* Banner Background */}

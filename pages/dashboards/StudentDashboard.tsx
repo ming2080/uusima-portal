@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Monitor, Award, Clock, TrendingUp, Calendar } from 'lucide-react';
+import { BookOpen, Monitor, Award, Clock, TrendingUp, Calendar, CheckSquare, ListTodo, FileText, BadgeCheck, GraduationCap, Building, NotebookTabs } from 'lucide-react';
 import { User } from '../../types';
 
 interface Props {
@@ -9,27 +9,76 @@ interface Props {
 
 const StudentDashboard: React.FC<Props> = ({ user }) => {
   return (
-    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">欢迎回来，{user.name} 同学！</h1>
-        <p className="text-gray-500 mt-1">今天是继续学习的好日子，看看你今天的学习任务吧。</p>
+    <div>
+      {/* New Hero Section */}
+      <div className="bg-gradient-to-r from-[#F0F5FF] to-[#E5EDFC] rounded-2xl p-6 mb-8 flex flex-col md:flex-row items-center justify-between shadow-sm relative overflow-hidden">
+        {/* Background Decoration Pattern */}
+        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none"></div>
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/4 w-64 h-64 bg-blue-200/40 blur-3xl rounded-full pointer-events-none"></div>
+
+        <div className="flex-1 relative z-10">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight">
+            Hi, 15306915030 同学 下午好 欢迎回来~
+          </h1>
+          <div className="flex flex-wrap gap-8 items-center text-sm">
+             <div className="flex items-center gap-2">
+                 <div className="w-8 h-8 rounded-full bg-indigo-400 text-white flex items-center justify-center shadow-sm">
+                   <GraduationCap className="w-4 h-4" />
+                 </div>
+                 <div>
+                    <p className="text-gray-500 text-xs mb-0.5">班级</p>
+                    <p className="font-semibold text-gray-800">试用账号班级</p>
+                 </div>
+             </div>
+             <div className="flex items-center gap-2">
+                 <div className="w-8 h-8 rounded-full bg-orange-300 text-white flex items-center justify-center shadow-sm">
+                   <Building className="w-4 h-4" />
+                 </div>
+                 <div>
+                    <p className="text-gray-500 text-xs mb-0.5">学院</p>
+                    <p className="font-semibold text-gray-800">试用账号管理学校</p>
+                 </div>
+             </div>
+             <div className="flex items-center gap-2">
+                 <div className="w-8 h-8 rounded-full bg-sky-400 text-white flex items-center justify-center shadow-sm">
+                   <NotebookTabs className="w-4 h-4" />
+                 </div>
+                 <div>
+                    <p className="text-gray-500 text-xs mb-0.5">专业</p>
+                    <p className="font-semibold text-gray-800">物联网 |</p>
+                 </div>
+             </div>
+          </div>
+        </div>
+        
+        <div className="relative z-10 hidden md:block shrink-0 mt-4 md:mt-0">
+          {/* Vector style illustration replacement for the graphic in right of header */}
+          <div className="w-32 h-32 relative flex items-center justify-center">
+            <div className="absolute w-28 h-28 bg-white/60 blur-xl rounded-full"></div>
+            <FileText className="w-20 h-20 text-blue-500 rotate-12 drop-shadow-lg" />
+            <BadgeCheck className="w-10 h-10 text-emerald-400 absolute bottom-2 right-2 drop-shadow-md bg-white rounded-full" />
+          </div>
+        </div>
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
         {[
-          { label: '在学课程', value: '4', icon: BookOpen, color: 'text-blue-600', bg: 'bg-blue-50' },
-          { label: '实验时长', value: '32h', icon: Monitor, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-          { label: '获得证书', value: '2', icon: Award, color: 'text-amber-600', bg: 'bg-amber-50' },
-          { label: '学习积分', value: '1,250', icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+          { label: '待办任务', value: '8', unit: '个', icon: ListTodo, color: 'text-violet-500' },
+          { label: '已完成任务', value: '1', unit: '个', icon: CheckSquare, color: 'text-blue-500' },
+          { label: '已用时长', value: '176', unit: '分钟', icon: Clock, color: 'text-cyan-500' },
+          { label: '剩余时长', value: '11,024', unit: '分钟', icon: Monitor, color: 'text-blue-600' },
+          { label: '实验报告数', value: '1', unit: '份', icon: FileText, color: 'text-indigo-500' },
         ].map((stat, idx) => (
-          <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mr-4 ${stat.bg} ${stat.color}`}>
-              <stat.icon className="w-6 h-6" />
+          <div key={idx} className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 relative overflow-hidden group">
+            <div className="relative z-10">
+              <p className="text-[13px] text-gray-500 font-medium mb-3">{stat.label}</p>
+              <p className="text-2xl font-bold text-gray-900 bg-clip-text text-transparent bg-gradient-to-br from-gray-900 to-gray-700">
+                {stat.value} <span className="text-xs font-normal text-gray-500 ml-0.5">{stat.unit}</span>
+              </p>
             </div>
-            <div>
-              <p className="text-sm text-gray-500 font-medium">{stat.label}</p>
-              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+            <div className={`absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 group-hover:opacity-20 transition-all duration-300 ${stat.color}`}>
+              <stat.icon className="w-20 h-20 rotate-12" />
             </div>
           </div>
         ))}
@@ -103,49 +152,25 @@ const StudentDashboard: React.FC<Props> = ({ user }) => {
           {/* Upcoming Exams/Tasks */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold text-gray-900">待办事项</h2>
+              <h2 className="text-lg font-bold text-gray-900">待考试任务</h2>
               <Link to="/my-home/exams" className="text-sm text-blue-600 hover:text-blue-700 font-medium">查看全部</Link>
             </div>
             <div className="space-y-4">
               {[
                 { title: '期中测试：计算机网络', time: '明天 14:00', type: '考试', color: 'text-red-600 bg-red-50' },
-                { title: '提交实验报告：Linux基础', time: '周五 23:59', type: '作业', color: 'text-amber-600 bg-amber-50' },
-                { title: '参加线上答疑：数据结构', time: '周六 10:00', type: '直播', color: 'text-purple-600 bg-purple-50' },
+                { title: '随堂测试：数据结构', time: '周五 10:00', type: '考试', color: 'text-red-600 bg-red-50' },
+                { title: '期末模拟考试', time: '下周一 09:00', type: '考试', color: 'text-red-600 bg-red-50' },
               ].map((task, idx) => (
                 <div key={idx} className="flex items-start">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 flex-shrink-0 ${task.color}`}>
                     <Calendar className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-900">{task.title}</h3>
+                    <h3 className="text-sm font-medium text-gray-900 line-clamp-1">{task.title}</h3>
                     <div className="flex items-center mt-1 text-xs text-gray-500">
                       <Clock className="w-3 h-3 mr-1" /> {task.time}
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Learning Path */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-6">学习路径</h2>
-            <div className="relative border-l-2 border-blue-100 ml-3 space-y-6">
-              {[
-                { title: 'C语言基础', status: 'completed' },
-                { title: '数据结构与算法', status: 'current' },
-                { title: '操作系统原理', status: 'upcoming' },
-                { title: '计算机网络', status: 'upcoming' },
-              ].map((step, idx) => (
-                <div key={idx} className="relative pl-6">
-                  <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 ${
-                    step.status === 'completed' ? 'bg-blue-500 border-blue-500' :
-                    step.status === 'current' ? 'bg-white border-blue-500' : 'bg-white border-gray-300'
-                  }`}></div>
-                  <h3 className={`text-sm font-medium ${
-                    step.status === 'completed' ? 'text-gray-500 line-through' :
-                    step.status === 'current' ? 'text-blue-600 font-bold' : 'text-gray-400'
-                  }`}>{step.title}</h3>
                 </div>
               ))}
             </div>

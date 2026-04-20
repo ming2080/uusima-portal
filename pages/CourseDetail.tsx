@@ -195,7 +195,7 @@ const CourseDetail: React.FC = () => {
 
             <button 
               onClick={() => navigate(-1)}
-              className="absolute top-0 right-0 flex items-center gap-2 px-5 py-2.5 bg-slate-100/80 backdrop-blur-sm text-slate-600 rounded-xl text-sm font-bold hover:bg-slate-200 transition-all active:scale-95"
+              className="absolute top-0 right-0 flex items-center gap-2 px-5 py-2.5 bg-slate-100/80 backdrop-blur-sm text-slate-600 rounded-xl text-sm font-bold hover:bg-slate-200 transition-all active:scale-95 cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" /> 返回
             </button>
@@ -223,7 +223,10 @@ const CourseDetail: React.FC = () => {
             <div className="text-right">
               <p className="text-slate-500 text-sm">已有 <span className="font-bold text-slate-900">{course.students}</span> 人在学</p>
             </div>
-            <button className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/30 flex items-center gap-2">
+            <button 
+              onClick={() => navigate(`/lab-session/${id || '1'}`)}
+              className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/30 flex items-center gap-2 cursor-pointer"
+            >
               <Play className="w-4 h-4 fill-current" /> 去学习
             </button>
             {/* Small book illustration placeholder */}
@@ -364,7 +367,10 @@ const CourseDetail: React.FC = () => {
                                   <Box className="w-3.5 h-3.5" />
                                 </div>
                               </div>
-                              <button className="px-4 py-1.5 bg-white border border-blue-200 text-blue-600 rounded-lg text-sm font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+                              <button 
+                                onClick={() => navigate(`/lab-session/${id || '1'}`)}
+                                className="px-4 py-1.5 bg-white border border-blue-200 text-blue-600 rounded-lg text-sm font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm cursor-pointer"
+                              >
                                 开始学习
                               </button>
                             </div>

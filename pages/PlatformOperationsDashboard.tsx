@@ -425,18 +425,36 @@ const PlatformOperationsDashboard: React.FC = () => {
       <header className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-4">
           <button 
-            onClick={() => navigate('/big-screen-dashboard')}
+            onClick={() => navigate('/operations-dashboard')}
             className="p-2 rounded-full hover:bg-slate-100 transition-colors text-slate-600"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-slate-900">
-              UUSIMA 平台运营数据看板
+            <h1 className="text-2xl font-black tracking-widest text-slate-900">
+              UUSIMA 运营决策大屏
             </h1>
-            <div className="text-xs text-slate-500 mt-0.5">
-              实时监测平台运营数据与使用情况
-            </div>
+          </div>
+          
+          {/* Tab Switcher */}
+          <div className="flex bg-slate-100 border-slate-200 p-1 rounded-2xl border ml-8">
+            <button
+              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all bg-white text-blue-600 shadow-sm"
+            >
+              平台运营
+            </button>
+            <button
+              onClick={() => navigate('/big-screen-dashboard', { state: { activeTab: 'operations' } })}
+              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-slate-500 hover:text-slate-700"
+            >
+              平台运维
+            </button>
+            <button
+              onClick={() => navigate('/big-screen-dashboard', { state: { activeTab: 'business' } })}
+              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-slate-500 hover:text-slate-700"
+            >
+              运营情况
+            </button>
           </div>
         </div>
         <div className="text-sm text-slate-500 flex items-center gap-2">
@@ -650,7 +668,7 @@ const PlatformOperationsDashboard: React.FC = () => {
               title="实验环境使用榜单"
               filter={labFilter}
               onFilterChange={setLabFilter}
-              onViewAll={() => handleViewAll('实验环境使用榜单', ['排名', '实验环境名称', '资源并发数', '累计运行时长'], getScaledData(fullData.activeLabs, labFilter), 'activeLabs')}
+              onViewAll={() => handleViewAll('实验环境使用榜单', ['排名', '实验环境名称', '累计运行时长'], getScaledData(fullData.activeLabs, labFilter), 'activeLabs')}
             >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={getScaledData(activityData.activeLabs, labFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
@@ -664,9 +682,6 @@ const PlatformOperationsDashboard: React.FC = () => {
                     isAnimationActive={false}
                   />
                   <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
-                  <Bar dataKey="count" name="资源并发数" fill="#06B6D4" barSize={12} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
-                    <LabelList dataKey="count" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
-                  </Bar>
                   <Bar dataKey="duration" name="累计运行时长" fill="#F97316" barSize={12} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
                     <LabelList dataKey="duration" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
                   </Bar>
@@ -762,7 +777,6 @@ const PlatformOperationsDashboard: React.FC = () => {
                       )}
                       {modalConfig.type === 'activeLabs' && (
                         <>
-                          <td className="py-3 text-right text-slate-600">{row.count?.toLocaleString()}</td>
                           <td className="py-3 text-right text-slate-600">{row.duration?.toLocaleString()}</td>
                         </>
                       )}

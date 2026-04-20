@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BookOpen,
   Award,
@@ -24,7 +24,11 @@ import {
   Paperclip,
   AlertCircle,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  UserPlus,
+  GraduationCap,
+  FileText,
+  AppWindow
 } from "lucide-react";
 import TaskManagement from "../components/TaskManagement";
 import QuestionManagement from "../components/QuestionManagement";
@@ -44,16 +48,29 @@ import ExperimentList from "../components/ExperimentList";
 import ImageManagement from "../components/ImageManagement";
 import PluginManagement from "../components/PluginManagement";
 import ExperimentInstance from "../components/ExperimentInstance";
+import AppConfigManagement from "../components/AppConfigManagement";
+import { User, UserRole } from "../types";
 
-const Config: React.FC = () => {
+interface ConfigProps {
+  user: User | null;
+}
+
+const Config: React.FC<ConfigProps> = ({ user }) => {
   const [activeModule, setActiveModule] = useState("course");
   const [activeSubModule, setActiveSubModule] = useState("course-list");
-  const [view, setView] = useState<"list" | "editor">("list");
+  const [view, setView] = useState<"list" | "editor" | "no-access">("list");
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
   const [courseToDelete, setCourseToDelete] = useState<string>("");
   const [publishedCourses, setPublishedCourses] = useState<number[]>([1, 2, 3, 4, 5, 6]);
   const [expandedModules, setExpandedModules] = useState<string[]>(["course"]);
+
+  useEffect(() => {
+    // If user is a student, they shouldn't even be here, but let's handle it
+    if (user?.role === UserRole.STUDENT) {
+      setView("no-access");
+    }
+  }, [user]);
 
   const toggleModule = (moduleId: string) => {
     setExpandedModules(prev => 
@@ -78,25 +95,25 @@ const Config: React.FC = () => {
     "网络安全实战",
   ];
 
-  const modules = [
+  const allModules = [
     {
       id: "course",
       label: "课程管理",
       icon: <BookOpen className="w-5 h-5" />,
-      subModules: [{ id: "course-list", label: "课程列表管理" }],
+      subModules: [{ id: "course-list", label: "课程列表管理", icon: <BookOpen className="w-4 h-4" /> }],
     },
     {
       id: "exam",
       label: "考试竞赛",
       icon: <Award className="w-5 h-5" />,
       subModules: [
-        { id: "task", label: "任务管理" },
-        { id: "question", label: "试题管理" },
-        { id: "question-bank", label: "题库管理" },
-        { id: "paper", label: "试卷管理" },
-        { id: "exam-manage", label: "考试管理" },
-        { id: "session", label: "场次管理" },
-        { id: "grading", label: "阅卷管理" },
+        { id: "task", label: "任务管理", icon: <CheckSquare className="w-4 h-4" /> },
+        { id: "question", label: "试题管理", icon: <FileText className="w-4 h-4" /> },
+        { id: "question-bank", label: "题库管理", icon: <Database className="w-4 h-4" /> },
+        { id: "paper", label: "试卷管理", icon: <LayoutTemplate className="w-4 h-4" /> },
+        { id: "exam-manage", label: "考试管理", icon: <Award className="w-4 h-4" /> },
+        { id: "session", label: "场次管理", icon: <Clock className="w-4 h-4" /> },
+        { id: "grading", label: "阅卷管理", icon: <Edit className="w-4 h-4" /> },
       ],
     },
     {
@@ -104,8 +121,8 @@ const Config: React.FC = () => {
       label: "自动评分",
       icon: <CheckSquare className="w-5 h-5" />,
       subModules: [
-        { id: "grade-rule", label: "评分规则" },
-        { id: "grade-template", label: "评分模板" },
+        { id: "grade-rule", label: "评分规则", icon: <Filter className="w-4 h-4" /> },
+        { id: "grade-template", label: "评分模板", icon: <LayoutTemplate className="w-4 h-4" /> },
       ],
     },
     {
@@ -113,9 +130,9 @@ const Config: React.FC = () => {
       label: "成员管理",
       icon: <Users className="w-5 h-5" />,
       subModules: [
-        { id: "class-manage", label: "班级管理" },
-        { id: "teacher-manage", label: "教师管理" },
-        { id: "student-manage", label: "学生管理" },
+        { id: "class-manage", label: "班级管理", icon: <Users className="w-4 h-4" /> },
+        { id: "teacher-manage", label: "教师管理", icon: <UserPlus className="w-4 h-4" /> },
+        { id: "student-manage", label: "学生管理", icon: <GraduationCap className="w-4 h-4" /> },
       ],
     },
     {
@@ -123,10 +140,10 @@ const Config: React.FC = () => {
       label: "实验管理",
       icon: <FlaskConical className="w-5 h-5" />,
       subModules: [
-        { id: "experiment-list", label: "实验列表" },
-        { id: "image-manage", label: "镜像管理" },
-        { id: "plugin-manage", label: "插件管理" },
-        { id: "experiment-instance", label: "实验实例" },
+        { id: "experiment-list", label: "实验列表", icon: <FlaskConical className="w-4 h-4" /> },
+        { id: "image-manage", label: "镜像管理", icon: <HardDrive className="w-4 h-4" /> },
+        { id: "plugin-manage", label: "插件管理", icon: <Settings className="w-4 h-4" /> },
+        { id: "experiment-instance", label: "实验实例", icon: <Database className="w-4 h-4" /> },
       ],
     },
     {
@@ -134,17 +151,37 @@ const Config: React.FC = () => {
       label: "磁盘管理",
       icon: <HardDrive className="w-5 h-5" />,
       subModules: [
-        { id: "disk-clean", label: "磁盘清理" },
-        { id: "clean-record", label: "清理记录" },
+        { id: "disk-clean", label: "磁盘清理", icon: <Trash2 className="w-4 h-4" /> },
+        { id: "clean-record", label: "清理记录", icon: <Clock className="w-4 h-4" /> },
       ],
     },
     {
       id: "resource",
       label: "资源管理",
       icon: <Database className="w-5 h-5" />,
-      subModules: [{ id: "data-annotation", label: "数据标注" }],
+      subModules: [{ id: "data-annotation", label: "数据标注", icon: <Edit className="w-4 h-4" /> }],
+    },
+    {
+      id: "system-config",
+      label: "系统配置",
+      icon: <Settings className="w-5 h-5" />,
+      subModules: [{ id: "app-config", label: "应用配置", icon: <AppWindow className="w-4 h-4" /> }],
     },
   ];
+
+  // Filter modules based on user role
+  const modules = React.useMemo(() => {
+    if (user?.role === UserRole.TEACHER) {
+      return allModules.filter(m => ["course", "exam", "auto-grade", "member"].includes(m.id));
+    }
+    if (user?.role === UserRole.ADMIN_SCHOOL) {
+      return allModules.filter(m => m.id !== "system-config");
+    }
+    if (user?.role === UserRole.ADMIN_PLATFORM) {
+      return allModules;
+    }
+    return [];
+  }, [user]);
 
   const renderCourseManagement = () => {
     return (
@@ -351,6 +388,20 @@ const Config: React.FC = () => {
   };
 
   const renderContent = () => {
+    if (view === "no-access") {
+      return (
+        <div className="flex flex-col items-center justify-center h-[60vh] text-slate-400 animate-fade-in">
+          <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-4 border border-red-100">
+            <AlertCircle className="w-10 h-10 text-red-500" />
+          </div>
+          <h3 className="text-lg font-medium text-slate-900 mb-2">暂无权限访问</h3>
+          <p className="text-sm text-slate-500">
+            对不起，您没有权限访问配置管理模块。
+          </p>
+        </div>
+      );
+    }
+
     if (activeModule === "course" && activeSubModule === "course-list") {
       return view === "list" ? (
         renderCourseManagement()
@@ -392,6 +443,12 @@ const Config: React.FC = () => {
         case "image-manage": return <ImageManagement />;
         case "plugin-manage": return <PluginManagement />;
         case "experiment-instance": return <ExperimentInstance />;
+      }
+    }
+
+    if (activeModule === "system-config") {
+      switch (activeSubModule) {
+        case "app-config": return <AppConfigManagement />;
       }
     }
 
@@ -453,10 +510,10 @@ const Config: React.FC = () => {
 
                     {isExpanded && module.subModules.length > 0 && (
                       <div className="ml-11 space-y-1 relative before:absolute before:left-0 before:top-0 before:bottom-4 before:w-px before:bg-slate-200 overflow-hidden animate-fade-in">
-                        {module.subModules.map((sub) => (
+                        {module.subModules.map((sub: any) => (
                           <div
                             key={sub.id}
-                            className={`relative px-3 py-2 text-sm rounded-lg cursor-pointer transition-all ${
+                            className={`relative px-3 py-2 text-sm rounded-lg cursor-pointer transition-all flex items-center gap-2 ${
                               activeSubModule === sub.id
                                 ? "text-blue-600 font-medium bg-blue-50/50"
                                 : "text-slate-500 hover:text-slate-900 hover:bg-slate-200/50"
@@ -470,6 +527,9 @@ const Config: React.FC = () => {
                             {activeSubModule === sub.id && (
                               <div className="absolute left-[-17px] top-1/2 -translate-y-1/2 w-[16px] h-px bg-blue-300"></div>
                             )}
+                            <div className={`${activeSubModule === sub.id ? "text-blue-600" : "text-slate-400"}`}>
+                              {sub.icon}
+                            </div>
                             {sub.label}
                           </div>
                         ))}

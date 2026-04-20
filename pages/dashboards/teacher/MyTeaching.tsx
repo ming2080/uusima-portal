@@ -54,7 +54,7 @@ const MyTeaching: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div>
       {/* Tabs */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
         <div className="border-b border-gray-100 px-6">

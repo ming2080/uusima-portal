@@ -42,7 +42,7 @@ const AIInteraction: React.FC = () => {
       <div className="h-14 bg-white border-b border-slate-200 flex items-center px-4 shrink-0">
         <button 
           onClick={() => navigate(-1)}
-          className="p-2 hover:bg-slate-100 rounded-lg transition-colors mr-2"
+          className="p-2 hover:bg-slate-100 rounded-lg transition-colors mr-2 cursor-pointer"
         >
           <ArrowLeft className="w-5 h-5 text-slate-600" />
         </button>

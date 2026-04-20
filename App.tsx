@@ -152,7 +152,7 @@ const AppContent: React.FC = () => {
                 element={<Exams onAccessTrigger={handleRestrictedAccess} />}
               />
               <Route path="/about" element={<About />} />
-              <Route path="/config" element={<Config />} />
+              <Route path="/config" element={<Config user={user} />} />
               {/* Redirect unknown routes within the layout to home */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
