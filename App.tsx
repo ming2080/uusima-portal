@@ -42,15 +42,23 @@ const AppContent: React.FC = () => {
     }
   };
 
-  const handleLogin = (role: UserRole, name: string) => {
+  const handleLogin = (roles: UserRole[], name: string) => {
     const newUser: User = {
       id: Date.now().toString(),
       name: name,
-      role: role,
+      role: roles[0],
+      roles: roles,
       avatar: "https://picsum.photos/100",
     };
     setUser(newUser);
     navigate('/my-home');
+  };
+
+  const handleSwitchRole = (newRole: UserRole) => {
+    if (user && user.roles?.includes(newRole)) {
+      setUser({ ...user, role: newRole });
+      navigate('/my-home'); // Redirect to home so the UI updates and resets to the default route for that role
+    }
   };
 
   const handleLogout = () => {
@@ -97,6 +105,7 @@ const AppContent: React.FC = () => {
             user={user}
             onLoginClick={() => navigate('/login')}
             onLogoutClick={handleLogout}
+            onSwitchRole={handleSwitchRole}
           >
             <Routes>
               <Route path="/" element={<Home user={user} />} />

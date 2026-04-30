@@ -154,7 +154,7 @@ const Labs: React.FC<LabsProps> = ({ user, onLoginRequest }) => {
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
-              云端实训中心
+              云端实验大厅
             </h1>
             <p className="text-lg md:text-xl text-blue-100 mb-8 leading-relaxed">
               无需配置本地环境，一键开启沉浸式实战演练。涵盖主流技术栈，配备 AI 智能助教，随时随地提升你的工程实践能力。

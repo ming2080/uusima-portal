@@ -4,21 +4,36 @@ import { Moon, Sun, BookOpen } from 'lucide-react';
 import { UserRole } from '../types';
 
 interface LoginProps {
-  onLogin: (role: UserRole, name: string) => void;
+  onLogin: (roles: UserRole[], name: string) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
-  const [role, setRole] = useState<UserRole>(UserRole.STUDENT);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState('');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onLogin(role, username || '张三');
-    navigate('/');
+    
+    const accountMap: Record<string, { password: string, name: string, roles: UserRole[] }> = {
+      '1': { password: '1', name: '学生张三', roles: [UserRole.STUDENT] },
+      '2': { password: '2', name: '王老师', roles: [UserRole.TEACHER] },
+      '3': { password: '3', name: '李校长', roles: [UserRole.ADMIN_SCHOOL] },
+      '4': { password: '4', name: '系统管理员', roles: [UserRole.ADMIN_PLATFORM] },
+      '5': { password: '5', name: '多角色测试人员', roles: [UserRole.STUDENT, UserRole.TEACHER, UserRole.ADMIN_SCHOOL] },
+    };
+
+    const account = accountMap[username];
+    if (account && account.password === password) {
+      setError('');
+      onLogin(account.roles, account.name);
+      navigate('/');
+    } else {
+      setError('账号或密码错误（测试提供: 1, 2, 3, 4, 5，密码同账号）');
+    }
   };
 
   const toggleTheme = () => {
@@ -89,28 +104,31 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               <p className={`mt-4 text-sm font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                 下一代数字化教学与实验一站式管理平台
               </p>
+              
+              <div className={`mt-6 p-4 rounded-xl text-xs space-y-2 ${
+                theme === 'dark' ? 'bg-slate-800/50 text-slate-300' : 'bg-blue-50 text-slate-600'
+              }`}>
+                <p className="font-semibold mb-1">测试账号说明 (账号与密码相同):</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>1: 学生体验账户</div>
+                  <div>2: 教师体验账户</div>
+                  <div>3: 校管体验账户</div>
+                  <div>4: 超管体验账户</div>
+                  <div className="col-span-2">5: 多角色集成账户 (学生+教师+校管)</div>
+                </div>
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Role Selection */}
-              <div className="flex gap-3 mb-8">
-                {[UserRole.STUDENT, UserRole.TEACHER, UserRole.ADMIN_SCHOOL, UserRole.ADMIN_PLATFORM].map((r) => (
-                  <button
-                    key={r}
-                    type="button"
-                    onClick={() => setRole(r)}
-                    className={`flex-1 py-2.5 text-sm rounded-full transition-all duration-300 ${
-                      role === r
-                        ? 'bg-blue-500 text-white font-medium shadow-md shadow-blue-500/30'
-                        : theme === 'dark'
-                          ? 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
-                          : 'bg-slate-50 text-slate-500 hover:text-slate-800 hover:bg-slate-100'
-                    }`}
-                  >
-                    {r === UserRole.STUDENT ? '学生' : r === UserRole.TEACHER ? '教师' : r === UserRole.ADMIN_SCHOOL ? '校管' : '超管'}
-                  </button>
-                ))}
-              </div>
+              {error && (
+                <div className={`p-3 text-sm rounded-lg border ${
+                  theme === 'dark' 
+                    ? 'bg-red-900/30 border-red-800 text-red-400' 
+                    : 'bg-red-50 border-red-200 text-red-600'
+                }`}>
+                  {error}
+                </div>
+              )}
 
               {/* Username Input */}
               <div>

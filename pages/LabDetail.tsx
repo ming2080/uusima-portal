@@ -109,7 +109,7 @@ const LabDetail: React.FC<LabDetailProps> = ({ user, onLoginRequest }) => {
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <nav className="flex text-sm text-gray-500 mb-6">
-            <button onClick={() => navigate('/labs')} className="hover:text-blue-600 transition-colors">实训中心</button>
+            <button onClick={() => navigate('/labs')} className="hover:text-blue-600 transition-colors">实验大厅</button>
             <ChevronRight className="w-4 h-4 mx-2" />
             <span className="text-gray-900 font-medium">{lab.title}</span>
           </nav>

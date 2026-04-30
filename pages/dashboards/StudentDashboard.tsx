@@ -127,7 +127,7 @@ const StudentDashboard: React.FC<Props> = ({ user }) => {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-bold text-gray-900">推荐实验</h2>
-              <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">进入实训中心</button>
+              <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">进入实验大厅</button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[

@@ -68,7 +68,7 @@ const SystemAdminDashboard: React.FC<Props> = ({ user }) => {
                 <tbody>
                   {[
                     { name: '计算机工程学院', users: '3,200', compute: '256 Core / 1TB', storage: '20 TB', status: '正常', color: 'text-emerald-600 bg-emerald-50' },
-                    { name: '人工智能实训中心', users: '1,500', compute: '512 Core / 2TB', storage: '50 TB', status: '高负载', color: 'text-amber-600 bg-amber-50' },
+                    { name: '人工智能实验大厅', users: '1,500', compute: '512 Core / 2TB', storage: '50 TB', status: '高负载', color: 'text-amber-600 bg-amber-50' },
                     { name: '大数据实验室', users: '2,100', compute: '128 Core / 512GB', storage: '30 TB', status: '正常', color: 'text-emerald-600 bg-emerald-50' },
                     { name: '物联网工程学院', users: '2,800', compute: '128 Core / 512GB', storage: '15 TB', status: '正常', color: 'text-emerald-600 bg-emerald-50' },
                   ].map((dept, idx) => (

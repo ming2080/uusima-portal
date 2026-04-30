@@ -41,70 +41,70 @@ const overallData = {
 
 const trendData = {
   courseLearning: [
-    { month: '9月', online: 12000, private: 22000 },
-    { month: '10月', online: 13000, private: 25000 },
-    { month: '11月', online: 14000, private: 28000 },
-    { month: '12月', online: 15000, private: 32000 },
+    { month: '9月', online: 452, private: 681 },
+    { month: '10月', online: 410, private: 720 },
+    { month: '11月', online: 538, private: 610 },
+    { month: '12月', online: 580, private: 765 },
   ],
   labDuration: [
-    { month: '9月', online: 15000, private: 35000 },
-    { month: '10月', online: 18000, private: 38000 },
-    { month: '11月', online: 20000, private: 42000 },
-    { month: '12月', online: 22000, private: 45000 },
+    { month: '9月', online: 520, private: 740 },
+    { month: '10月', online: 582, private: 695 },
+    { month: '11月', online: 615, private: 810 },
+    { month: '12月', online: 648, private: 785 },
   ],
   newSchools: [
-    { month: '9月', count: 12 },
-    { month: '10月', count: 15 },
-    { month: '11月', count: 18 },
-    { month: '12月', count: 22 },
+    { month: '9月', count: 3 },
+    { month: '10月', count: 5 },
+    { month: '11月', count: 4 },
+    { month: '12月', count: 7 },
   ]
 };
 
 const activityData = {
   activeSchools: [
-    { name: '深圳职业技术学院', lab: 6000, login: 7000, course: 5500 },
-    { name: '广州番禺职业技术学院', lab: 5500, login: 6500, course: 5000 },
-    { name: '广东轻工职业技术学院', lab: 5000, login: 6000, course: 4500 },
-    { name: '顺德职业技术学院', lab: 4500, login: 5500, course: 4000 },
-    { name: '广东科学技术职业学院', lab: 4000, login: 5000, course: 3500 },
+    { name: '深圳职业技术学院', lab: 25, login: 32, course: 18 },
+    { name: '广州番禺职业技术学院', lab: 21, login: 28, course: 15 },
+    { name: '广东轻工职业技术学院', lab: 18, login: 22, course: 13 },
+    { name: '顺德职业技术学院', lab: 15, login: 19, course: 11 },
+    { name: '广东科学技术职业学院', lab: 12, login: 16, course: 9 },
   ],
   activeCourses: [
-    { name: 'Python 程序设计', duration: 75000, visits: 40000 },
-    { name: '人工智能基础', duration: 65000, visits: 35000 },
-    { name: '物联网导论', duration: 55000, visits: 30000 },
-    { name: '大数据分析', duration: 45000, visits: 25000 },
-    { name: '工业互联网', duration: 35000, visits: 22000 },
+    { name: 'Python 程序设计', duration: 25, visits: 18 },
+    { name: '人工智能基础', duration: 21, visits: 15 },
+    { name: '物联网导论', duration: 18, visits: 12 },
+    { name: '大数据分析', duration: 15, visits: 9 },
+    { name: '工业互联网', duration: 11, visits: 7 },
   ],
   activeLabs: [
-    { name: 'AI 模型训练实验室', count: 9000, duration: 45000 },
-    { name: '物联网仿真实验室', count: 8000, duration: 40000 },
-    { name: '大数据处理实验室', count: 7000, duration: 35000 },
-    { name: '区块链开发实验室', count: 6000, duration: 28000 },
-    { name: '工业互联网实验室', count: 5000, duration: 25000 },
+    { name: 'AI 模型训练实验室', count: 18, duration: 25 },
+    { name: '物联网仿真实验室', count: 15, duration: 21 },
+    { name: '大数据处理实验室', count: 12, duration: 18 },
+    { name: '区块链开发实验室', count: 9, duration: 14 },
+    { name: '工业互联网实验室', count: 7, duration: 11 },
   ]
 };
 
 const leaderboardData = {
   schools: [
-    { rank: 1, name: '深圳职业技术学院', duration: '45,800 分钟', token: '125,000' },
-    { rank: 2, name: '广州番禺职业技术学院', duration: '41,200 分钟', token: '112,000' },
-    { rank: 3, name: '广东轻工职业技术学院', duration: '37,500 分钟', token: '98,000' },
-    { rank: 4, name: '顺德职业技术学院', duration: '33,800 分钟', token: '88,000' },
-    { rank: 5, name: '广东科学技术职业学院', duration: '30,200 分钟', token: '78,000' },
+    { rank: 1, name: '深圳职业技术学院', duration: '8,520 分钟', token: '9,850' },
+    { rank: 2, name: '广州番禺职业技术学院', duration: '7,845 分钟', token: '8,920' },
+    { rank: 3, name: '广东轻工职业技术学院', duration: '6,910 分钟', token: '7,540' },
+    { rank: 4, name: '顺德职业技术学院', duration: '5,840 分钟', token: '6,210' },
+    { rank: 5, name: '广东科学技术职业学院', duration: '4,520 分钟', token: '5,180' },
   ],
   courses: [
-    { rank: 1, name: 'Python 程序设计', duration: '68,000 分钟' },
-    { rank: 2, name: '人工智能基础', duration: '62,000 分钟' },
-    { rank: 3, name: '物联网导论', duration: '53,000 分钟' },
-    { rank: 4, name: '大数据分析', duration: '46,000 分钟' },
-    { rank: 5, name: '工业互联网', duration: '39,000 分钟' },
+    { rank: 1, name: 'Python 程序设计', duration: '9,120 分钟' },
+    { rank: 2, name: '人工智能基础', duration: '8,450 分钟' },
+    { rank: 3, name: '物联网导论', duration: '7,320 分钟' },
+    { rank: 4, name: '大数据分析', duration: '6,150 分钟' },
+    { rank: 5, name: '工业互联网', duration: '5,480 分钟' },
   ],
   labs: [
-    { rank: 1, name: 'AI 模型训练实验室', duration: '45,000 分钟' },
-    { rank: 2, name: '物联网仿真实验室', duration: '39,500 分钟' },
-    { rank: 3, name: '大数据处理实验室', duration: '35,000 分钟' },
-    { rank: 4, name: '区块链开发实验室', duration: '28,500 分钟' },
-    { rank: 5, name: '工业互联网实验室', duration: '23,800 分钟' },
+    { rank: 1, name: 'AI 模型训练实验室', duration: '9,850 分钟' },
+    { rank: 2, name: '物联网仿真实验室', duration: '8,620 分钟' },
+    { rank: 3, name: '大数据处理实验室', duration: '7,950 分钟' },
+    { rank: 4, name: '区块链开发实验室', duration: '6,480 分钟' },
+    { rank: 5, name: '工业互联网实验室', duration: '5,210 分钟' },
   ]
 };
 
@@ -113,31 +113,31 @@ const generateMockData = (type: string, count: number) => {
   return Array.from({ length: count }, (_, i) => {
     const rank = i + 1;
     if (type === 'activeSchools') {
-      return { rank, name: `测试院校 ${rank}`, lab: Math.floor(Math.random() * 5000) + 1000, login: Math.floor(Math.random() * 6000) + 1000, course: Math.floor(Math.random() * 4000) + 1000 };
+      return { rank, name: `测试院校 ${rank}`, lab: Math.floor(Math.random() * 12) + 2, login: Math.floor(Math.random() * 15) + 3, course: Math.floor(Math.random() * 8) + 2 };
     }
     if (type === 'activeCourses') {
-      return { rank, name: `测试课程 ${rank}`, duration: Math.floor(Math.random() * 50000) + 10000, visits: Math.floor(Math.random() * 30000) + 5000 };
+      return { rank, name: `测试课程 ${rank}`, duration: Math.floor(Math.random() * 15) + 2, visits: Math.floor(Math.random() * 8) + 1 };
     }
     if (type === 'activeLabs') {
-      return { rank, name: `测试实验环境 ${rank}`, count: Math.floor(Math.random() * 8000) + 1000, duration: Math.floor(Math.random() * 40000) + 5000 };
+      return { rank, name: `测试实验环境 ${rank}`, count: Math.floor(Math.random() * 8) + 1, duration: Math.floor(Math.random() * 15) + 2 };
     }
     if (type === 'leaderboardSchools') {
-      return { rank, name: `测试院校 ${rank}`, duration: `${(Math.floor(Math.random() * 40000) + 5000).toLocaleString()} 分钟`, token: (Math.floor(Math.random() * 100000) + 10000).toLocaleString() };
+      return { rank, name: `测试院校 ${rank}`, duration: `${(Math.floor(Math.random() * 3000) + 1500).toLocaleString()} 分钟`, token: (Math.floor(Math.random() * 4000) + 1000).toLocaleString() };
     }
     if (type === 'leaderboardCourses') {
-      return { rank, name: `测试课程 ${rank}`, duration: `${(Math.floor(Math.random() * 60000) + 10000).toLocaleString()} 分钟` };
+      return { rank, name: `测试课程 ${rank}`, duration: `${(Math.floor(Math.random() * 3500) + 1000).toLocaleString()} 分钟` };
     }
     if (type === 'leaderboardLabs') {
-      return { rank, name: `测试实验环境 ${rank}`, duration: `${(Math.floor(Math.random() * 40000) + 5000).toLocaleString()} 分钟` };
+      return { rank, name: `测试实验环境 ${rank}`, duration: `${(Math.floor(Math.random() * 3500) + 1000).toLocaleString()} 分钟` };
     }
     if (type === 'trendCourseDetails') {
-      return { rank, name: `测试院校 ${rank}`, duration: `${(Math.floor(Math.random() * 80000) + 10000).toLocaleString()} 分钟` };
+      return { rank, name: `测试院校 ${rank}`, duration: `${(Math.floor(Math.random() * 8000) + 1000).toLocaleString()} 分钟` };
     }
     if (type === 'trendLabDetails') {
-      return { rank, name: `测试院校 ${rank}`, duration: `${(Math.floor(Math.random() * 60000) + 5000).toLocaleString()} 分钟` };
+      return { rank, name: `测试院校 ${rank}`, duration: `${(Math.floor(Math.random() * 7000) + 500).toLocaleString()} 分钟` };
     }
     if (type === 'trendNewSchoolsDetails') {
-      return { rank, name: `新合作院校 ${rank}`, accountCount: Math.floor(Math.random() * 500) + 50, duration: `${(Math.floor(Math.random() * 20000) + 1000).toLocaleString()} 分钟` };
+      return { rank, name: `新合作院校 ${rank}`, accountCount: Math.floor(Math.random() * 50) + 5, duration: `${(Math.floor(Math.random() * 2000) + 100).toLocaleString()} 分钟` };
     }
     return { rank, name: `Item ${rank}` };
   });
@@ -155,6 +155,165 @@ const fullData = {
   trendNewSchoolsDetails: generateMockData('trendNewSchoolsDetails', 67),
 };
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-3 rounded-lg shadow-lg border border-slate-100 min-w-[150px]">
+        <p className="font-medium text-slate-800 mb-2">{label}</p>
+        {payload.map((entry: any, index: number) => (
+          <div key={index} className="flex items-center gap-2 text-sm mt-1">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+            <span className="text-slate-600">{entry.name}:</span>
+            <span className="font-medium text-slate-900">{entry.value.toLocaleString()}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
+const SectionTitle = ({ icon: Icon, title, color }: { icon: any, title: string, color: string }) => (
+  <div className="flex items-center gap-2 mb-4 mt-8 first:mt-0">
+    <Icon className={`w-5 h-5 ${color}`} />
+    <h2 className="text-lg font-bold text-slate-800">{title}</h2>
+  </div>
+);
+
+const StatCard = ({ title, value, subtext, icon: Icon, iconColor }: any) => (
+  <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between">
+    <div className="flex justify-between items-start mb-4">
+      <h3 className="text-sm font-medium text-slate-600">{title}</h3>
+      <div className={`p-2 rounded-lg bg-slate-50`}>
+        <Icon className={`w-5 h-5 ${iconColor}`} />
+      </div>
+    </div>
+    <div>
+      <div className="text-3xl font-bold text-slate-900 mb-2 font-din">{value.toLocaleString()}</div>
+      <div className="text-xs text-slate-500">{subtext}</div>
+    </div>
+  </div>
+);
+
+const ChartCard = ({ title, onViewAll, viewAllText = "查看全部", filter, onFilterChange, children }: any) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  return (
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col h-[320px]">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-base font-bold text-slate-800">{title}</h3>
+        <div className="flex items-center gap-3">
+          {onViewAll && (
+            <button 
+              onClick={onViewAll}
+              className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+            >
+              {viewAllText}
+            </button>
+          )}
+          {filter && onFilterChange ? (
+            <div className="relative">
+              <button 
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center gap-1 text-xs text-slate-600 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 hover:bg-slate-100 transition-colors"
+              >
+                {filter} <ChevronDown className="w-3 h-3" />
+              </button>
+              {isDropdownOpen && (
+                <>
+                  <div className="fixed inset-0 z-0" onClick={() => setIsDropdownOpen(false)}></div>
+                  <div className="absolute right-0 mt-1 w-24 bg-white border border-slate-200 rounded-md shadow-lg z-10">
+                    <div className="py-1">
+                      {['按日', '按周', '按月', '按年'].map(f => (
+                        <button 
+                          key={f}
+                          onClick={() => {
+                            onFilterChange(f);
+                            setIsDropdownOpen(false);
+                          }}
+                          className={`block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 ${filter === f ? 'bg-slate-50 font-medium' : ''}`}
+                        >
+                          {f}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            <div className="relative group">
+              <button className="flex items-center gap-1 text-xs text-slate-600 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 hover:bg-slate-100 transition-colors">
+                按月 <ChevronDown className="w-3 h-3" />
+              </button>
+              <div className="absolute right-0 mt-1 w-24 bg-white border border-slate-200 rounded-md shadow-lg hidden group-hover:block z-10">
+                <div className="py-1">
+                  <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">按日</button>
+                  <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">按周</button>
+                  <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 bg-slate-50 font-medium">按月</button>
+                  <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">按年</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="flex-1 w-full h-full min-h-0">
+        {children}
+      </div>
+    </div>
+  );
+};
+
+const LeaderboardCard = ({ title, icon: Icon, iconColor, columns, data, onViewAll }: any) => (
+  <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col">
+    <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center gap-2">
+        <Icon className={`w-5 h-5 ${iconColor}`} />
+        <h3 className="text-base font-bold text-slate-800">{title}</h3>
+      </div>
+      {onViewAll && (
+        <button 
+          onClick={onViewAll}
+          className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+        >
+          查看全部
+        </button>
+      )}
+    </div>
+    <div className="flex-1">
+      <table className="w-full text-sm text-left">
+        <thead className="text-xs text-slate-500 border-b border-slate-100">
+          <tr>
+            {columns.map((col: string, idx: number) => (
+              <th key={idx} className={`pb-3 font-medium ${idx > 0 ? 'text-right' : ''}`}>{col}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row: any, idx: number) => (
+            <tr key={idx} className="border-b border-slate-50 last:border-0">
+              <td className="py-3">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                  row.rank === 1 ? 'bg-amber-100 text-amber-600' :
+                  row.rank === 2 ? 'bg-slate-100 text-slate-600' :
+                  row.rank === 3 ? 'bg-orange-100 text-orange-600' :
+                  'bg-slate-50 text-slate-500'
+                }`}>
+                  {row.rank}
+                </div>
+              </td>
+              <td className="py-3 font-medium text-slate-700">{row.name}</td>
+              {row.duration && <td className="py-3 text-right text-slate-600">{row.duration}</td>}
+              {row.token && <td className="py-3 text-right text-slate-600">{row.token}</td>}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
 const PlatformOperationsDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -164,6 +323,10 @@ const PlatformOperationsDashboard: React.FC = () => {
   const [schoolFilter, setSchoolFilter] = useState('按日');
   const [courseFilter, setCourseFilter] = useState('按日');
   const [labFilter, setLabFilter] = useState('按日');
+  
+  const [trendCourseFilter, setTrendCourseFilter] = useState('按月');
+  const [trendLabFilter, setTrendLabFilter] = useState('按月');
+  const [trendNewSchoolsFilter, setTrendNewSchoolsFilter] = useState('按月');
 
   const [modalConfig, setModalConfig] = useState<{
     isOpen: boolean;
@@ -238,189 +401,42 @@ const PlatformOperationsDashboard: React.FC = () => {
     return scaled.map((item, index) => ({ ...item, rank: index + 1 }));
   };
 
-  const StickyTooltip = ({ active, payload, label, setHasHovered }: any) => {
-    const [lastData, setLastData] = useState<{ payload: any, label: any } | null>(null);
+  const getScaledTrendData = (data: any[], filter: string, isCount = false) => {
+    const multiplier = filter === '按日' ? 0.03 : filter === '按周' ? 0.23 : filter === '按月' ? 1 : 12;
+    const labelsMap: Record<string, string[]> = {
+      '按日': ['1日', '2日', '3日', '4日', '5日', '6日', '7日'],
+      '按周': ['第1周', '第2周', '第3周', '第4周', '第5周'],
+      '按月': ['9月', '10月', '11月', '12月'],
+      '按年': ['2021年', '2022年', '2023年', '2024年'],
+    };
+    
+    const targetLength = isCount ? 7 : labelsMap[filter].length; 
+    const labels = labelsMap[filter] || labelsMap['按月'];
 
-    useEffect(() => {
-      if (active && payload && payload.length) {
-        setLastData({ payload, label });
-        if (setHasHovered) setHasHovered(true);
+    return Array.from({ length: labels.length }, (_, i) => {
+      // try to get base seed from original if it exists
+      const baseItem = data[i % data.length] || data[0]; 
+      const newItem: any = { month: labels[i] }; // Using 'month' as the generic key name for the XAxis 
+      
+      const seedStr = (baseItem.month || i.toString()) + filter;
+      let hash = 0;
+      for (let j = 0; j < seedStr.length; j++) {
+          hash = ((hash << 5) - hash) + seedStr.charCodeAt(j);
+          hash |= 0;
       }
-    }, [active, payload, label, setHasHovered]);
+      const randomFactor = 0.5 + (Math.abs(hash % 100) / 100); 
 
-    if (!lastData) return null;
-
-    return (
-      <div className="bg-white p-3 rounded-lg shadow-lg border border-slate-100 min-w-[150px]">
-        <p className="font-medium text-slate-800 mb-2">{lastData.label}</p>
-        {lastData.payload.map((entry: any, index: number) => (
-          <div key={index} className="flex items-center gap-2 text-sm mt-1">
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-            <span className="text-slate-600">{entry.name}:</span>
-            <span className="font-medium text-slate-900">{entry.value.toLocaleString()}</span>
-          </div>
-        ))}
-      </div>
-    );
+      for (const key in baseItem) {
+        if (typeof baseItem[key] === 'number') {
+          newItem[key] = Math.floor(baseItem[key] * multiplier * randomFactor);
+        }
+      }
+      return newItem;
+    });
   };
-
-  const [hoveredCharts, setHoveredCharts] = useState<Record<string, boolean>>({});
-
-  const SectionTitle = ({ icon: Icon, title, color }: { icon: any, title: string, color: string }) => (
-    <div className="flex items-center gap-2 mb-4 mt-8 first:mt-0">
-      <Icon className={`w-5 h-5 ${color}`} />
-      <h2 className="text-lg font-bold text-slate-800">{title}</h2>
-    </div>
-  );
-
-  const StatCard = ({ title, value, subtext, icon: Icon, iconColor }: any) => (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between">
-      <div className="flex justify-between items-start mb-4">
-        <h3 className="text-sm font-medium text-slate-600">{title}</h3>
-        <div className={`p-2 rounded-lg bg-slate-50`}>
-          <Icon className={`w-5 h-5 ${iconColor}`} />
-        </div>
-      </div>
-      <div>
-        <div className="text-3xl font-bold text-slate-900 mb-2 font-din">{value.toLocaleString()}</div>
-        <div className="text-xs text-slate-500">{subtext}</div>
-      </div>
-    </div>
-  );
-
-  const ChartCard = ({ title, onViewAll, viewAllText = "查看全部", filter, onFilterChange, children }: any) => {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-    return (
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col h-[320px]">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-base font-bold text-slate-800">{title}</h3>
-          <div className="flex items-center gap-3">
-            {onViewAll && (
-              <button 
-                onClick={onViewAll}
-                className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors"
-              >
-                {viewAllText}
-              </button>
-            )}
-            {filter && onFilterChange ? (
-              <div className="relative">
-                <button 
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center gap-1 text-xs text-slate-600 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 hover:bg-slate-100 transition-colors"
-                >
-                  {filter} <ChevronDown className="w-3 h-3" />
-                </button>
-                {isDropdownOpen && (
-                  <>
-                    <div className="fixed inset-0 z-0" onClick={() => setIsDropdownOpen(false)}></div>
-                    <div className="absolute right-0 mt-1 w-24 bg-white border border-slate-200 rounded-md shadow-lg z-10">
-                      <div className="py-1">
-                        {['按日', '按周', '按月', '按年'].map(f => (
-                          <button 
-                            key={f}
-                            onClick={() => {
-                              onFilterChange(f);
-                              setIsDropdownOpen(false);
-                            }}
-                            className={`block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 ${filter === f ? 'bg-slate-50 font-medium' : ''}`}
-                          >
-                            {f}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            ) : (
-              <div className="relative group">
-                <button className="flex items-center gap-1 text-xs text-slate-600 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 hover:bg-slate-100 transition-colors">
-                  按月 <ChevronDown className="w-3 h-3" />
-                </button>
-                <div className="absolute right-0 mt-1 w-24 bg-white border border-slate-200 rounded-md shadow-lg hidden group-hover:block z-10">
-                  <div className="py-1">
-                    <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">按日</button>
-                    <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">按周</button>
-                    <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 bg-slate-50 font-medium">按月</button>
-                    <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">按年</button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="flex-1 w-full h-full min-h-0">
-          {children}
-        </div>
-      </div>
-    );
-  };
-
-  const LeaderboardCard = ({ title, icon: Icon, iconColor, columns, data, onViewAll }: any) => (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-2">
-          <Icon className={`w-5 h-5 ${iconColor}`} />
-          <h3 className="text-base font-bold text-slate-800">{title}</h3>
-        </div>
-        {onViewAll && (
-          <button 
-            onClick={onViewAll}
-            className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors"
-          >
-            查看全部
-          </button>
-        )}
-      </div>
-      <div className="flex-1">
-        <table className="w-full text-sm text-left">
-          <thead className="text-xs text-slate-500 border-b border-slate-100">
-            <tr>
-              {columns.map((col: string, idx: number) => (
-                <th key={idx} className={`pb-3 font-medium ${idx > 0 ? 'text-right' : ''}`}>{col}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row: any, idx: number) => (
-              <tr key={idx} className="border-b border-slate-50 last:border-0">
-                <td className="py-3">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                    row.rank === 1 ? 'bg-amber-100 text-amber-600' :
-                    row.rank === 2 ? 'bg-slate-100 text-slate-600' :
-                    row.rank === 3 ? 'bg-orange-100 text-orange-600' :
-                    'bg-slate-50 text-slate-500'
-                  }`}>
-                    {row.rank}
-                  </div>
-                </td>
-                <td className="py-3 font-medium text-slate-700">{row.name}</td>
-                {row.duration && <td className="py-3 text-right text-slate-600">{row.duration}</td>}
-                {row.token && <td className="py-3 text-right text-slate-600">{row.token}</td>}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans overflow-y-auto pb-10">
-      <style>{`
-        .sticky-tooltip-wrapper {
-          visibility: visible !important;
-          opacity: 1 !important;
-          transition: transform 0.2s ease;
-          z-index: 50;
-        }
-        .sticky-tooltip-wrapper.hidden-initial {
-          visibility: hidden !important;
-          opacity: 0 !important;
-        }
-      `}</style>
       {/* Header */}
       <header className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-4">
@@ -519,11 +535,13 @@ const PlatformOperationsDashboard: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <ChartCard 
               title="课程学习时长"
+              filter={trendCourseFilter}
+              onFilterChange={setTrendCourseFilter}
               viewAllText="查看详情"
               onViewAll={() => handleViewAll('课程学习时长排行', ['排名', '学校名称', '累计学习时长'], fullData.trendCourseDetails, 'trendCourseDetails')}
             >
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={trendData.courseLearning} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <AreaChart data={getScaledTrendData(trendData.courseLearning, trendCourseFilter)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorPrivateCourse" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#34D399" stopOpacity={0.3}/>
@@ -551,11 +569,13 @@ const PlatformOperationsDashboard: React.FC = () => {
             
             <ChartCard 
               title="实验使用时长"
+              filter={trendLabFilter}
+              onFilterChange={setTrendLabFilter}
               viewAllText="查看详情"
               onViewAll={() => handleViewAll('实验环境使用时长排行', ['排名', '学校名称', '累计使用时长'], fullData.trendLabDetails, 'trendLabDetails')}
             >
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={trendData.labDuration} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <AreaChart data={getScaledTrendData(trendData.labDuration, trendLabFilter)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorPrivateLab" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.3}/>
@@ -583,11 +603,13 @@ const PlatformOperationsDashboard: React.FC = () => {
 
             <ChartCard 
               title="新开通学校数"
+              filter={trendNewSchoolsFilter}
+              onFilterChange={setTrendNewSchoolsFilter}
               viewAllText="查看详情"
               onViewAll={() => handleViewAll('新开通学校详情', ['序号', '学校名称', '账号数', '累计时长'], fullData.trendNewSchoolsDetails, 'trendNewSchoolsDetails')}
             >
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={trendData.newSchools} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <BarChart data={getScaledTrendData(trendData.newSchools, trendNewSchoolsFilter, true)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                   <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} dy={10} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} />
@@ -617,8 +639,7 @@ const PlatformOperationsDashboard: React.FC = () => {
                   <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
                   <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={100} />
                   <RechartsTooltip 
-                    content={<StickyTooltip setHasHovered={(v: boolean) => setHoveredCharts(prev => ({...prev, activeSchools: v}))} />}
-                    wrapperClassName={hoveredCharts['activeSchools'] ? "sticky-tooltip-wrapper" : "sticky-tooltip-wrapper hidden-initial"}
+                    content={<CustomTooltip />}
                     cursor={{ fill: '#F1F5F9' }} 
                     isAnimationActive={false}
                   />
@@ -648,8 +669,7 @@ const PlatformOperationsDashboard: React.FC = () => {
                   <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
                   <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={80} />
                   <RechartsTooltip 
-                    content={<StickyTooltip setHasHovered={(v: boolean) => setHoveredCharts(prev => ({...prev, activeCourses: v}))} />}
-                    wrapperClassName={hoveredCharts['activeCourses'] ? "sticky-tooltip-wrapper" : "sticky-tooltip-wrapper hidden-initial"}
+                    content={<CustomTooltip />}
                     cursor={{ fill: '#F1F5F9' }} 
                     isAnimationActive={false}
                   />
@@ -676,8 +696,7 @@ const PlatformOperationsDashboard: React.FC = () => {
                   <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
                   <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={100} />
                   <RechartsTooltip 
-                    content={<StickyTooltip setHasHovered={(v: boolean) => setHoveredCharts(prev => ({...prev, activeLabs: v}))} />}
-                    wrapperClassName={hoveredCharts['activeLabs'] ? "sticky-tooltip-wrapper" : "sticky-tooltip-wrapper hidden-initial"}
+                    content={<CustomTooltip />}
                     cursor={{ fill: '#F1F5F9' }} 
                     isAnimationActive={false}
                   />
@@ -691,12 +710,12 @@ const PlatformOperationsDashboard: React.FC = () => {
           </div>
         </section>
 
-        {/* Section 4: 核心业务排行 */}
+        {/* Section 4: 业务总榜 */}
         <section>
-          <SectionTitle icon={Award} title="核心业务排行" color="text-amber-500" />
+          <SectionTitle icon={Award} title="业务总榜" color="text-amber-500" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <LeaderboardCard 
-              title="院校资源用量排行 Top5" 
+              title="院校资源用量榜" 
               icon={School} 
               iconColor="text-blue-500"
               columns={['排名', '学校名称', '累计实训时长', 'AI 算力消耗']}
@@ -704,7 +723,7 @@ const PlatformOperationsDashboard: React.FC = () => {
               onViewAll={() => handleViewAll('院校资源用量排行', ['排名', '学校名称', '累计实训时长', 'AI 算力消耗'], fullData.leaderboardSchools, 'leaderboardSchools')}
             />
             <LeaderboardCard 
-              title="热门课程学时榜单 Top5" 
+              title="热门课程榜" 
               icon={BookOpen} 
               iconColor="text-emerald-500"
               columns={['排名', '课程名称', '累计学时']}
@@ -712,7 +731,7 @@ const PlatformOperationsDashboard: React.FC = () => {
               onViewAll={() => handleViewAll('热门课程学时榜单', ['排名', '课程名称', '累计学时'], fullData.leaderboardCourses, 'leaderboardCourses')}
             />
             <LeaderboardCard 
-              title="实训环境调用排行 Top5" 
+              title="实验环境榜" 
               icon={Wrench} 
               iconColor="text-purple-500"
               columns={['排名', '实验环境名称', '环境运行总时长']}

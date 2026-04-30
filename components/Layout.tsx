@@ -27,6 +27,7 @@ interface LayoutProps {
   user: User | null;
   onLoginClick: () => void;
   onLogoutClick: () => void;
+  onSwitchRole?: (role: any) => void;
 }
 
 const defaultApps: AppConfigItem[] = [
@@ -67,6 +68,7 @@ const Layout: React.FC<LayoutProps> = ({
   user,
   onLoginClick,
   onLogoutClick,
+  onSwitchRole,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [language, setLanguage] = useState<"zh" | "en">("zh");
@@ -96,7 +98,7 @@ const Layout: React.FC<LayoutProps> = ({
       icon: <GraduationCap className="w-5 h-5 mr-1.5" />,
     },
     {
-      label: "实训中心",
+      label: "实验大厅",
       path: "/labs",
       icon: <Beaker className="w-5 h-5 mr-1.5" />,
     },
@@ -219,7 +221,7 @@ const Layout: React.FC<LayoutProps> = ({
                   </span>
                 </button>
                 <a
-                  href="https://aistudio.google.com/"
+                  href="https://agi.nlecloud.com/"
                   target="_blank"
                   rel="noreferrer"
                   className="p-2.5 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all relative group/tooltip"
@@ -277,7 +279,7 @@ const Layout: React.FC<LayoutProps> = ({
                         )}
                       </div>
                       {/* User Tooltip */}
-                      <div className="absolute top-full right-0 mt-3 w-48 bg-white text-gray-800 p-3 rounded-xl opacity-0 invisible group-hover/user:opacity-100 group-hover/user:visible transition-all pointer-events-none shadow-xl border border-gray-100 z-50 transform translate-y-2 group-hover/user:translate-y-0">
+                      <div className="absolute top-full right-0 mt-3 w-48 bg-white text-gray-800 p-3 rounded-xl opacity-0 invisible group-hover/user:opacity-100 group-hover/user:visible transition-all shadow-xl border border-gray-100 z-50 transform translate-y-2 group-hover/user:translate-y-0">
                         <div className="flex items-center gap-3 mb-2 pb-2 border-b border-gray-50">
                           <div className="h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-xs">
                             {user.name.charAt(0)}
@@ -291,7 +293,23 @@ const Layout: React.FC<LayoutProps> = ({
                             </p>
                           </div>
                         </div>
-                        <div className="text-xs text-gray-400 text-center">
+                        {user.roles && user.roles.length > 1 ? (
+                          <div className="mb-2 pb-2 border-b border-gray-50">
+                            <p className="text-[10px] text-gray-400 font-semibold mb-1 uppercase tracking-wider">切换身份</p>
+                            <div className="space-y-1">
+                              {user.roles.filter(r => r !== user.role).map((role) => (
+                                <button
+                                  key={role}
+                                  onClick={() => onSwitchRole?.(role)}
+                                  className="w-full text-left px-2 py-1.5 text-xs text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                                >
+                                  {getRoleName(role)}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ) : null}
+                        <div className="text-xs text-gray-400 text-center pointer-events-none">
                           已登录
                         </div>
                       </div>
@@ -360,30 +378,51 @@ const Layout: React.FC<LayoutProps> = ({
 
               <div className="pt-6 mt-4 border-t border-gray-100">
                 {user ? (
-                  <div className="flex items-center justify-between px-2 bg-gray-50 p-3 rounded-xl">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-gray-200 shadow-sm">
-                        <UserIcon className="w-6 h-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <div className="font-bold text-gray-900">
-                          {user.name}
+                  <div className="bg-gray-50 p-3 rounded-xl flex flex-col gap-3">
+                    <div className="flex items-center justify-between px-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-gray-200 shadow-sm">
+                          <UserIcon className="w-6 h-6 text-blue-600" />
                         </div>
-                        <div className="text-xs text-blue-600 bg-blue-100 px-1.5 rounded inline-block">
-                          {getRoleName(user.role)}
+                        <div>
+                          <div className="font-bold text-gray-900">
+                            {user.name}
+                          </div>
+                          <div className="text-xs text-blue-600 bg-blue-100 px-1.5 rounded inline-block">
+                            {getRoleName(user.role)}
+                          </div>
                         </div>
                       </div>
+                      <button
+                        onClick={() => {
+                          onLogoutClick();
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="flex items-center text-red-600 bg-white border border-red-100 px-3 py-1.5 rounded-lg text-sm font-medium shadow-sm hover:bg-red-50"
+                      >
+                        <LogOut className="w-4 h-4 mr-1" />
+                        退出
+                      </button>
                     </div>
-                    <button
-                      onClick={() => {
-                        onLogoutClick();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="flex items-center text-red-600 bg-white border border-red-100 px-3 py-1.5 rounded-lg text-sm font-medium shadow-sm hover:bg-red-50"
-                    >
-                      <LogOut className="w-4 h-4 mr-1" />
-                      退出
-                    </button>
+                    {user.roles && user.roles.length > 1 && (
+                      <div className="border-t border-gray-200 pt-3 mt-2 px-2">
+                        <p className="text-[10px] text-gray-500 font-semibold mb-2 uppercase tracking-wider">切换身份</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {user.roles.filter(r => r !== user.role).map((role) => (
+                            <button
+                              key={role}
+                              onClick={() => {
+                                onSwitchRole?.(role);
+                                setIsMobileMenuOpen(false);
+                              }}
+                              className="text-left px-3 py-2 text-sm text-slate-700 bg-white border border-gray-200 rounded-lg shadow-sm hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-colors"
+                            >
+                              {getRoleName(role)}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <button
@@ -442,7 +481,7 @@ const Layout: React.FC<LayoutProps> = ({
                     to="/labs"
                     className="hover:text-white hover:translate-x-1 transition-transform inline-block"
                   >
-                    实训中心
+                    实验大厅
                   </Link>
                 </li>
                 <li>
