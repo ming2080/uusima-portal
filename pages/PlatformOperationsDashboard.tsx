@@ -547,7 +547,7 @@ const PlatformOperationsDashboard: React.FC = () => {
               iconColor="text-orange-500"
             />
             <StatCard 
-              title="智能体调用次数" 
+              title="AI 技能助手调用次数" 
               value={overallData.agentInvocations.total} 
               subtext={`软件: ${overallData.agentInvocations.software.toLocaleString()} | 硬件: ${overallData.agentInvocations.hardware.toLocaleString()}`}
               icon={Cpu}
