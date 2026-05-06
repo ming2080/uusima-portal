@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   AreaChart,
   Area,
@@ -86,11 +86,11 @@ const activityData = {
 
 const leaderboardData = {
   schools: [
-    { rank: 1, name: '深圳职业技术学院', duration: '8,520 分钟', token: '9,850' },
-    { rank: 2, name: '广州番禺职业技术学院', duration: '7,845 分钟', token: '8,920' },
-    { rank: 3, name: '广东轻工职业技术学院', duration: '6,910 分钟', token: '7,540' },
-    { rank: 4, name: '顺德职业技术学院', duration: '5,840 分钟', token: '6,210' },
-    { rank: 5, name: '广东科学技术职业学院', duration: '4,520 分钟', token: '5,180' },
+    { rank: 1, name: '深圳职业技术学院', duration: '8,520 分钟', courseDuration: '12,500 分钟', token: '9,850' },
+    { rank: 2, name: '广州番禺职业技术学院', duration: '7,845 分钟', courseDuration: '11,200 分钟', token: '8,920' },
+    { rank: 3, name: '广东轻工职业技术学院', duration: '6,910 分钟', courseDuration: '9,800 分钟', token: '7,540' },
+    { rank: 4, name: '顺德职业技术学院', duration: '5,840 分钟', courseDuration: '8,600 分钟', token: '6,210' },
+    { rank: 5, name: '广东科学技术职业学院', duration: '4,520 分钟', courseDuration: '7,500 分钟', token: '5,180' },
   ],
   courses: [
     { rank: 1, name: 'Python 程序设计', duration: '9,120 分钟' },
@@ -108,36 +108,69 @@ const leaderboardData = {
   ]
 };
 
+const realSchools = [
+  '深圳职业技术大学', '金华职业技术大学', '陕西工业职业技术学院', '淄博职业学院', '无锡职业技术学院',
+  '常州信息职业技术学院', '广东轻工职业技术大学', '重庆工业职业技术学院', '浙江金融职业学院', '苏州工业园区职业技术学院',
+  '芜湖职业技术学院', '北京电子科技职业学院', '广州番禺职业技术学院', '长沙民政职业技术学院', '重庆电子工程职业学院',
+  '广东机电职业技术学院', '扬州工业职业技术学院', '常州机电职业技术学院', '宁波职业技术学院', '襄阳职业技术学院',
+  '济南职业学院', '武汉职业技术学院', '承德石油高等专科学校', '成都航空职业技术学院', '九江职业技术学院',
+  '兰州石化职业技术大学', '柳州职业技术学院', '哈尔滨职业技术学院', '四川建筑职业技术学院', '江苏农林职业技术学院',
+  '郑州铁路职业技术学院', '黄河水利职业技术学院', '日照职业技术学院', '威海职业学院', '杭州职业技术学院',
+  '温州职业技术学院', '重庆机电职业技术大学', '陕西铁路工程职业技术学院', '四川工程职业技术学院', '贵州交通职业技术学院',
+  '河北工业职业技术大学', '内蒙古机电职业技术学院', '辽宁省交通高等专科学校', '长春汽车职业技术大学', '上海城市管理职业技术学院',
+  '南京工业职业技术大学', '福建船政交通职业学院', '江西应用技术职业学院', '山东商业职业技术学院', '河南工业职业技术学院'
+];
+
+const realCourses = [
+  'Python 程序设计', '人工智能基础', '机器学习与数学基础', '深度学习及其应用', '计算机视觉与图像处理', '自然语言处理',
+  '物联网导论', '传感器与检测技术', '单片机原理与应用', '嵌入式系统开发', '无线传感网技术', 'RFID与物联网应用',
+  '大数据导论', 'Hadoop 大数据开发', 'Spark 大数据分析', '数据挖掘与分析', '数据可视化技术', 'Python 数据分析',
+  '工业互联网导论', '工业控制网络', '工业数据采集', '边缘计算应用', '工业互联网平台开发', '工业软件原理与应用',
+  'C语言程序设计', 'Java 核心技术', 'Web 前端开发', '数据库原理与应用', 'Linux 操作系统', '软件工程'
+];
+
+const realLabs = [
+  'AI 面部识别实验', 'YOLO 目标检测实验', 'CNN 图像分类实验', 'RNN 情感分析实验', '智能语音识别实验', '自动驾驶仿真实验',
+  'STM32 嵌入式开发实验', 'ZigBee 无线组网实验', 'LoRa 远距离通信实验', 'NB-IoT 物联网接入实验', '智能家居控制系统实验', '智慧农业环境监测实验',
+  'Hadoop 集群搭建实验', 'Spark 数据流处理实验', '电商用户行为分析实验', '日志数据挖掘实验', '大屏数据可视化实验', '分布式存储调优实验',
+  'PLC 综合控制实验', 'SCADA 系统组态实验', '工业控制协议解析实验', '柔性生产线仿真实验', '数字孪生工厂系统实验', '边缘计算网关配置实验',
+  'Python 基础语法实验', 'Java 面向对象实验', 'MySQL 性能优化实验', 'Web 响应式布局实验', 'Linux 网络配置实验', 'Docker 容器部署实验'
+];
+
 // Generate mock data for "View All" modals
 const generateMockData = (type: string, count: number) => {
   return Array.from({ length: count }, (_, i) => {
     const rank = i + 1;
+    const schoolName = realSchools[i % realSchools.length];
+    const courseName = realCourses[i % realCourses.length];
+    const labName = realLabs[i % realLabs.length];
+    
     if (type === 'activeSchools') {
-      return { rank, name: `测试院校 ${rank}`, lab: Math.floor(Math.random() * 12) + 2, login: Math.floor(Math.random() * 15) + 3, course: Math.floor(Math.random() * 8) + 2 };
+      return { rank, name: schoolName, lab: Math.floor(Math.random() * 12) + 2, login: Math.floor(Math.random() * 15) + 3, course: Math.floor(Math.random() * 8) + 2 };
     }
     if (type === 'activeCourses') {
-      return { rank, name: `测试课程 ${rank}`, duration: Math.floor(Math.random() * 15) + 2, visits: Math.floor(Math.random() * 8) + 1 };
+      return { rank, name: courseName, duration: Math.floor(Math.random() * 15) + 2, visits: Math.floor(Math.random() * 8) + 1 };
     }
     if (type === 'activeLabs') {
-      return { rank, name: `测试实验环境 ${rank}`, count: Math.floor(Math.random() * 8) + 1, duration: Math.floor(Math.random() * 15) + 2 };
+      return { rank, name: labName, count: Math.floor(Math.random() * 8) + 1, duration: Math.floor(Math.random() * 15) + 2 };
     }
     if (type === 'leaderboardSchools') {
-      return { rank, name: `测试院校 ${rank}`, duration: `${(Math.floor(Math.random() * 3000) + 1500).toLocaleString()} 分钟`, token: (Math.floor(Math.random() * 4000) + 1000).toLocaleString() };
+      return { rank, name: schoolName, duration: `${(Math.floor(Math.random() * 3000) + 1500).toLocaleString()} 分钟`, courseDuration: `${(Math.floor(Math.random() * 5000) + 2000).toLocaleString()} 分钟`, token: (Math.floor(Math.random() * 4000) + 1000).toLocaleString() };
     }
     if (type === 'leaderboardCourses') {
-      return { rank, name: `测试课程 ${rank}`, duration: `${(Math.floor(Math.random() * 3500) + 1000).toLocaleString()} 分钟` };
+      return { rank, name: courseName, duration: `${(Math.floor(Math.random() * 3500) + 1000).toLocaleString()} 分钟` };
     }
     if (type === 'leaderboardLabs') {
-      return { rank, name: `测试实验环境 ${rank}`, duration: `${(Math.floor(Math.random() * 3500) + 1000).toLocaleString()} 分钟` };
+      return { rank, name: labName, duration: `${(Math.floor(Math.random() * 3500) + 1000).toLocaleString()} 分钟` };
     }
     if (type === 'trendCourseDetails') {
-      return { rank, name: `测试院校 ${rank}`, duration: `${(Math.floor(Math.random() * 8000) + 1000).toLocaleString()} 分钟` };
+      return { rank, name: schoolName, duration: `${(Math.floor(Math.random() * 8000) + 1000).toLocaleString()} 分钟` };
     }
     if (type === 'trendLabDetails') {
-      return { rank, name: `测试院校 ${rank}`, duration: `${(Math.floor(Math.random() * 7000) + 500).toLocaleString()} 分钟` };
+      return { rank, name: schoolName, duration: `${(Math.floor(Math.random() * 7000) + 500).toLocaleString()} 分钟` };
     }
     if (type === 'trendNewSchoolsDetails') {
-      return { rank, name: `新合作院校 ${rank}`, accountCount: Math.floor(Math.random() * 50) + 5, duration: `${(Math.floor(Math.random() * 2000) + 100).toLocaleString()} 分钟` };
+      return { rank, name: schoolName, accountCount: Math.floor(Math.random() * 50) + 5, duration: `${(Math.floor(Math.random() * 2000) + 100).toLocaleString()} 分钟` };
     }
     return { rank, name: `Item ${rank}` };
   });
@@ -286,14 +319,14 @@ const LeaderboardCard = ({ title, icon: Icon, iconColor, columns, data, onViewAl
         <thead className="text-xs text-slate-500 border-b border-slate-100">
           <tr>
             {columns.map((col: string, idx: number) => (
-              <th key={idx} className={`pb-3 font-medium ${idx > 0 ? 'text-right' : ''}`}>{col}</th>
+              <th key={idx} className={`pb-3 font-medium ${idx > 1 ? 'text-right' : ''}`}>{col}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {data.map((row: any, idx: number) => (
             <tr key={idx} className="border-b border-slate-50 last:border-0">
-              <td className="py-3">
+              <td className="py-3 w-12">
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
                   row.rank === 1 ? 'bg-amber-100 text-amber-600' :
                   row.rank === 2 ? 'bg-slate-100 text-slate-600' :
@@ -303,9 +336,10 @@ const LeaderboardCard = ({ title, icon: Icon, iconColor, columns, data, onViewAl
                   {row.rank}
                 </div>
               </td>
-              <td className="py-3 font-medium text-slate-700">{row.name}</td>
-              {row.duration && <td className="py-3 text-right text-slate-600">{row.duration}</td>}
-              {row.token && <td className="py-3 text-right text-slate-600">{row.token}</td>}
+              <td className="py-3 font-medium text-slate-700 whitespace-nowrap">{row.name}</td>
+              {row.duration && <td className="py-3 text-right text-slate-600 whitespace-nowrap">{row.duration}</td>}
+              {row.courseDuration && <td className="py-3 text-right text-slate-600 whitespace-nowrap">{row.courseDuration}</td>}
+              {row.token && <td className="py-3 text-right text-slate-600 whitespace-nowrap">{row.token}</td>}
             </tr>
           ))}
         </tbody>
@@ -718,9 +752,9 @@ const PlatformOperationsDashboard: React.FC = () => {
               title="院校资源用量榜" 
               icon={School} 
               iconColor="text-blue-500"
-              columns={['排名', '学校名称', '累计实训时长', 'AI 算力消耗']}
+              columns={['排名', '学校名称', '累计实训时长', '累计课程时长', 'AI 算力消耗']}
               data={leaderboardData.schools}
-              onViewAll={() => handleViewAll('院校资源用量排行', ['排名', '学校名称', '累计实训时长', 'AI 算力消耗'], fullData.leaderboardSchools, 'leaderboardSchools')}
+              onViewAll={() => handleViewAll('院校资源用量榜', ['排名', '学校名称', '累计实训时长', '累计课程时长', 'AI 算力消耗'], fullData.leaderboardSchools, 'leaderboardSchools')}
             />
             <LeaderboardCard 
               title="热门课程榜" 
@@ -778,7 +812,18 @@ const PlatformOperationsDashboard: React.FC = () => {
                           {row.rank}
                         </div>
                       </td>
-                      <td className="py-3 font-medium text-slate-700">{row.name}</td>
+                      <td className="py-3 font-medium text-slate-700">
+                        {modalConfig.type === 'leaderboardSchools' ? (
+                          <Link 
+                            to={`/school-dashboard/${encodeURIComponent(row.name)}`}
+                            className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                          >
+                            {row.name}
+                          </Link>
+                        ) : (
+                          row.name
+                        )}
+                      </td>
                       
                       {/* Dynamic columns based on type */}
                       {modalConfig.type === 'activeSchools' && (
@@ -802,6 +847,7 @@ const PlatformOperationsDashboard: React.FC = () => {
                       {modalConfig.type === 'leaderboardSchools' && (
                         <>
                           <td className="py-3 text-right text-slate-600">{row.duration}</td>
+                          <td className="py-3 text-right text-slate-600">{row.courseDuration}</td>
                           <td className="py-3 text-right text-slate-600">{row.token}</td>
                         </>
                       )}
