@@ -26,7 +26,8 @@ import {
   Flame,
   Award,
   ChevronDown,
-  X
+  X,
+  Calendar
 } from "lucide-react";
 
 // --- Mock Data ---
@@ -206,12 +207,43 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-const SectionTitle = ({ icon: Icon, title, color }: { icon: any, title: string, color: string }) => (
-  <div className="flex items-center gap-2 mb-4 mt-8 first:mt-0">
-    <Icon className={`w-5 h-5 ${color}`} />
-    <h2 className="text-lg font-bold text-slate-800">{title}</h2>
+const SectionTitle = ({ icon: Icon, title, color, children }: { icon: any, title: string, color: string, children?: React.ReactNode }) => (
+  <div className="flex items-center justify-between mb-4 mt-8 first:mt-0">
+    <div className="flex items-center gap-2">
+      <Icon className={`w-5 h-5 ${color}`} />
+      <h2 className="text-lg font-bold text-slate-800">{title}</h2>
+    </div>
+    {children && (
+      <div className="flex items-center gap-3">
+        {children}
+      </div>
+    )}
   </div>
 );
+
+const SectionFilter = ({ filter, onFilterChange }: { filter: string, onFilterChange: (f: string) => void }) => {
+  return (
+    <div className="flex items-center gap-3 font-normal">
+      <div className="flex items-center bg-white border border-slate-200 rounded-lg shadow-sm text-xs p-1">
+        {['按日', '按周', '按月', '按年'].map(f => (
+          <button
+            key={f}
+            onClick={() => onFilterChange(f)}
+            className={`px-3 py-1.5 rounded-md transition-colors ${filter === f ? 'bg-slate-100 text-slate-800 font-medium' : 'text-slate-500 hover:text-slate-700'}`}
+          >
+            {f}
+          </button>
+        ))}
+      </div>
+      <div className="flex items-center bg-white border border-slate-200 rounded-lg shadow-sm px-2 py-1 text-xs text-slate-600 gap-2 transition-colors">
+        <Calendar className="w-3.5 h-3.5 text-slate-400" />
+        <input type="date" className="bg-transparent border-none outline-none cursor-pointer text-slate-600 w-[100px]" defaultValue="2024-01-01" />
+        <span className="text-slate-300">-</span>
+        <input type="date" className="bg-transparent border-none outline-none cursor-pointer text-slate-600 w-[100px]" defaultValue="2024-12-31" />
+      </div>
+    </div>
+  );
+};
 
 const StatCard = ({ title, value, subtext, icon: Icon, iconColor }: any) => (
   <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between">
@@ -228,9 +260,7 @@ const StatCard = ({ title, value, subtext, icon: Icon, iconColor }: any) => (
   </div>
 );
 
-const ChartCard = ({ title, onViewAll, viewAllText = "查看全部", filter, onFilterChange, children }: any) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+const ChartCard = ({ title, onViewAll, viewAllText = "查看全部", children }: any) => {
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col h-[320px]">
       <div className="flex justify-between items-center mb-6">
@@ -243,51 +273,6 @@ const ChartCard = ({ title, onViewAll, viewAllText = "查看全部", filter, onF
             >
               {viewAllText}
             </button>
-          )}
-          {filter && onFilterChange ? (
-            <div className="relative">
-              <button 
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-1 text-xs text-slate-600 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 hover:bg-slate-100 transition-colors"
-              >
-                {filter} <ChevronDown className="w-3 h-3" />
-              </button>
-              {isDropdownOpen && (
-                <>
-                  <div className="fixed inset-0 z-0" onClick={() => setIsDropdownOpen(false)}></div>
-                  <div className="absolute right-0 mt-1 w-24 bg-white border border-slate-200 rounded-md shadow-lg z-10">
-                    <div className="py-1">
-                      {['按日', '按周', '按月', '按年'].map(f => (
-                        <button 
-                          key={f}
-                          onClick={() => {
-                            onFilterChange(f);
-                            setIsDropdownOpen(false);
-                          }}
-                          className={`block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 ${filter === f ? 'bg-slate-50 font-medium' : ''}`}
-                        >
-                          {f}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          ) : (
-            <div className="relative group">
-              <button className="flex items-center gap-1 text-xs text-slate-600 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 hover:bg-slate-100 transition-colors">
-                按月 <ChevronDown className="w-3 h-3" />
-              </button>
-              <div className="absolute right-0 mt-1 w-24 bg-white border border-slate-200 rounded-md shadow-lg hidden group-hover:block z-10">
-                <div className="py-1">
-                  <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">按日</button>
-                  <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">按周</button>
-                  <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 bg-slate-50 font-medium">按月</button>
-                  <button className="block w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">按年</button>
-                </div>
-              </div>
-            </div>
           )}
         </div>
       </div>
@@ -354,13 +339,9 @@ const PlatformOperationsDashboard: React.FC = () => {
   const [isChartAnimationActive, setIsChartAnimationActive] = useState(true);
   
   // Filters state
-  const [schoolFilter, setSchoolFilter] = useState('按日');
-  const [courseFilter, setCourseFilter] = useState('按日');
-  const [labFilter, setLabFilter] = useState('按日');
-  
-  const [trendCourseFilter, setTrendCourseFilter] = useState('按月');
-  const [trendLabFilter, setTrendLabFilter] = useState('按月');
-  const [trendNewSchoolsFilter, setTrendNewSchoolsFilter] = useState('按月');
+  const [activityFilter, setActivityFilter] = useState('按日');
+  const [trendFilter, setTrendFilter] = useState('按月');
+  const [activeLeaderboardTab, setActiveLeaderboardTab] = useState('schools');
 
   const [modalConfig, setModalConfig] = useState<{
     isOpen: boolean;
@@ -563,112 +544,237 @@ const PlatformOperationsDashboard: React.FC = () => {
           </div>
         </section>
 
-        {/* Section 2: 趋势分析 */}
-        <section>
-          <SectionTitle icon={TrendingUp} title="趋势分析" color="text-emerald-600" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <ChartCard 
-              title="课程学习时长"
-              filter={trendCourseFilter}
-              onFilterChange={setTrendCourseFilter}
-              viewAllText="查看详情"
-              onViewAll={() => handleViewAll('课程学习时长排行', ['排名', '学校名称', '累计学习时长'], fullData.trendCourseDetails, 'trendCourseDetails')}
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={getScaledTrendData(trendData.courseLearning, trendCourseFilter)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorPrivateCourse" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#34D399" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#34D399" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorOnlineCourse" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#60A5FA" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#60A5FA" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} />
-                  <RechartsTooltip isAnimationActive={false} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
-                  <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
-                  <Area type="monotone" dataKey="private" name="私有化课程" stroke="#34D399" fillOpacity={1} fill="url(#colorPrivateCourse)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
-                    <LabelList dataKey="private" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
-                  </Area>
-                  <Area type="monotone" dataKey="online" name="线上课程" stroke="#60A5FA" fillOpacity={1} fill="url(#colorOnlineCourse)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
-                    <LabelList dataKey="online" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
-                  </Area>
-                </AreaChart>
-              </ResponsiveContainer>
-            </ChartCard>
-            
-            <ChartCard 
-              title="实验使用时长"
-              filter={trendLabFilter}
-              onFilterChange={setTrendLabFilter}
-              viewAllText="查看详情"
-              onViewAll={() => handleViewAll('实验环境使用时长排行', ['排名', '学校名称', '累计使用时长'], fullData.trendLabDetails, 'trendLabDetails')}
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={getScaledTrendData(trendData.labDuration, trendLabFilter)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorPrivateLab" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#A78BFA" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorOnlineLab" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#FBBF24" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#FBBF24" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} />
-                  <RechartsTooltip isAnimationActive={false} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
-                  <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
-                  <Area type="monotone" dataKey="private" name="私有化实验" stroke="#A78BFA" fillOpacity={1} fill="url(#colorPrivateLab)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
-                    <LabelList dataKey="private" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
-                  </Area>
-                  <Area type="monotone" dataKey="online" name="线上实验" stroke="#FBBF24" fillOpacity={1} fill="url(#colorOnlineLab)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
-                    <LabelList dataKey="online" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
-                  </Area>
-                </AreaChart>
-              </ResponsiveContainer>
-            </ChartCard>
+        {/* Section 2: 趋势分析 & 业务总榜 */}
+        <div className="flex flex-col xl:flex-row justify-between gap-6">
+          <div className="w-full xl:w-[68%] flex flex-col">
+            <SectionTitle icon={TrendingUp} title="趋势分析" color="text-emerald-600">
+              <SectionFilter filter={trendFilter} onFilterChange={setTrendFilter} />
+            </SectionTitle>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 flex-1">
+              <ChartCard 
+                title="课程学习时长"
+                viewAllText="查看详情"
+                onViewAll={() => handleViewAll('课程学习时长排行', ['排名', '学校名称', '累计学习时长'], fullData.trendCourseDetails, 'trendCourseDetails')}
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={getScaledTrendData(trendData.courseLearning, trendFilter)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorPrivateCourse" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#34D399" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#34D399" stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="colorOnlineCourse" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#60A5FA" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#60A5FA" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} />
+                    <RechartsTooltip isAnimationActive={false} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
+                    <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
+                    <Area type="monotone" dataKey="private" name="私有化课程" stroke="#34D399" fillOpacity={1} fill="url(#colorPrivateCourse)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
+                      <LabelList dataKey="private" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
+                    </Area>
+                    <Area type="monotone" dataKey="online" name="线上课程" stroke="#60A5FA" fillOpacity={1} fill="url(#colorOnlineCourse)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
+                      <LabelList dataKey="online" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
+                    </Area>
+                  </AreaChart>
+                </ResponsiveContainer>
+              </ChartCard>
+              
+              <ChartCard 
+                title="实验使用时长"
+                viewAllText="查看详情"
+                onViewAll={() => handleViewAll('实验环境使用时长排行', ['排名', '学校名称', '累计使用时长'], fullData.trendLabDetails, 'trendLabDetails')}
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={getScaledTrendData(trendData.labDuration, trendFilter)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorPrivateLab" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#A78BFA" stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="colorOnlineLab" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#FBBF24" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#FBBF24" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} />
+                    <RechartsTooltip isAnimationActive={false} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
+                    <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
+                    <Area type="monotone" dataKey="private" name="私有化实验" stroke="#A78BFA" fillOpacity={1} fill="url(#colorPrivateLab)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
+                      <LabelList dataKey="private" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
+                    </Area>
+                    <Area type="monotone" dataKey="online" name="线上实验" stroke="#FBBF24" fillOpacity={1} fill="url(#colorOnlineLab)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
+                      <LabelList dataKey="online" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
+                    </Area>
+                  </AreaChart>
+                </ResponsiveContainer>
+              </ChartCard>
 
-            <ChartCard 
-              title="新开通学校数"
-              filter={trendNewSchoolsFilter}
-              onFilterChange={setTrendNewSchoolsFilter}
-              viewAllText="查看详情"
-              onViewAll={() => handleViewAll('新开通学校详情', ['序号', '学校名称', '账号数', '累计时长'], fullData.trendNewSchoolsDetails, 'trendNewSchoolsDetails')}
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={getScaledTrendData(trendData.newSchools, trendNewSchoolsFilter, true)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} />
-                  <RechartsTooltip isAnimationActive={false} cursor={{ fill: '#F1F5F9' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
-                  <Bar dataKey="count" fill="#06B6D4" radius={[4, 4, 0, 0]} maxBarSize={40} isAnimationActive={isChartAnimationActive}>
-                    <LabelList dataKey="count" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartCard>
+              <ChartCard 
+                title="新开通学校数"
+                viewAllText="查看详情"
+                onViewAll={() => handleViewAll('新开通学校详情', ['序号', '学校名称', '账号数', '累计时长'], fullData.trendNewSchoolsDetails, 'trendNewSchoolsDetails')}
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={getScaledTrendData(trendData.newSchools, trendFilter, true)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} />
+                    <RechartsTooltip isAnimationActive={false} cursor={{ fill: '#F1F5F9' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
+                    <Bar dataKey="count" fill="#06B6D4" radius={[4, 4, 0, 0]} maxBarSize={40} isAnimationActive={isChartAnimationActive}>
+                      <LabelList dataKey="count" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartCard>
+            </div>
           </div>
-        </section>
+          
+          <div className="w-full xl:w-[30%] flex flex-col">
+            <SectionTitle icon={Award} title="业务总榜" color="text-amber-500" />
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 flex flex-col flex-1 h-[320px]">
+              <div className="flex bg-slate-50 p-1 rounded-lg mb-4 text-xs font-medium border border-slate-100">
+                <button
+                  className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'schools' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+                  onClick={() => setActiveLeaderboardTab('schools')}
+                >
+                  院校
+                </button>
+                <button
+                  className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'courses' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-500 hover:text-slate-700'}`}
+                  onClick={() => setActiveLeaderboardTab('courses')}
+                >
+                  课程
+                </button>
+                <button
+                  className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'labs' ? 'bg-white shadow-sm text-purple-600' : 'text-slate-500 hover:text-slate-700'}`}
+                  onClick={() => setActiveLeaderboardTab('labs')}
+                >
+                  实验
+                </button>
+              </div>
+
+              {activeLeaderboardTab === 'schools' && (
+                <div className="flex-1 flex flex-col min-h-0">
+                  <div className="flex items-center justify-between mb-3 text-sm">
+                    <span className="font-bold text-slate-800 text-xs">院校资源用量榜</span>
+                    <button onClick={() => handleViewAll('院校资源用量榜', ['排名', '学校名称', '累计实训时长', '累计课程时长', 'AI 算力消耗'], fullData.leaderboardSchools, 'leaderboardSchools')} className="text-[11px] text-blue-600 hover:text-blue-800 hover:underline">查看全部</button>
+                  </div>
+                  <div className="overflow-y-auto pr-1 text-xs">
+                    <table className="w-full text-left">
+                      <tbody>
+                        {leaderboardData.schools.map((row: any, idx: number) => (
+                          <tr key={idx} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
+                            <td className="py-2 w-8">
+                              <div className={`w-5 h-5 mx-auto rounded flex items-center justify-center font-bold text-[10px] ${
+                                row.rank === 1 ? 'bg-amber-100 text-amber-600' :
+                                row.rank === 2 ? 'bg-slate-100 text-slate-600' :
+                                row.rank === 3 ? 'bg-orange-100 text-orange-600' :
+                                'bg-slate-50 text-slate-500'
+                              }`}>
+                                {row.rank}
+                              </div>
+                            </td>
+                            <td className="py-2">
+                              <div className="flex items-center justify-between gap-2">
+                                <span className="font-medium text-slate-700 truncate min-w-0" title={row.name}>{row.name}</span>
+                                <div className="flex items-center gap-2 text-[10px] text-slate-500 shrink-0">
+                                  <div className="flex items-center"><span className="text-slate-400 mr-1">实训</span><span className="font-din text-purple-600 font-medium">{row.duration.replace(' 分钟', 'm').replace(/,/g, '')}</span></div>
+                                  <div className="flex items-center"><span className="text-slate-400 mr-1">课程</span><span className="font-din text-emerald-600 font-medium">{row.courseDuration.replace(' 分钟', 'm').replace(/,/g, '')}</span></div>
+                                  <div className="flex items-center"><span className="text-slate-400 mr-1">算力</span><span className="font-din text-blue-600 font-medium">{row.token.replace(/,/g, '')}</span></div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {activeLeaderboardTab === 'courses' && (
+                <div className="flex-1 flex flex-col min-h-0">
+                  <div className="flex items-center justify-between mb-3 text-sm">
+                    <span className="font-bold text-slate-800 text-xs">热门课程榜</span>
+                    <button onClick={() => handleViewAll('热门课程学时榜单', ['排名', '课程名称', '累计学时'], fullData.leaderboardCourses, 'leaderboardCourses')} className="text-[11px] text-emerald-600 hover:text-emerald-800 hover:underline">查看全部</button>
+                  </div>
+                  <div className="overflow-y-auto pr-1 text-xs">
+                    <table className="w-full text-left">
+                      <tbody>
+                        {leaderboardData.courses.map((row: any, idx: number) => (
+                          <tr key={idx} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
+                            <td className="py-2 w-8">
+                              <div className={`w-5 h-5 mx-auto rounded flex items-center justify-center font-bold text-[10px] ${
+                                row.rank === 1 ? 'bg-amber-100 text-amber-600' :
+                                row.rank === 2 ? 'bg-slate-100 text-slate-600' :
+                                row.rank === 3 ? 'bg-orange-100 text-orange-600' :
+                                'bg-slate-50 text-slate-500'
+                              }`}>
+                                {row.rank}
+                              </div>
+                            </td>
+                            <td className="py-2 font-medium text-slate-700 truncate max-w-[100px]">{row.name}</td>
+                            <td className="py-2 text-right text-slate-500 font-din">{row.duration}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {activeLeaderboardTab === 'labs' && (
+                <div className="flex-1 flex flex-col min-h-0">
+                  <div className="flex items-center justify-between mb-3 text-sm">
+                    <span className="font-bold text-slate-800 text-xs">实验环境使用榜单</span>
+                    <button onClick={() => handleViewAll('实训环境调用排行', ['排名', '实验环境名称', '环境运行总时长'], fullData.leaderboardLabs, 'leaderboardLabs')} className="text-[11px] text-purple-600 hover:text-purple-800 hover:underline">查看全部</button>
+                  </div>
+                  <div className="overflow-y-auto pr-1 text-xs">
+                    <table className="w-full text-left">
+                      <tbody>
+                        {leaderboardData.labs.map((row: any, idx: number) => (
+                          <tr key={idx} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
+                            <td className="py-2 w-8">
+                              <div className={`w-5 h-5 mx-auto rounded flex items-center justify-center font-bold text-[10px] ${
+                                row.rank === 1 ? 'bg-amber-100 text-amber-600' :
+                                row.rank === 2 ? 'bg-slate-100 text-slate-600' :
+                                row.rank === 3 ? 'bg-orange-100 text-orange-600' :
+                                'bg-slate-50 text-slate-500'
+                              }`}>
+                                {row.rank}
+                              </div>
+                            </td>
+                            <td className="py-2 font-medium text-slate-700 truncate max-w-[100px]">{row.name}</td>
+                            <td className="py-2 text-right text-slate-500 font-din">{row.duration}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
 
         {/* Section 3: 教学与实训活动情况 */}
         <section>
-          <SectionTitle icon={Flame} title="教学与实训活动情况" color="text-red-500" />
+          <SectionTitle icon={Flame} title="教学与实训活动情况" color="text-red-500">
+            <SectionFilter filter={activityFilter} onFilterChange={setActivityFilter} />
+          </SectionTitle>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <ChartCard 
               title="活跃院校榜单"
-              filter={schoolFilter}
-              onFilterChange={setSchoolFilter}
-              onViewAll={() => handleViewAll('活跃院校榜单', ['排名', '学校名称', '实验环境调用量', '平台登录人次', '课程参与频次'], getScaledData(fullData.activeSchools, schoolFilter), 'activeSchools')}
+              onViewAll={() => handleViewAll('活跃院校榜单', ['排名', '学校名称', '实验环境调用量', '平台登录人次', '课程参与频次'], getScaledData(fullData.activeSchools, activityFilter), 'activeSchools')}
             >
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={getScaledData(activityData.activeSchools, schoolFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
+                <BarChart data={getScaledData(activityData.activeSchools, activityFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
                   <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
                   <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={100} />
@@ -693,12 +799,10 @@ const PlatformOperationsDashboard: React.FC = () => {
 
             <ChartCard 
               title="课程热度榜单"
-              filter={courseFilter}
-              onFilterChange={setCourseFilter}
-              onViewAll={() => handleViewAll('课程热度榜单', ['排名', '课程名称', '累计学习时长', '累计访问人次'], getScaledData(fullData.activeCourses, courseFilter), 'activeCourses')}
+              onViewAll={() => handleViewAll('课程热度榜单', ['排名', '课程名称', '累计学习时长', '累计访问人次'], getScaledData(fullData.activeCourses, activityFilter), 'activeCourses')}
             >
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={getScaledData(activityData.activeCourses, courseFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
+                <BarChart data={getScaledData(activityData.activeCourses, activityFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
                   <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
                   <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={80} />
@@ -720,12 +824,10 @@ const PlatformOperationsDashboard: React.FC = () => {
 
             <ChartCard 
               title="实验环境使用榜单"
-              filter={labFilter}
-              onFilterChange={setLabFilter}
-              onViewAll={() => handleViewAll('实验环境使用榜单', ['排名', '实验环境名称', '累计运行时长'], getScaledData(fullData.activeLabs, labFilter), 'activeLabs')}
+              onViewAll={() => handleViewAll('实验环境使用榜单', ['排名', '实验环境名称', '累计运行时长'], getScaledData(fullData.activeLabs, activityFilter), 'activeLabs')}
             >
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={getScaledData(activityData.activeLabs, labFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
+                <BarChart data={getScaledData(activityData.activeLabs, activityFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
                   <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
                   <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={100} />
@@ -744,36 +846,7 @@ const PlatformOperationsDashboard: React.FC = () => {
           </div>
         </section>
 
-        {/* Section 4: 业务总榜 */}
-        <section>
-          <SectionTitle icon={Award} title="业务总榜" color="text-amber-500" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <LeaderboardCard 
-              title="院校资源用量榜" 
-              icon={School} 
-              iconColor="text-blue-500"
-              columns={['排名', '学校名称', '累计实训时长', '累计课程时长', 'AI 算力消耗']}
-              data={leaderboardData.schools}
-              onViewAll={() => handleViewAll('院校资源用量榜', ['排名', '学校名称', '累计实训时长', '累计课程时长', 'AI 算力消耗'], fullData.leaderboardSchools, 'leaderboardSchools')}
-            />
-            <LeaderboardCard 
-              title="热门课程榜" 
-              icon={BookOpen} 
-              iconColor="text-emerald-500"
-              columns={['排名', '课程名称', '累计学时']}
-              data={leaderboardData.courses}
-              onViewAll={() => handleViewAll('热门课程学时榜单', ['排名', '课程名称', '累计学时'], fullData.leaderboardCourses, 'leaderboardCourses')}
-            />
-            <LeaderboardCard 
-              title="实验环境榜" 
-              icon={Wrench} 
-              iconColor="text-purple-500"
-              columns={['排名', '实验环境名称', '环境运行总时长']}
-              data={leaderboardData.labs}
-              onViewAll={() => handleViewAll('实训环境调用排行', ['排名', '实验环境名称', '环境运行总时长'], fullData.leaderboardLabs, 'leaderboardLabs')}
-            />
-          </div>
-        </section>
+
 
       </main>
 

@@ -73,7 +73,16 @@ const Layout: React.FC<LayoutProps> = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [language, setLanguage] = useState<"zh" | "en">("zh");
   const [appConfigs, setAppConfigs] = useState<AppConfigItem[]>([]);
+  const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     const loadApps = () => {
@@ -91,26 +100,21 @@ const Layout: React.FC<LayoutProps> = ({
   }, []);
 
   const navItems = [
-    { label: "首页", path: "/", icon: null },
     {
-      label: "课程大厅",
+      label: "课程中心",
       path: "/courses",
-      icon: <GraduationCap className="w-5 h-5 mr-1.5" />,
     },
     {
       label: "实验大厅",
       path: "/labs",
-      icon: <Beaker className="w-5 h-5 mr-1.5" />,
     },
     {
       label: "考试认证",
       path: "/exams",
-      icon: <FileBadge className="w-5 h-5 mr-1.5" />,
     },
     {
       label: "配置管理",
       path: "/config",
-      icon: <Settings className="w-5 h-5 mr-1.5" />,
       roles: ["TEACHER", "ADMIN_SCHOOL", "ADMIN_PLATFORM"]
     },
   ];
@@ -139,19 +143,19 @@ const Layout: React.FC<LayoutProps> = ({
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
       {/* Header - Optimized Design */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-lg border-b border-gray-200/80 shadow-sm transition-all duration-300 supports-[backdrop-filter]:bg-white/60">
+      <header className={`sticky top-0 z-40 transition-all duration-300 ${location.pathname === '/' && !isScrolled ? 'bg-transparent' : 'bg-white/90 backdrop-blur-lg border-b border-gray-200/80 shadow-sm supports-[backdrop-filter]:bg-white/60'}`}>
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo Section */}
             <Link
               to="/"
-              className="flex-shrink-0 flex items-center gap-2 group mr-6 lg:mr-8 relative z-50"
+              className="flex-shrink-0 flex items-center gap-3 group mr-6 lg:mr-8 relative z-50"
             >
-              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-transform">
-                <BookOpen className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-[#2563eb] rounded-[10px] flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
+                <div className="w-4 h-4 bg-yellow-400 rounded-sm"></div>
               </div>
-              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-500 tracking-tight">
-                UUSIMA
+              <span className="text-xl font-bold text-[#2C3A5A] tracking-tight">
+                UUSIMA 智慧教学验平台
               </span>
             </Link>
 
@@ -371,7 +375,6 @@ const Layout: React.FC<LayoutProps> = ({
                       : "text-gray-600 hover:bg-gray-50 hover:text-blue-600"
                   }`}
                 >
-                  {item.icon}
                   {item.label}
                 </Link>
               ))}

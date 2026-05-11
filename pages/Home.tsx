@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Monitor, BookOpen, Award, Cpu, ChevronLeft, ChevronRight, Star, Zap, BarChart3, Cloud, FileBadge, BrainCircuit, PlayCircle, Clock, Eye } from 'lucide-react';
+import { ArrowRight, Monitor, BookOpen, Award, Cpu, ChevronLeft, ChevronRight, Star, Zap, BarChart3, Cloud, FileBadge, BrainCircuit, PlayCircle, Clock, Eye, Paintbrush } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { User, UserRole } from '../types';
 import StudentDashboard from './dashboards/StudentDashboard';
 import TeacherDashboard from './dashboards/TeacherDashboard';
 import SchoolAdminDashboard from './dashboards/SchoolAdminDashboard';
 import SystemAdminDashboard from './dashboards/SystemAdminDashboard';
+import EtherealHome from './EtherealHome';
 
 interface HomeProps {
   user?: User | null;
@@ -482,7 +483,27 @@ const MarketingHome: React.FC = () => {
 };
 
 const Home: React.FC<HomeProps> = ({ user }) => {
-  return <MarketingHome />;
+  const [theme, setTheme] = useState<'classic' | 'ethereal'>('ethereal');
+
+  return (
+    <div className="relative">
+      {theme === 'classic' ? <MarketingHome /> : <EtherealHome />}
+      
+      {/* Theme Switcher Toggle */}
+      <div className="fixed bottom-24 right-6 z-[60] flex flex-col gap-2">
+        <button 
+          onClick={() => setTheme(theme === 'classic' ? 'ethereal' : 'classic')}
+          className="bg-white/90 backdrop-blur border border-slate-200 shadow-xl rounded-full p-3 hover:-translate-y-1 transition-all group relative items-center justify-center flex"
+          title={theme === 'classic' ? '切换至未来风格' : '切换至经典风格'}
+        >
+          <Paintbrush className="w-5 h-5 text-indigo-600" />
+          <span className="absolute right-full mr-3 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+             {theme === 'classic' ? '切换至未来风格' : '切换至经典风格'}
+          </span>
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default Home;
