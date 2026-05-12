@@ -388,6 +388,16 @@ const BigScreenDashboard: React.FC = () => {
               平台运营
             </button>
             <button
+              onClick={() => navigate('/platform-application-dashboard')}
+              className={`px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all ${
+                theme === 'light'
+                  ? 'text-slate-500 hover:text-slate-700'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              平台应用情况
+            </button>
+            <button
               onClick={() => setActiveTab('operations')}
               className={`px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all ${
                 activeTab === 'operations' 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   AreaChart,
@@ -27,18 +27,36 @@ import {
   Award,
   ChevronDown,
   X,
-  Calendar
+  Calendar,
+  Search,
+  Rocket
 } from "lucide-react";
 
 // --- Mock Data ---
 const overallData = {
-  users: { total: 12580, trial: 3200, official: 9380 },
-  schools: { total: 156, online: 128, private: 28 },
-  courseSales: { total: 2850, online: 2120, private: 730 },
-  toolUsage: { total: 45680 },
-  agentInvocations: { total: 128500, software: 95200, hardware: 33300 },
-  labDuration: { total: 68900, hours: 12580 }
+  users: { total: 12580, detail: '体验账号: 3,200 | 正式账号: 9,380' },
+  schools: { total: 156, detail: '线上: 128 | 私有化: 28' },
+  courses: { total: 2850, detail: '线上: 2,120 | 私有化: 730' },
+  toolUsage: { total: 45680, detail: 'AI 教学工具总使用次数' },
+  agentInvocations: { total: 128500, detail: '软件: 95,200 | 硬件: 33,300' },
+  labDuration: { total: 68900, detail: '总时长: 12,580 小时' }
 };
+
+const dynamicsData = [
+  { id: 1, title: '平台累计用户突破 12,000', desc: '感谢各院校的支持与信任，平台用户规模再创新高！', time: '10-01 14:30', icon: Users, color: 'text-blue-500', bg: 'bg-blue-50' },
+  { id: 2, title: 'AI 技能助手使用量增长 120%', desc: '本月 AI 技能助手使用次数较上月增长 120%。', time: '10-01 11:20', icon: Cpu, color: 'text-blue-500', bg: 'bg-blue-50' },
+  { id: 3, title: '新增优质课程 320 门', desc: '本月新增优质课程 320 门，持续丰富平台教学资源！', time: '10-01 10:15', icon: BookOpen, color: 'text-blue-500', bg: 'bg-blue-50' },
+  { id: 4, title: '实训时长突破 6 万小时', desc: '实训时长累计突破 6 万小时，实践教学成效显著！', time: '09-30 16:45', icon: Clock, color: 'text-blue-500', bg: 'bg-blue-50' },
+];
+
+const todayData = [
+  { title: '今日新增用户', value: 568, trend: '↑ 12.5%', icon: Users },
+  { title: '今日学习时长 (小时)', value: 8652, trend: '↑ 15.2%', icon: Clock },
+  { title: '今日实训时长 (小时)', value: 2368, trend: '↑ 11.3%', icon: Cpu },
+  { title: '今日课程学习人次', value: 3865, trend: '↑ 9.8%', icon: BookOpen },
+  { title: '今日技术助手调用', value: 4125, trend: '↑ 14.6%', icon: Rocket },
+  { title: '今日实验完成数', value: 1258, trend: '↑ 10.7%', icon: Award },
+];
 
 const trendData = {
   courseLearning: [
@@ -208,7 +226,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const SectionTitle = ({ icon: Icon, title, color, children }: { icon: any, title: string, color: string, children?: React.ReactNode }) => (
-  <div className="flex items-center justify-between mb-4 mt-8 first:mt-0">
+  <div className="flex items-center justify-between mb-4 mt-8 first:mt-0 min-h-[36px]">
     <div className="flex items-center gap-2">
       <Icon className={`w-5 h-5 ${color}`} />
       <h2 className="text-lg font-bold text-slate-800">{title}</h2>
@@ -245,20 +263,22 @@ const SectionFilter = ({ filter, onFilterChange }: { filter: string, onFilterCha
   );
 };
 
-const StatCard = ({ title, value, subtext, icon: Icon, iconColor }: any) => (
-  <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between">
-    <div className="flex justify-between items-start mb-4">
-      <h3 className="text-sm font-medium text-slate-600">{title}</h3>
-      <div className={`p-2 rounded-lg bg-slate-50`}>
-        <Icon className={`w-5 h-5 ${iconColor}`} />
+const StatCard = ({ title, value, detail, icon: Icon, iconColor, iconBg }: any) => {
+  return (
+    <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 flex flex-col justify-between">
+      <div className="flex justify-between items-start mb-2">
+        <h3 className="text-[13px] font-bold text-slate-700">{title}</h3>
+        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${iconBg}`}>
+          <Icon className={`w-4 h-4 ${iconColor}`} />
+        </div>
+      </div>
+      <div>
+        <div className="text-2xl font-bold text-slate-900 mb-2 font-din tracking-tight truncate">{typeof value === 'number' ? value.toLocaleString() : value}</div>
+        {detail && <div className="text-[10px] text-slate-500 truncate">{detail}</div>}
       </div>
     </div>
-    <div>
-      <div className="text-3xl font-bold text-slate-900 mb-2 font-din">{value.toLocaleString()}</div>
-      <div className="text-xs text-slate-500">{subtext}</div>
-    </div>
-  </div>
-);
+  );
+};
 
 const ChartCard = ({ title, onViewAll, viewAllText = "查看全部", children }: any) => {
   return (
@@ -337,6 +357,40 @@ const PlatformOperationsDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isChartAnimationActive, setIsChartAnimationActive] = useState(true);
+  
+  // Search state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  const [searchVisibleCount, setSearchVisibleCount] = useState(20);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setIsSearchDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    setSearchVisibleCount(20);
+  }, [searchQuery]);
+
+  const sortedFilteredSchools = [...realSchools]
+    .filter(school => school.includes(searchQuery))
+    .sort((a, b) => a.localeCompare(b, 'zh-CN'));
+  
+  const displayedSchools = sortedFilteredSchools.slice(0, searchVisibleCount);
+
+  const handleSearchScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const bottom = e.currentTarget.scrollHeight - e.currentTarget.scrollTop <= e.currentTarget.clientHeight + 20;
+    if (bottom && searchVisibleCount < sortedFilteredSchools.length) {
+      setSearchVisibleCount(prev => prev + 20);
+    }
+  };
   
   // Filters state
   const [activityFilter, setActivityFilter] = useState('按日');
@@ -475,6 +529,12 @@ const PlatformOperationsDashboard: React.FC = () => {
               平台运营
             </button>
             <button
+              onClick={() => navigate('/platform-application-dashboard')}
+              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-slate-500 hover:text-slate-700"
+            >
+              平台应用情况
+            </button>
+            <button
               onClick={() => navigate('/big-screen-dashboard', { state: { activeTab: 'operations' } })}
               className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-slate-500 hover:text-slate-700"
             >
@@ -497,50 +557,69 @@ const PlatformOperationsDashboard: React.FC = () => {
         
         {/* Section 1: 数据总览 */}
         <section>
-          <SectionTitle icon={BarChart3} title="数据总览" color="text-blue-600" />
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <StatCard 
-              title="平台用户数" 
-              value={overallData.users.total} 
-              subtext={`体验账号: ${overallData.users.trial.toLocaleString()} | 正式账号: ${overallData.users.official.toLocaleString()}`}
-              icon={Users}
-              iconColor="text-blue-500"
-            />
-            <StatCard 
-              title="学校总数" 
-              value={overallData.schools.total} 
-              subtext={`线上: ${overallData.schools.online} | 私有化: ${overallData.schools.private}`}
-              icon={School}
-              iconColor="text-emerald-500"
-            />
-            <StatCard 
-              title="课程销量" 
-              value={overallData.courseSales.total} 
-              subtext={`线上: ${overallData.courseSales.online.toLocaleString()} | 私有化: ${overallData.courseSales.private.toLocaleString()}`}
-              icon={BookOpen}
-              iconColor="text-violet-500"
-            />
-            <StatCard 
-              title="教学工具使用量" 
-              value={overallData.toolUsage.total} 
-              subtext="AI 教学工具总使用次数"
-              icon={Wrench}
-              iconColor="text-orange-500"
-            />
-            <StatCard 
-              title="AI 技能助手调用次数" 
-              value={overallData.agentInvocations.total} 
-              subtext={`软件: ${overallData.agentInvocations.software.toLocaleString()} | 硬件: ${overallData.agentInvocations.hardware.toLocaleString()}`}
-              icon={Cpu}
-              iconColor="text-pink-500"
-            />
-            <StatCard 
-              title="实验使用时长" 
-              value={overallData.labDuration.total} 
-              subtext={`总时长: ${overallData.labDuration.hours.toLocaleString()} 小时`}
-              icon={Clock}
-              iconColor="text-cyan-500"
-            />
+          <SectionTitle icon={BarChart3} title="数据总览" color="text-blue-600">
+            <div className="relative z-50 w-64" ref={searchContainerRef}>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setIsSearchDropdownOpen(true);
+                }}
+                onFocus={() => setIsSearchDropdownOpen(true)}
+                placeholder="搜索学校使用信息..."
+                className="w-full pl-9 pr-9 py-2 border border-slate-200 rounded-lg text-sm text-slate-700 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-normal placeholder:text-slate-400 hover:border-slate-300"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    if (searchQuery.trim()) {
+                      navigate(`/school-dashboard/${encodeURIComponent(searchQuery.trim())}`);
+                      setIsSearchDropdownOpen(false);
+                    }
+                  }
+                }}
+              />
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400 group-focus-within:text-blue-500 transition-colors pointer-events-none" />
+              <ChevronDown 
+                className="absolute right-3 top-2.5 w-4 h-4 text-slate-400 cursor-pointer hover:text-slate-600 transition-colors" 
+                onClick={() => setIsSearchDropdownOpen(!isSearchDropdownOpen)}
+              />
+              
+              {isSearchDropdownOpen && displayedSchools.length > 0 && (
+                <div 
+                  className="absolute top-full mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-xl overflow-hidden max-h-[300px] overflow-y-auto z-50"
+                  onScroll={handleSearchScroll}
+                >
+                  <div className="py-1">
+                    {displayedSchools.map((school) => (
+                      <button
+                        key={school}
+                        className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors font-medium border-b border-slate-50 last:border-0"
+                        onClick={() => {
+                          setSearchQuery(school);
+                          setIsSearchDropdownOpen(false);
+                          navigate(`/school-dashboard/${encodeURIComponent(school)}`);
+                        }}
+                      >
+                        {school}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {isSearchDropdownOpen && displayedSchools.length === 0 && (
+                <div className="absolute top-full mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-xl p-4 text-center z-50">
+                  <div className="text-sm text-slate-500">未找到相关学校</div>
+                </div>
+              )}
+            </div>
+          </SectionTitle>
+          <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4">
+            <StatCard title="平台用户数" value={overallData.users.total} detail={overallData.users.detail} icon={Users} iconColor="text-blue-500" iconBg="bg-blue-50" />
+            <StatCard title="学校总数" value={overallData.schools.total} detail={overallData.schools.detail} icon={School} iconColor="text-emerald-500" iconBg="bg-emerald-50" />
+            <StatCard title="课程数量" value={overallData.courses.total} detail={overallData.courses.detail} icon={BookOpen} iconColor="text-purple-500" iconBg="bg-purple-50" />
+            <StatCard title="教学工具使用量" value={overallData.toolUsage.total} detail={overallData.toolUsage.detail} icon={Rocket} iconColor="text-orange-500" iconBg="bg-orange-50" />
+            <StatCard title="AI技能助手调用次数" value={overallData.agentInvocations.total} detail={overallData.agentInvocations.detail} icon={Cpu} iconColor="text-pink-500" iconBg="bg-pink-50" />
+            <StatCard title="实训使用时长(小时)" value={overallData.labDuration.total} detail={overallData.labDuration.detail} icon={Clock} iconColor="text-blue-600" iconBg="bg-blue-100" />
           </div>
         </section>
 
@@ -637,7 +716,7 @@ const PlatformOperationsDashboard: React.FC = () => {
           
           <div className="w-full xl:w-[30%] flex flex-col">
             <SectionTitle icon={Award} title="业务总榜" color="text-amber-500" />
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 flex flex-col flex-1 h-[320px]">
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 flex flex-col flex-1">
               <div className="flex bg-slate-50 p-1 rounded-lg mb-4 text-xs font-medium border border-slate-100">
                 <button
                   className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'schools' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
@@ -682,7 +761,7 @@ const PlatformOperationsDashboard: React.FC = () => {
                             </td>
                             <td className="py-2">
                               <div className="flex items-center justify-between gap-2">
-                                <span className="font-medium text-slate-700 truncate min-w-0" title={row.name}>{row.name}</span>
+                                <Link to={`/school-dashboard/${encodeURIComponent(row.name)}`} className="font-medium text-blue-600 hover:text-blue-800 hover:underline truncate min-w-0" title={row.name}>{row.name}</Link>
                                 <div className="flex items-center gap-2 text-[10px] text-slate-500 shrink-0">
                                   <div className="flex items-center"><span className="text-slate-400 mr-1">实训</span><span className="font-din text-purple-600 font-medium">{row.duration.replace(' 分钟', 'm').replace(/,/g, '')}</span></div>
                                   <div className="flex items-center"><span className="text-slate-400 mr-1">课程</span><span className="font-din text-emerald-600 font-medium">{row.courseDuration.replace(' 分钟', 'm').replace(/,/g, '')}</span></div>
@@ -763,90 +842,183 @@ const PlatformOperationsDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Section 3: 教学与实训活动情况 */}
-        <section>
-          <SectionTitle icon={Flame} title="教学与实训活动情况" color="text-red-500">
-            <SectionFilter filter={activityFilter} onFilterChange={setActivityFilter} />
-          </SectionTitle>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <ChartCard 
-              title="活跃院校榜单"
-              onViewAll={() => handleViewAll('活跃院校榜单', ['排名', '学校名称', '实验环境调用量', '平台登录人次', '课程参与频次'], getScaledData(fullData.activeSchools, activityFilter), 'activeSchools')}
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={getScaledData(activityData.activeSchools, activityFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
-                  <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
-                  <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={100} />
-                  <RechartsTooltip 
-                    content={<CustomTooltip />}
-                    cursor={{ fill: '#F1F5F9' }} 
-                    isAnimationActive={false}
-                  />
-                  <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
-                  <Bar dataKey="lab" name="实验环境调用量" fill="#F59E0B" barSize={8} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
-                    <LabelList dataKey="lab" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
-                  </Bar>
-                  <Bar dataKey="login" name="平台登录人次" fill="#3B82F6" barSize={8} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
-                    <LabelList dataKey="login" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
-                  </Bar>
-                  <Bar dataKey="course" name="课程参与频次" fill="#10B981" barSize={8} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
-                    <LabelList dataKey="course" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartCard>
+        {/* Section 3 & 4 Layout */}
+        <div className="flex flex-col gap-6 pb-6 mt-6">
+          {/* Row 1: Section 3 & Operations Dynamics */}
+          <div className="flex flex-col xl:flex-row justify-between gap-6">
+            {/* Section 3: 教学与实训活动情况 */}
+            <section className="w-full xl:w-[68%] flex flex-col">
+              <SectionTitle icon={Flame} title="教学与实训活动情况" color="text-blue-600">
+                <SectionFilter filter={activityFilter} onFilterChange={setActivityFilter} />
+              </SectionTitle>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 flex-1">
+                <ChartCard 
+                  title="活跃院校榜单"
+                  onViewAll={() => handleViewAll('活跃院校榜单', ['排名', '学校名称', '实验环境调用量', '平台登录人次', '课程参与频次'], getScaledData(fullData.activeSchools, activityFilter), 'activeSchools')}
+                >
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={getScaledData(activityData.activeSchools, activityFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
+                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
+                      <YAxis 
+                        dataKey="name" 
+                        type="category" 
+                        axisLine={false} 
+                        tickLine={false} 
+                        width={100} 
+                        tick={({ x, y, payload }: any) => (
+                          <g transform={`translate(${x},${y})`}>
+                            <text
+                              x={0}
+                              y={0}
+                              dy={4}
+                              textAnchor="end"
+                              fill="#2563EB"
+                              fontSize={10}
+                              className="cursor-pointer hover:underline"
+                              onClick={() => navigate(`/school-dashboard/${encodeURIComponent(payload.value)}`)}
+                            >
+                              {payload.value}
+                            </text>
+                          </g>
+                        )}
+                      />
+                      <RechartsTooltip 
+                        content={<CustomTooltip />}
+                        cursor={{ fill: '#F1F5F9' }} 
+                        isAnimationActive={false}
+                      />
+                      <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                      <Bar dataKey="lab" name="实验调用" fill="#3B82F6" barSize={6} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive} />
+                      <Bar dataKey="login" name="平台登录" fill="#60A5FA" barSize={6} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive} />
+                      <Bar dataKey="course" name="课程参与" fill="#93C5FD" barSize={6} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </ChartCard>
 
-            <ChartCard 
-              title="课程热度榜单"
-              onViewAll={() => handleViewAll('课程热度榜单', ['排名', '课程名称', '累计学习时长', '累计访问人次'], getScaledData(fullData.activeCourses, activityFilter), 'activeCourses')}
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={getScaledData(activityData.activeCourses, activityFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
-                  <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
-                  <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={80} />
-                  <RechartsTooltip 
-                    content={<CustomTooltip />}
-                    cursor={{ fill: '#F1F5F9' }} 
-                    isAnimationActive={false}
-                  />
-                  <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
-                  <Bar dataKey="duration" name="累计学习时长" fill="#EC4899" barSize={12} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
-                    <LabelList dataKey="duration" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
-                  </Bar>
-                  <Bar dataKey="visits" name="累计访问人次" fill="#8B5CF6" barSize={12} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
-                    <LabelList dataKey="visits" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartCard>
+                <ChartCard 
+                  title="课程热度榜单"
+                  onViewAll={() => handleViewAll('课程热度榜单', ['排名', '课程名称', '累计学习时长', '累计访问人次'], getScaledData(fullData.activeCourses, activityFilter), 'activeCourses')}
+                >
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={getScaledData(activityData.activeCourses, activityFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 30, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
+                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
+                      <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={80} />
+                      <RechartsTooltip 
+                        content={<CustomTooltip />}
+                        cursor={{ fill: '#F1F5F9' }} 
+                        isAnimationActive={false}
+                      />
+                      <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                      <Bar dataKey="duration" name="累计学习时长(千小时)" fill="#C084FC" barSize={8} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
+                        <LabelList dataKey="duration" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </ChartCard>
 
-            <ChartCard 
-              title="实验环境使用榜单"
-              onViewAll={() => handleViewAll('实验环境使用榜单', ['排名', '实验环境名称', '累计运行时长'], getScaledData(fullData.activeLabs, activityFilter), 'activeLabs')}
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={getScaledData(activityData.activeLabs, activityFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
-                  <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
-                  <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={100} />
-                  <RechartsTooltip 
-                    content={<CustomTooltip />}
-                    cursor={{ fill: '#F1F5F9' }} 
-                    isAnimationActive={false}
-                  />
-                  <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
-                  <Bar dataKey="duration" name="累计运行时长" fill="#F97316" barSize={12} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
-                    <LabelList dataKey="duration" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartCard>
+                <ChartCard 
+                  title="实训实验使用榜单"
+                  onViewAll={() => handleViewAll('实验环境使用榜单', ['排名', '实验环境名称', '累计运行时长'], getScaledData(fullData.activeLabs, activityFilter), 'activeLabs')}
+                >
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={getScaledData(activityData.activeLabs, activityFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 30, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
+                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
+                      <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={100} />
+                      <RechartsTooltip 
+                        content={<CustomTooltip />}
+                        cursor={{ fill: '#F1F5F9' }} 
+                        isAnimationActive={false}
+                      />
+                      <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                      <Bar dataKey="duration" name="累计使用时长(千小时)" fill="#F97316" barSize={8} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
+                        <LabelList dataKey="duration" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </ChartCard>
+              </div>
+            </section>
+            
+            {/* 运营动态 */}
+            <section className="w-full xl:w-[30%] flex flex-col">
+              <SectionTitle icon={Rocket} title="运营动态" color="text-blue-600">
+                <button className="text-xs text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1 font-normal">查看更多 {'>'}</button>
+              </SectionTitle>
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col flex-1">
+                <div className="flex-1 flex flex-col gap-6 overflow-y-auto pr-2">
+                  {dynamicsData.map(item => (
+                    <div key={item.id} className="flex gap-4">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${item.bg}`}>
+                        <item.icon className={`w-4 h-4 ${item.color}`} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col mb-0.5 gap-0.5">
+                          <h4 className="text-[13px] font-bold text-slate-800 truncate">{item.title}</h4>
+                          <span className="text-[10px] text-slate-400 shrink-0 font-din">{item.time}</span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed mt-1">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
           </div>
-        </section>
 
+          {/* Row 2: Section 4 & Data Time Range */}
+          <div className="flex flex-col xl:flex-row justify-between gap-6">
+            {/* Section 4: 数据概览 (今日) */}
+            <section className="w-full xl:w-[68%] flex flex-col">
+              <SectionTitle icon={BarChart3} title="数据概览 (今日)" color="text-blue-600" />
+              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5 flex-1">
+                {todayData.map((item, idx) => (
+                  <div key={idx} className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex items-center gap-3 h-full">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
+                      <item.icon className="w-5 h-5" />
+                    </div>
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <h3 className="text-xs font-medium text-slate-700 mb-0.5 truncate">{item.title}</h3>
+                      <div className="text-lg font-bold text-slate-900 font-din truncate">{item.value.toLocaleString()}</div>
+                      <div className="text-[10px] text-slate-500 truncate mt-0.5">较昨日 <span className="font-medium text-emerald-500 ml-0.5">{item.trend}</span></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
 
+            {/* 数据时间范围 */}
+            <section className="w-full xl:w-[30%] flex flex-col">
+              {/* Invisible spacer title to align exactly with left side title */}
+              <div className="invisible min-h-[36px] mb-4">Spacer</div>
+              <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 flex flex-col justify-center flex-1 relative overflow-hidden">
+                <div className="relative z-10 flex flex-col items-start pr-10">
+                  <h3 className="text-[13px] font-bold text-slate-800 mb-2">数据时间范围</h3>
+                  <div className="flex items-center gap-2 text-blue-600 font-din font-medium text-[15px] mt-1 bg-blue-50/50 px-3 py-1.5 rounded-lg border border-blue-100/50">
+                    <Calendar className="w-4 h-4 text-blue-500" />
+                    <span>2025 年 10 月 1 日 - 2026 年 3 月 31 日</span>
+                  </div>
+                  <div className="text-[11px] text-slate-500 mt-3 flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
+                    数据每日更新，统计周期为自然日
+                  </div>
+                </div>
+                <div className="absolute right-[-15px] bottom-[-15px] opacity-[0.04]">
+                  <Calendar className="w-40 h-40 text-blue-600" />
+                </div>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-20">
+                  <div className="flex gap-1">
+                    <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
+                    <div className="w-1.5 h-10 bg-blue-500 rounded-full" />
+                    <div className="w-1.5 h-4 bg-blue-500 rounded-full" />
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
 
       </main>
 
@@ -886,7 +1058,7 @@ const PlatformOperationsDashboard: React.FC = () => {
                         </div>
                       </td>
                       <td className="py-3 font-medium text-slate-700">
-                        {modalConfig.type === 'leaderboardSchools' ? (
+                        {['leaderboardSchools', 'activeSchools', 'trendCourseDetails', 'trendLabDetails', 'trendNewSchoolsDetails'].includes(modalConfig.type) ? (
                           <Link 
                             to={`/school-dashboard/${encodeURIComponent(row.name)}`}
                             className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"

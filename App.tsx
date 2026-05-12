@@ -28,6 +28,7 @@ import Profile from "./pages/Profile";
 import OperationsDashboard from "./pages/OperationsDashboard";
 import BigScreenDashboard from "./pages/BigScreenDashboard";
 import PlatformOperationsDashboard from "./pages/PlatformOperationsDashboard";
+import PlatformApplicationDashboard from "./pages/PlatformApplicationDashboard";
 import SchoolDashboard from "./pages/SchoolDashboard";
 
 const AppContent: React.FC = () => {
@@ -97,6 +98,7 @@ const AppContent: React.FC = () => {
       <Route path="/operations-dashboard" element={<OperationsDashboard />} />
       <Route path="/big-screen-dashboard" element={<BigScreenDashboard />} />
       <Route path="/platform-operations-dashboard" element={<PlatformOperationsDashboard />} />
+      <Route path="/platform-application-dashboard" element={<PlatformApplicationDashboard />} />
       <Route path="/school-dashboard/:schoolName" element={<SchoolDashboard />} />
 
       {/* Main Application Routes with Layout */}

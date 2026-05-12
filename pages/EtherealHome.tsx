@@ -32,68 +32,6 @@ const EtherealHome: React.FC = () => {
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-cyan-200/40 blur-[120px] -z-10"></div>
         <div className="absolute top-[20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-sky-200/40 blur-[140px] -z-10"></div>
         
-        {/* Floating Graphics (Left and Right) based on design */}
-        <div className="absolute left-[2%] xl:left-[8%] top-[40%] hidden lg:flex flex-col gap-6 animate-[bounce_8s_ease-in-out_infinite]">
-          {/* Top Left Connection Line graphic */}
-          <div className="relative h-16 ml-10">
-             <div className="absolute top-0 left-0 w-32 h-[1px] bg-cyan-300 -rotate-12 translate-x-12 translate-y-8"></div>
-             <div className="absolute top-0 left-0 w-4 h-4 rounded-full border-[3px] border-cyan-400 bg-white translate-x-8 translate-y-4"></div>
-             <div className="w-24 bg-white/80 backdrop-blur-sm rounded-xl py-2 px-3 shadow-sm border border-cyan-100 flex items-center justify-center relative translate-x-28">
-               <div className="w-10 h-2 bg-blue-300 rounded-full mb-1"></div>
-               <div className="w-8 h-2 bg-yellow-400 rounded-full absolute bottom-2 left-3"></div>
-             </div>
-          </div>
-          
-          <div className="w-[160px] bg-white/80 backdrop-blur-sm rounded-full py-2.5 px-4 shadow-sm border border-slate-100 flex items-center gap-3 relative z-10 xl:translate-x-10">
-             <div className="w-2.5 h-2.5 rounded-full bg-[#00C2A8]"></div>
-             <span className="text-sm font-medium text-slate-600">机器人实训</span>
-          </div>
-          
-          <div className="relative mt-8 group xl:translate-x-12">
-            <svg width="200" height="150" viewBox="0 0 200 150" fill="none" className="absolute -top-12 left-4 -z-10 opacity-40">
-              <path d="M90 20 L40 70 L20 120" stroke="#00C2A8" strokeWidth="1.5" />
-              <path d="M90 20 L150 50" stroke="#cbd5e1" strokeWidth="1.5" strokeDasharray="4 4" />
-              <circle cx="90" cy="20" r="10" stroke="#00C2A8" strokeWidth="3" fill="transparent" />
-              <circle cx="90" cy="20" r="4" fill="#00C2A8" />
-              <circle cx="40" cy="70" r="14" fill="#2563eb" />
-              <circle cx="150" cy="50" r="8" fill="#94a3b8" />
-            </svg>
-            <div className="w-36 h-6 mt-12 bg-[#2563eb] rounded-full drop-shadow-md"></div>
-            <div className="w-28 h-6 mt-1 bg-[#F59E0B] rounded-full drop-shadow-sm"></div>
-            <div className="w-32 h-8 mt-1 bg-[#2C3A5A] rounded-full drop-shadow-sm"></div>
-          </div>
-        </div>
-        
-        <div className="absolute right-[2%] xl:right-[5%] top-[35%] hidden lg:flex flex-col items-end gap-3 animate-[bounce_9s_ease-in-out_infinite_alternate]">
-           <div className="flex flex-col items-center gap-4 relative">
-             <div className="absolute -top-16 right-10">
-                 <div className="w-[140px] bg-white/80 rounded-full py-2 px-3 flex items-center gap-2 border border-slate-100 shadow-sm">
-                    <div className="w-2 h-2 rounded-full bg-[#F59E0B]"></div>
-                    <span className="text-sm font-medium text-slate-600">PLC 云实验</span>
-                 </div>
-             </div>
-             <div className="flex items-center gap-8 relative xl:-translate-x-10 mt-10">
-                 <div className="w-16 h-16 rounded-full border-2 border-cyan-200/50 flex items-center justify-center text-cyan-200/50">
-                    <Plus className="w-8 h-8"/>
-                 </div>
-             </div>
-             
-             <div className="relative mt-8 xl:-translate-x-8">
-               <div className="w-[280px] bg-white/95 backdrop-blur-md rounded-2xl p-5 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)] border border-slate-100">
-                  <div className="w-full h-32 bg-[#2C3A5A] rounded-xl mb-4 overflow-hidden flex relative">
-                    <div className="flex-1 bg-gradient-to-br from-[#4b8af5] to-[#2563eb] m-2 rounded-lg bg-[linear-gradient(135deg,rgba(255,255,255,.2)_25%,transparent_25%,transparent_50%,rgba(255,255,255,.2)_50%,rgba(255,255,255,.2)_75%,transparent_75%,transparent)] bg-[length:14px_14px]"></div>
-                    <div className="w-12 h-full flex flex-col items-center justify-center gap-3 p-1">
-                       <div className="w-5 h-1.5 bg-cyan-400 rounded-full"></div>
-                       <div className="w-4 h-4 bg-[#F59E0B] rounded-full"></div>
-                       <div className="w-5 h-1.5 bg-slate-500 rounded-full"></div>
-                    </div>
-                  </div>
-                  <div className="w-full h-10 bg-[#e2e8f0] rounded-xl"></div>
-               </div>
-             </div>
-           </div>
-        </div>
-        
         {/* Main Hero Content */}
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#2563eb] shadow-sm mb-12 animate-fade-in-up transition-colors cursor-pointer">
@@ -561,7 +499,9 @@ const EtherealHome: React.FC = () => {
   );
 };
 
-const SchoolBadge = ({ name, abbr, color }: { name: string, abbr: string, color: string }) => {
+
+
+const SchoolBadge: React.FC<{ name: string, abbr: string, color: string }> = ({ name, abbr, color }) => {
   return (
     <div className={`flex flex-row items-center justify-start gap-3 md:gap-4 group hover:scale-105 transition-transform duration-300 cursor-pointer ${color}`}>
        <div className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0">
