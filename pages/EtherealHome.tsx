@@ -148,13 +148,7 @@ const EtherealHome: React.FC = () => {
           </div>
         </div>
         
-        {/* Floating Decorative Elements */}
-        <div className="absolute left-[10%] top-[30%] animate-float-slow hidden lg:block opacity-50">
-           <Cpu className="w-16 h-16 text-blue-300" />
-        </div>
-        <div className="absolute right-[15%] top-[40%] animate-float hidden lg:block opacity-50">
-           <BrainCircuit className="w-20 h-20 text-purple-300" />
-        </div>
+        {/* Removed Floating Decorative Elements */}
       </section>
 
       {/* --- CORE CAPABILITIES --- */}

@@ -43,10 +43,10 @@ const overallData = {
 };
 
 const dynamicsData = [
-  { id: 1, title: '平台累计用户突破 12,000', desc: '感谢各院校的支持与信任，平台用户规模再创新高！', time: '10-01 14:30', icon: Users, color: 'text-blue-500', bg: 'bg-blue-50' },
-  { id: 2, title: 'AI 技能助手使用量增长 120%', desc: '本月 AI 技能助手使用次数较上月增长 120%。', time: '10-01 11:20', icon: Cpu, color: 'text-blue-500', bg: 'bg-blue-50' },
-  { id: 3, title: '新增优质课程 320 门', desc: '本月新增优质课程 320 门，持续丰富平台教学资源！', time: '10-01 10:15', icon: BookOpen, color: 'text-blue-500', bg: 'bg-blue-50' },
-  { id: 4, title: '实训时长突破 6 万小时', desc: '实训时长累计突破 6 万小时，实践教学成效显著！', time: '09-30 16:45', icon: Clock, color: 'text-blue-500', bg: 'bg-blue-50' },
+  { id: 1, title: '平台累计用户突破 12,000', desc: '感谢各院校的支持与信任，平台用户规模再创新高！', time: '10-01 14:30', icon: Users, color: 'text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]', bg: 'bg-blue-900/30' },
+  { id: 2, title: 'AI 技能助手使用量增长 120%', desc: '本月 AI 技能助手使用次数较上月增长 120%。', time: '10-01 11:20', icon: Cpu, color: 'text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]', bg: 'bg-blue-900/30' },
+  { id: 3, title: '新增优质课程 320 门', desc: '本月新增优质课程 320 门，持续丰富平台教学资源！', time: '10-01 10:15', icon: BookOpen, color: 'text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]', bg: 'bg-blue-900/30' },
+  { id: 4, title: '实训时长突破 6 万小时', desc: '实训时长累计突破 6 万小时，实践教学成效显著！', time: '09-30 16:45', icon: Clock, color: 'text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]', bg: 'bg-blue-900/30' },
 ];
 
 const todayData = [
@@ -210,13 +210,13 @@ const fullData = {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-3 rounded-lg shadow-lg border border-slate-100 min-w-[150px]">
-        <p className="font-medium text-slate-800 mb-2">{label}</p>
+      <div className="bg-[#111827] ring-1 ring-cyan-500/20 p-3 rounded-lg shadow-lg border border-cyan-500/20 min-w-[150px]">
+        <p className="font-medium text-cyan-400 font-bold tracking-wider mb-2">{label}</p>
         {payload.map((entry: any, index: number) => (
           <div key={index} className="flex items-center gap-2 text-sm mt-1">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-            <span className="text-slate-600">{entry.name}:</span>
-            <span className="font-medium text-slate-900">{entry.value.toLocaleString()}</span>
+            <span className="text-cyan-300">{entry.name}:</span>
+            <span className="font-medium text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">{entry.value.toLocaleString()}</span>
           </div>
         ))}
       </div>
@@ -229,7 +229,7 @@ const SectionTitle = ({ icon: Icon, title, color, children }: { icon: any, title
   <div className="flex items-center justify-between mb-4 mt-8 first:mt-0 min-h-[36px]">
     <div className="flex items-center gap-2">
       <Icon className={`w-5 h-5 ${color}`} />
-      <h2 className="text-lg font-bold text-slate-800">{title}</h2>
+      <h2 className="text-lg font-bold text-cyan-400 font-bold tracking-wider">{title}</h2>
     </div>
     {children && (
       <div className="flex items-center gap-3">
@@ -242,22 +242,22 @@ const SectionTitle = ({ icon: Icon, title, color, children }: { icon: any, title
 const SectionFilter = ({ filter, onFilterChange }: { filter: string, onFilterChange: (f: string) => void }) => {
   return (
     <div className="flex items-center gap-3 font-normal">
-      <div className="flex items-center bg-white border border-slate-200 rounded-lg shadow-sm text-xs p-1">
+      <div className="flex items-center bg-[#111827] ring-1 ring-cyan-500/20 border border-cyan-500/30 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.15)] text-xs p-1">
         {['按日', '按周', '按月', '按年'].map(f => (
           <button
             key={f}
             onClick={() => onFilterChange(f)}
-            className={`px-3 py-1.5 rounded-md transition-colors ${filter === f ? 'bg-slate-100 text-slate-800 font-medium' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`px-3 py-1.5 rounded-md transition-colors ${filter === f ? 'bg-cyan-900/40 text-cyan-400 font-bold tracking-wider font-medium' : 'text-cyan-500 hover:text-cyan-100'}`}
           >
             {f}
           </button>
         ))}
       </div>
-      <div className="flex items-center bg-white border border-slate-200 rounded-lg shadow-sm px-2 py-1 text-xs text-slate-600 gap-2 transition-colors">
-        <Calendar className="w-3.5 h-3.5 text-slate-400" />
-        <input type="date" className="bg-transparent border-none outline-none cursor-pointer text-slate-600 w-[100px]" defaultValue="2024-01-01" />
-        <span className="text-slate-300">-</span>
-        <input type="date" className="bg-transparent border-none outline-none cursor-pointer text-slate-600 w-[100px]" defaultValue="2024-12-31" />
+      <div className="flex items-center bg-[#111827] ring-1 ring-cyan-500/20 border border-cyan-500/30 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.15)] px-2 py-1 text-xs text-cyan-300 gap-2 transition-colors">
+        <Calendar className="w-3.5 h-3.5 text-cyan-600" />
+        <input type="date" className="bg-transparent border-none outline-none cursor-pointer text-cyan-300 w-[100px]" defaultValue="2024-01-01" />
+        <span className="text-cyan-700">-</span>
+        <input type="date" className="bg-transparent border-none outline-none cursor-pointer text-cyan-300 w-[100px]" defaultValue="2024-12-31" />
       </div>
     </div>
   );
@@ -265,16 +265,16 @@ const SectionFilter = ({ filter, onFilterChange }: { filter: string, onFilterCha
 
 const StatCard = ({ title, value, detail, icon: Icon, iconColor, iconBg }: any) => {
   return (
-    <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 flex flex-col justify-between">
+    <div className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-xl p-5 shadow-[0_0_15px_rgba(6,182,212,0.15)] border border-cyan-500/20 flex flex-col justify-between">
       <div className="flex justify-between items-start mb-2">
-        <h3 className="text-[13px] font-bold text-slate-700">{title}</h3>
+        <h3 className="text-[13px] font-bold text-cyan-100">{title}</h3>
         <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${iconBg}`}>
           <Icon className={`w-4 h-4 ${iconColor}`} />
         </div>
       </div>
       <div>
-        <div className="text-2xl font-bold text-slate-900 mb-2 font-din tracking-tight truncate">{typeof value === 'number' ? value.toLocaleString() : value}</div>
-        {detail && <div className="text-[10px] text-slate-500 truncate">{detail}</div>}
+        <div className="text-2xl font-bold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] mb-2 font-din tracking-tight truncate">{typeof value === 'number' ? value.toLocaleString() : value}</div>
+        {detail && <div className="text-[10px] text-cyan-500 truncate">{detail}</div>}
       </div>
     </div>
   );
@@ -282,14 +282,14 @@ const StatCard = ({ title, value, detail, icon: Icon, iconColor, iconBg }: any) 
 
 const ChartCard = ({ title, onViewAll, viewAllText = "查看全部", children }: any) => {
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col h-[320px]">
+    <div className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-xl p-6 shadow-[0_0_15px_rgba(6,182,212,0.15)] border border-cyan-500/20 flex flex-col h-[320px]">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-base font-bold text-slate-800">{title}</h3>
+        <h3 className="text-base font-bold text-cyan-400 font-bold tracking-wider">{title}</h3>
         <div className="flex items-center gap-3">
           {onViewAll && (
             <button 
               onClick={onViewAll}
-              className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+              className="text-xs text-cyan-400 hover:text-cyan-200 hover:underline transition-colors"
             >
               {viewAllText}
             </button>
@@ -304,16 +304,16 @@ const ChartCard = ({ title, onViewAll, viewAllText = "查看全部", children }:
 };
 
 const LeaderboardCard = ({ title, icon: Icon, iconColor, columns, data, onViewAll }: any) => (
-  <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col">
+  <div className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-xl p-6 shadow-[0_0_15px_rgba(6,182,212,0.15)] border border-cyan-500/20 flex flex-col">
     <div className="flex items-center justify-between mb-6">
       <div className="flex items-center gap-2">
         <Icon className={`w-5 h-5 ${iconColor}`} />
-        <h3 className="text-base font-bold text-slate-800">{title}</h3>
+        <h3 className="text-base font-bold text-cyan-400 font-bold tracking-wider">{title}</h3>
       </div>
       {onViewAll && (
         <button 
           onClick={onViewAll}
-          className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+          className="text-xs text-cyan-400 hover:text-cyan-200 hover:underline transition-colors"
         >
           查看全部
         </button>
@@ -321,7 +321,7 @@ const LeaderboardCard = ({ title, icon: Icon, iconColor, columns, data, onViewAl
     </div>
     <div className="flex-1">
       <table className="w-full text-sm text-left">
-        <thead className="text-xs text-slate-500 border-b border-slate-100">
+        <thead className="text-xs text-cyan-500 border-b border-cyan-500/20">
           <tr>
             {columns.map((col: string, idx: number) => (
               <th key={idx} className={`pb-3 font-medium ${idx > 1 ? 'text-right' : ''}`}>{col}</th>
@@ -330,21 +330,21 @@ const LeaderboardCard = ({ title, icon: Icon, iconColor, columns, data, onViewAl
         </thead>
         <tbody>
           {data.map((row: any, idx: number) => (
-            <tr key={idx} className="border-b border-slate-50 last:border-0">
+            <tr key={idx} className="border-b border-cyan-500/10 last:border-0">
               <td className="py-3 w-12">
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
                   row.rank === 1 ? 'bg-amber-100 text-amber-600' :
-                  row.rank === 2 ? 'bg-slate-100 text-slate-600' :
-                  row.rank === 3 ? 'bg-orange-100 text-orange-600' :
-                  'bg-slate-50 text-slate-500'
+                  row.rank === 2 ? 'bg-cyan-900/40 text-cyan-300' :
+                  row.rank === 3 ? 'bg-orange-800/30 text-orange-400' :
+                  'bg-[#0B0F19]/80 text-cyan-500'
                 }`}>
                   {row.rank}
                 </div>
               </td>
-              <td className="py-3 font-medium text-slate-700 whitespace-nowrap">{row.name}</td>
-              {row.duration && <td className="py-3 text-right text-slate-600 whitespace-nowrap">{row.duration}</td>}
-              {row.courseDuration && <td className="py-3 text-right text-slate-600 whitespace-nowrap">{row.courseDuration}</td>}
-              {row.token && <td className="py-3 text-right text-slate-600 whitespace-nowrap">{row.token}</td>}
+              <td className="py-3 font-medium text-cyan-100 whitespace-nowrap">{row.name}</td>
+              {row.duration && <td className="py-3 text-right text-cyan-300 whitespace-nowrap">{row.duration}</td>}
+              {row.courseDuration && <td className="py-3 text-right text-cyan-300 whitespace-nowrap">{row.courseDuration}</td>}
+              {row.token && <td className="py-3 text-right text-cyan-300 whitespace-nowrap">{row.token}</td>}
             </tr>
           ))}
         </tbody>
@@ -505,51 +505,51 @@ const PlatformOperationsDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-sans overflow-y-auto pb-10">
+    <div className="min-h-screen bg-[#0B0F19] font-sans overflow-y-auto pb-10">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-50">
+      <header className="bg-[#111827] ring-1 ring-cyan-500/20 border-b border-cyan-500/30 px-8 py-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-4">
           <button 
             onClick={() => navigate('/operations-dashboard')}
-            className="p-2 rounded-full hover:bg-slate-100 transition-colors text-slate-600"
+            className="p-2 rounded-full hover:bg-cyan-900/40 transition-colors text-cyan-300"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-2xl font-black tracking-widest text-slate-900">
+            <h1 className="text-2xl font-black tracking-widest text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">
               UUSIMA 运营决策大屏
             </h1>
           </div>
           
           {/* Tab Switcher */}
-          <div className="flex bg-slate-100 border-slate-200 p-1 rounded-2xl border ml-8">
+          <div className="flex bg-cyan-900/40 border-cyan-500/30 p-1 rounded-2xl border ml-8">
             <button
-              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all bg-white text-blue-600 shadow-sm"
+              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all bg-[#111827] ring-1 ring-cyan-500/20 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)]"
             >
               平台运营
             </button>
             <button
               onClick={() => navigate('/platform-application-dashboard')}
-              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-slate-500 hover:text-slate-700"
+              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-cyan-500 hover:text-cyan-100"
             >
               平台应用情况
             </button>
             <button
               onClick={() => navigate('/big-screen-dashboard', { state: { activeTab: 'operations' } })}
-              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-slate-500 hover:text-slate-700"
+              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-cyan-500 hover:text-cyan-100"
             >
               平台运维
             </button>
             <button
               onClick={() => navigate('/big-screen-dashboard', { state: { activeTab: 'business' } })}
-              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-slate-500 hover:text-slate-700"
+              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-cyan-500 hover:text-cyan-100"
             >
               运营情况
             </button>
           </div>
         </div>
-        <div className="text-sm text-slate-500 flex items-center gap-2">
-          最后更新: <span className="font-din font-medium text-slate-700">{currentTime.toLocaleTimeString('zh-CN', { hour12: false })}</span>
+        <div className="text-sm text-cyan-500 flex items-center gap-2">
+          最后更新: <span className="font-din font-medium text-cyan-100">{currentTime.toLocaleTimeString('zh-CN', { hour12: false })}</span>
         </div>
       </header>
 
@@ -557,7 +557,7 @@ const PlatformOperationsDashboard: React.FC = () => {
         
         {/* Section 1: 数据总览 */}
         <section>
-          <SectionTitle icon={BarChart3} title="数据总览" color="text-blue-600">
+          <SectionTitle icon={BarChart3} title="数据总览" color="text-cyan-400">
             <div className="relative z-50 w-64" ref={searchContainerRef}>
               <input
                 type="text"
@@ -568,7 +568,7 @@ const PlatformOperationsDashboard: React.FC = () => {
                 }}
                 onFocus={() => setIsSearchDropdownOpen(true)}
                 placeholder="搜索学校使用信息..."
-                className="w-full pl-9 pr-9 py-2 border border-slate-200 rounded-lg text-sm text-slate-700 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-normal placeholder:text-slate-400 hover:border-slate-300"
+                className="w-full pl-9 pr-9 py-2 border border-cyan-500/30 rounded-lg text-sm text-cyan-100 bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-normal placeholder:text-cyan-600 hover:border-slate-300"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     if (searchQuery.trim()) {
@@ -578,22 +578,22 @@ const PlatformOperationsDashboard: React.FC = () => {
                   }
                 }}
               />
-              <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400 group-focus-within:text-blue-500 transition-colors pointer-events-none" />
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-cyan-600 group-focus-within:text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.8)] transition-colors pointer-events-none" />
               <ChevronDown 
-                className="absolute right-3 top-2.5 w-4 h-4 text-slate-400 cursor-pointer hover:text-slate-600 transition-colors" 
+                className="absolute right-3 top-2.5 w-4 h-4 text-cyan-600 cursor-pointer hover:text-cyan-300 transition-colors" 
                 onClick={() => setIsSearchDropdownOpen(!isSearchDropdownOpen)}
               />
               
               {isSearchDropdownOpen && displayedSchools.length > 0 && (
                 <div 
-                  className="absolute top-full mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-xl overflow-hidden max-h-[300px] overflow-y-auto z-50"
+                  className="absolute top-full mt-1 w-full bg-[#111827] ring-1 ring-cyan-500/20 border border-cyan-500/30 rounded-lg shadow-[0_0_30px_rgba(6,182,212,0.3)] overflow-hidden max-h-[300px] overflow-y-auto z-50"
                   onScroll={handleSearchScroll}
                 >
                   <div className="py-1">
                     {displayedSchools.map((school) => (
                       <button
                         key={school}
-                        className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors font-medium border-b border-slate-50 last:border-0"
+                        className="w-full text-left px-4 py-2.5 text-sm text-cyan-100 hover:bg-[#0B0F19]/80 hover:text-cyan-400 transition-colors font-medium border-b border-cyan-500/10 last:border-0"
                         onClick={() => {
                           setSearchQuery(school);
                           setIsSearchDropdownOpen(false);
@@ -607,26 +607,26 @@ const PlatformOperationsDashboard: React.FC = () => {
                 </div>
               )}
               {isSearchDropdownOpen && displayedSchools.length === 0 && (
-                <div className="absolute top-full mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-xl p-4 text-center z-50">
-                  <div className="text-sm text-slate-500">未找到相关学校</div>
+                <div className="absolute top-full mt-1 w-full bg-[#111827] ring-1 ring-cyan-500/20 border border-cyan-500/30 rounded-lg shadow-[0_0_30px_rgba(6,182,212,0.3)] p-4 text-center z-50">
+                  <div className="text-sm text-cyan-500">未找到相关学校</div>
                 </div>
               )}
             </div>
           </SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4">
-            <StatCard title="平台用户数" value={overallData.users.total} detail={overallData.users.detail} icon={Users} iconColor="text-blue-500" iconBg="bg-blue-50" />
-            <StatCard title="学校总数" value={overallData.schools.total} detail={overallData.schools.detail} icon={School} iconColor="text-emerald-500" iconBg="bg-emerald-50" />
-            <StatCard title="课程数量" value={overallData.courses.total} detail={overallData.courses.detail} icon={BookOpen} iconColor="text-purple-500" iconBg="bg-purple-50" />
-            <StatCard title="教学工具使用量" value={overallData.toolUsage.total} detail={overallData.toolUsage.detail} icon={Rocket} iconColor="text-orange-500" iconBg="bg-orange-50" />
-            <StatCard title="AI技能助手调用次数" value={overallData.agentInvocations.total} detail={overallData.agentInvocations.detail} icon={Cpu} iconColor="text-pink-500" iconBg="bg-pink-50" />
-            <StatCard title="实训使用时长(小时)" value={overallData.labDuration.total} detail={overallData.labDuration.detail} icon={Clock} iconColor="text-blue-600" iconBg="bg-blue-100" />
+            <StatCard title="平台用户数" value={overallData.users.total} detail={overallData.users.detail} icon={Users} iconColor="text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]" iconBg="bg-blue-900/30" />
+            <StatCard title="学校总数" value={overallData.schools.total} detail={overallData.schools.detail} icon={School} iconColor="text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.8)]" iconBg="bg-emerald-900/30" />
+            <StatCard title="课程数量" value={overallData.courses.total} detail={overallData.courses.detail} icon={BookOpen} iconColor="text-purple-400 drop-shadow-[0_0_5px_rgba(192,132,252,0.8)]" iconBg="bg-purple-900/30" />
+            <StatCard title="教学工具使用量" value={overallData.toolUsage.total} detail={overallData.toolUsage.detail} icon={Rocket} iconColor="text-orange-400 drop-shadow-[0_0_5px_rgba(251,146,60,0.8)]" iconBg="bg-orange-900/30" />
+            <StatCard title="AI技能助手调用次数" value={overallData.agentInvocations.total} detail={overallData.agentInvocations.detail} icon={Cpu} iconColor="text-pink-400 drop-shadow-[0_0_5px_rgba(244,114,182,0.8)]" iconBg="bg-pink-900/30" />
+            <StatCard title="实训使用时长(小时)" value={overallData.labDuration.total} detail={overallData.labDuration.detail} icon={Clock} iconColor="text-cyan-400" iconBg="bg-blue-800/30" />
           </div>
         </section>
 
         {/* Section 2: 趋势分析 & 业务总榜 */}
         <div className="flex flex-col xl:flex-row justify-between gap-6">
           <div className="w-full xl:w-[68%] flex flex-col">
-            <SectionTitle icon={TrendingUp} title="趋势分析" color="text-emerald-600">
+            <SectionTitle icon={TrendingUp} title="趋势分析" color="text-emerald-400">
               <SectionFilter filter={trendFilter} onFilterChange={setTrendFilter} />
             </SectionTitle>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 flex-1">
@@ -647,16 +647,16 @@ const PlatformOperationsDashboard: React.FC = () => {
                         <stop offset="95%" stopColor="#60A5FA" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} dy={10} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} />
-                    <RechartsTooltip isAnimationActive={false} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#164E63" />
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#06B6D4' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#06B6D4' }} />
+                    <RechartsTooltip isAnimationActive={false} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(6,182,212,0.3)' }} />
                     <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
                     <Area type="monotone" dataKey="private" name="私有化课程" stroke="#34D399" fillOpacity={1} fill="url(#colorPrivateCourse)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
-                      <LabelList dataKey="private" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
+                      <LabelList dataKey="private" position="top" style={{ fontSize: '10px', fill: '#22D3EE' }} />
                     </Area>
                     <Area type="monotone" dataKey="online" name="线上课程" stroke="#60A5FA" fillOpacity={1} fill="url(#colorOnlineCourse)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
-                      <LabelList dataKey="online" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
+                      <LabelList dataKey="online" position="top" style={{ fontSize: '10px', fill: '#22D3EE' }} />
                     </Area>
                   </AreaChart>
                 </ResponsiveContainer>
@@ -679,16 +679,16 @@ const PlatformOperationsDashboard: React.FC = () => {
                         <stop offset="95%" stopColor="#FBBF24" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} dy={10} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} />
-                    <RechartsTooltip isAnimationActive={false} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#164E63" />
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#06B6D4' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#06B6D4' }} />
+                    <RechartsTooltip isAnimationActive={false} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(6,182,212,0.3)' }} />
                     <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
                     <Area type="monotone" dataKey="private" name="私有化实验" stroke="#A78BFA" fillOpacity={1} fill="url(#colorPrivateLab)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
-                      <LabelList dataKey="private" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
+                      <LabelList dataKey="private" position="top" style={{ fontSize: '10px', fill: '#22D3EE' }} />
                     </Area>
                     <Area type="monotone" dataKey="online" name="线上实验" stroke="#FBBF24" fillOpacity={1} fill="url(#colorOnlineLab)" strokeWidth={2} isAnimationActive={isChartAnimationActive}>
-                      <LabelList dataKey="online" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
+                      <LabelList dataKey="online" position="top" style={{ fontSize: '10px', fill: '#22D3EE' }} />
                     </Area>
                   </AreaChart>
                 </ResponsiveContainer>
@@ -701,12 +701,12 @@ const PlatformOperationsDashboard: React.FC = () => {
               >
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={getScaledTrendData(trendData.newSchools, trendFilter, true)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} dy={10} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} />
-                    <RechartsTooltip isAnimationActive={false} cursor={{ fill: '#F1F5F9' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#164E63" />
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#06B6D4' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#06B6D4' }} />
+                    <RechartsTooltip isAnimationActive={false} cursor={{ fill: '#0B0F19' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(6,182,212,0.3)' }} />
                     <Bar dataKey="count" fill="#06B6D4" radius={[4, 4, 0, 0]} maxBarSize={40} isAnimationActive={isChartAnimationActive}>
-                      <LabelList dataKey="count" position="top" style={{ fontSize: '10px', fill: '#64748B' }} />
+                      <LabelList dataKey="count" position="top" style={{ fontSize: '10px', fill: '#22D3EE' }} />
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
@@ -716,22 +716,22 @@ const PlatformOperationsDashboard: React.FC = () => {
           
           <div className="w-full xl:w-[30%] flex flex-col">
             <SectionTitle icon={Award} title="业务总榜" color="text-amber-500" />
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 flex flex-col flex-1">
-              <div className="flex bg-slate-50 p-1 rounded-lg mb-4 text-xs font-medium border border-slate-100">
+            <div className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-xl p-5 shadow-[0_0_15px_rgba(6,182,212,0.15)] border border-cyan-500/20 flex flex-col flex-1">
+              <div className="flex bg-[#0B0F19]/80 p-1 rounded-lg mb-4 text-xs font-medium border border-cyan-500/20">
                 <button
-                  className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'schools' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+                  className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'schools' ? 'bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-cyan-400' : 'text-cyan-500 hover:text-cyan-100'}`}
                   onClick={() => setActiveLeaderboardTab('schools')}
                 >
                   院校
                 </button>
                 <button
-                  className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'courses' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-500 hover:text-slate-700'}`}
+                  className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'courses' ? 'bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-emerald-400' : 'text-cyan-500 hover:text-cyan-100'}`}
                   onClick={() => setActiveLeaderboardTab('courses')}
                 >
                   课程
                 </button>
                 <button
-                  className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'labs' ? 'bg-white shadow-sm text-purple-600' : 'text-slate-500 hover:text-slate-700'}`}
+                  className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'labs' ? 'bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-purple-400' : 'text-cyan-500 hover:text-cyan-100'}`}
                   onClick={() => setActiveLeaderboardTab('labs')}
                 >
                   实验
@@ -741,31 +741,31 @@ const PlatformOperationsDashboard: React.FC = () => {
               {activeLeaderboardTab === 'schools' && (
                 <div className="flex-1 flex flex-col min-h-0">
                   <div className="flex items-center justify-between mb-3 text-sm">
-                    <span className="font-bold text-slate-800 text-xs">院校资源用量榜</span>
-                    <button onClick={() => handleViewAll('院校资源用量榜', ['排名', '学校名称', '累计实训时长', '累计课程时长', 'AI 算力消耗'], fullData.leaderboardSchools, 'leaderboardSchools')} className="text-[11px] text-blue-600 hover:text-blue-800 hover:underline">查看全部</button>
+                    <span className="font-bold text-cyan-400 font-bold tracking-wider text-xs">院校资源用量榜</span>
+                    <button onClick={() => handleViewAll('院校资源用量榜', ['排名', '学校名称', '累计实训时长', '累计课程时长', 'AI 算力消耗'], fullData.leaderboardSchools, 'leaderboardSchools')} className="text-[11px] text-cyan-400 hover:text-cyan-200 hover:underline">查看全部</button>
                   </div>
                   <div className="overflow-y-auto pr-1 text-xs">
                     <table className="w-full text-left">
                       <tbody>
                         {leaderboardData.schools.map((row: any, idx: number) => (
-                          <tr key={idx} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
+                          <tr key={idx} className="border-b border-cyan-500/10 last:border-0 hover:bg-[#0B0F19]/80/50">
                             <td className="py-2 w-8">
                               <div className={`w-5 h-5 mx-auto rounded flex items-center justify-center font-bold text-[10px] ${
                                 row.rank === 1 ? 'bg-amber-100 text-amber-600' :
-                                row.rank === 2 ? 'bg-slate-100 text-slate-600' :
-                                row.rank === 3 ? 'bg-orange-100 text-orange-600' :
-                                'bg-slate-50 text-slate-500'
+                                row.rank === 2 ? 'bg-cyan-900/40 text-cyan-300' :
+                                row.rank === 3 ? 'bg-orange-800/30 text-orange-400' :
+                                'bg-[#0B0F19]/80 text-cyan-500'
                               }`}>
                                 {row.rank}
                               </div>
                             </td>
                             <td className="py-2">
                               <div className="flex items-center justify-between gap-2">
-                                <Link to={`/school-dashboard/${encodeURIComponent(row.name)}`} className="font-medium text-blue-600 hover:text-blue-800 hover:underline truncate min-w-0" title={row.name}>{row.name}</Link>
-                                <div className="flex items-center gap-2 text-[10px] text-slate-500 shrink-0">
-                                  <div className="flex items-center"><span className="text-slate-400 mr-1">实训</span><span className="font-din text-purple-600 font-medium">{row.duration.replace(' 分钟', 'm').replace(/,/g, '')}</span></div>
-                                  <div className="flex items-center"><span className="text-slate-400 mr-1">课程</span><span className="font-din text-emerald-600 font-medium">{row.courseDuration.replace(' 分钟', 'm').replace(/,/g, '')}</span></div>
-                                  <div className="flex items-center"><span className="text-slate-400 mr-1">算力</span><span className="font-din text-blue-600 font-medium">{row.token.replace(/,/g, '')}</span></div>
+                                <Link to={`/school-dashboard/${encodeURIComponent(row.name)}`} className="font-medium text-cyan-400 hover:text-cyan-200 hover:underline truncate min-w-0" title={row.name}>{row.name}</Link>
+                                <div className="flex items-center gap-2 text-[10px] text-cyan-500 shrink-0">
+                                  <div className="flex items-center"><span className="text-cyan-600 mr-1">实训</span><span className="font-din text-purple-400 font-medium">{row.duration.replace(' 分钟', 'm').replace(/,/g, '')}</span></div>
+                                  <div className="flex items-center"><span className="text-cyan-600 mr-1">课程</span><span className="font-din text-emerald-400 font-medium">{row.courseDuration.replace(' 分钟', 'm').replace(/,/g, '')}</span></div>
+                                  <div className="flex items-center"><span className="text-cyan-600 mr-1">算力</span><span className="font-din text-cyan-400 font-medium">{row.token.replace(/,/g, '')}</span></div>
                                 </div>
                               </div>
                             </td>
@@ -780,26 +780,26 @@ const PlatformOperationsDashboard: React.FC = () => {
               {activeLeaderboardTab === 'courses' && (
                 <div className="flex-1 flex flex-col min-h-0">
                   <div className="flex items-center justify-between mb-3 text-sm">
-                    <span className="font-bold text-slate-800 text-xs">热门课程榜</span>
-                    <button onClick={() => handleViewAll('热门课程学时榜单', ['排名', '课程名称', '累计学时'], fullData.leaderboardCourses, 'leaderboardCourses')} className="text-[11px] text-emerald-600 hover:text-emerald-800 hover:underline">查看全部</button>
+                    <span className="font-bold text-cyan-400 font-bold tracking-wider text-xs">热门课程榜</span>
+                    <button onClick={() => handleViewAll('热门课程学时榜单', ['排名', '课程名称', '累计学时'], fullData.leaderboardCourses, 'leaderboardCourses')} className="text-[11px] text-emerald-400 hover:text-emerald-800 hover:underline">查看全部</button>
                   </div>
                   <div className="overflow-y-auto pr-1 text-xs">
                     <table className="w-full text-left">
                       <tbody>
                         {leaderboardData.courses.map((row: any, idx: number) => (
-                          <tr key={idx} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
+                          <tr key={idx} className="border-b border-cyan-500/10 last:border-0 hover:bg-[#0B0F19]/80/50">
                             <td className="py-2 w-8">
                               <div className={`w-5 h-5 mx-auto rounded flex items-center justify-center font-bold text-[10px] ${
                                 row.rank === 1 ? 'bg-amber-100 text-amber-600' :
-                                row.rank === 2 ? 'bg-slate-100 text-slate-600' :
-                                row.rank === 3 ? 'bg-orange-100 text-orange-600' :
-                                'bg-slate-50 text-slate-500'
+                                row.rank === 2 ? 'bg-cyan-900/40 text-cyan-300' :
+                                row.rank === 3 ? 'bg-orange-800/30 text-orange-400' :
+                                'bg-[#0B0F19]/80 text-cyan-500'
                               }`}>
                                 {row.rank}
                               </div>
                             </td>
-                            <td className="py-2 font-medium text-slate-700 truncate max-w-[100px]">{row.name}</td>
-                            <td className="py-2 text-right text-slate-500 font-din">{row.duration}</td>
+                            <td className="py-2 font-medium text-cyan-100 truncate max-w-[100px]">{row.name}</td>
+                            <td className="py-2 text-right text-cyan-500 font-din">{row.duration}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -811,26 +811,26 @@ const PlatformOperationsDashboard: React.FC = () => {
               {activeLeaderboardTab === 'labs' && (
                 <div className="flex-1 flex flex-col min-h-0">
                   <div className="flex items-center justify-between mb-3 text-sm">
-                    <span className="font-bold text-slate-800 text-xs">实验环境使用榜单</span>
-                    <button onClick={() => handleViewAll('实训环境调用排行', ['排名', '实验环境名称', '环境运行总时长'], fullData.leaderboardLabs, 'leaderboardLabs')} className="text-[11px] text-purple-600 hover:text-purple-800 hover:underline">查看全部</button>
+                    <span className="font-bold text-cyan-400 font-bold tracking-wider text-xs">实验环境使用榜单</span>
+                    <button onClick={() => handleViewAll('实训环境调用排行', ['排名', '实验环境名称', '环境运行总时长'], fullData.leaderboardLabs, 'leaderboardLabs')} className="text-[11px] text-purple-400 hover:text-purple-800 hover:underline">查看全部</button>
                   </div>
                   <div className="overflow-y-auto pr-1 text-xs">
                     <table className="w-full text-left">
                       <tbody>
                         {leaderboardData.labs.map((row: any, idx: number) => (
-                          <tr key={idx} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
+                          <tr key={idx} className="border-b border-cyan-500/10 last:border-0 hover:bg-[#0B0F19]/80/50">
                             <td className="py-2 w-8">
                               <div className={`w-5 h-5 mx-auto rounded flex items-center justify-center font-bold text-[10px] ${
                                 row.rank === 1 ? 'bg-amber-100 text-amber-600' :
-                                row.rank === 2 ? 'bg-slate-100 text-slate-600' :
-                                row.rank === 3 ? 'bg-orange-100 text-orange-600' :
-                                'bg-slate-50 text-slate-500'
+                                row.rank === 2 ? 'bg-cyan-900/40 text-cyan-300' :
+                                row.rank === 3 ? 'bg-orange-800/30 text-orange-400' :
+                                'bg-[#0B0F19]/80 text-cyan-500'
                               }`}>
                                 {row.rank}
                               </div>
                             </td>
-                            <td className="py-2 font-medium text-slate-700 truncate max-w-[100px]">{row.name}</td>
-                            <td className="py-2 text-right text-slate-500 font-din">{row.duration}</td>
+                            <td className="py-2 font-medium text-cyan-100 truncate max-w-[100px]">{row.name}</td>
+                            <td className="py-2 text-right text-cyan-500 font-din">{row.duration}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -848,7 +848,7 @@ const PlatformOperationsDashboard: React.FC = () => {
           <div className="flex flex-col xl:flex-row justify-between gap-6">
             {/* Section 3: 教学与实训活动情况 */}
             <section className="w-full xl:w-[68%] flex flex-col">
-              <SectionTitle icon={Flame} title="教学与实训活动情况" color="text-blue-600">
+              <SectionTitle icon={Flame} title="教学与实训活动情况" color="text-cyan-400">
                 <SectionFilter filter={activityFilter} onFilterChange={setActivityFilter} />
               </SectionTitle>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 flex-1">
@@ -858,8 +858,8 @@ const PlatformOperationsDashboard: React.FC = () => {
                 >
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={getScaledData(activityData.activeSchools, activityFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
-                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#164E63" />
+                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#06B6D4' }} />
                       <YAxis 
                         dataKey="name" 
                         type="category" 
@@ -885,7 +885,7 @@ const PlatformOperationsDashboard: React.FC = () => {
                       />
                       <RechartsTooltip 
                         content={<CustomTooltip />}
-                        cursor={{ fill: '#F1F5F9' }} 
+                        cursor={{ fill: '#0B0F19' }} 
                         isAnimationActive={false}
                       />
                       <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
@@ -902,17 +902,17 @@ const PlatformOperationsDashboard: React.FC = () => {
                 >
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={getScaledData(activityData.activeCourses, activityFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 30, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
-                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
-                      <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={80} />
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#164E63" />
+                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#06B6D4' }} />
+                      <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#22D3EE' }} width={80} />
                       <RechartsTooltip 
                         content={<CustomTooltip />}
-                        cursor={{ fill: '#F1F5F9' }} 
+                        cursor={{ fill: '#0B0F19' }} 
                         isAnimationActive={false}
                       />
                       <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
                       <Bar dataKey="duration" name="累计学习时长(千小时)" fill="#C084FC" barSize={8} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
-                        <LabelList dataKey="duration" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
+                        <LabelList dataKey="duration" position="right" style={{ fontSize: '10px', fill: '#22D3EE' }} />
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
@@ -924,17 +924,17 @@ const PlatformOperationsDashboard: React.FC = () => {
                 >
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={getScaledData(activityData.activeLabs, activityFilter)} layout="vertical" margin={{ top: 0, right: 10, left: 30, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
-                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
-                      <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} width={100} />
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#164E63" />
+                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#06B6D4' }} />
+                      <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#22D3EE' }} width={100} />
                       <RechartsTooltip 
                         content={<CustomTooltip />}
-                        cursor={{ fill: '#F1F5F9' }} 
+                        cursor={{ fill: '#0B0F19' }} 
                         isAnimationActive={false}
                       />
                       <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
                       <Bar dataKey="duration" name="累计使用时长(千小时)" fill="#F97316" barSize={8} radius={[0, 4, 4, 0]} isAnimationActive={isChartAnimationActive}>
-                        <LabelList dataKey="duration" position="right" style={{ fontSize: '10px', fill: '#64748B' }} />
+                        <LabelList dataKey="duration" position="right" style={{ fontSize: '10px', fill: '#22D3EE' }} />
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
@@ -944,10 +944,10 @@ const PlatformOperationsDashboard: React.FC = () => {
             
             {/* 运营动态 */}
             <section className="w-full xl:w-[30%] flex flex-col">
-              <SectionTitle icon={Rocket} title="运营动态" color="text-blue-600">
-                <button className="text-xs text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1 font-normal">查看更多 {'>'}</button>
+              <SectionTitle icon={Rocket} title="运营动态" color="text-cyan-400">
+                <button className="text-xs text-cyan-400 hover:text-cyan-200 transition-colors flex items-center gap-1 font-normal">查看更多 {'>'}</button>
               </SectionTitle>
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col flex-1">
+              <div className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-xl p-6 shadow-[0_0_15px_rgba(6,182,212,0.15)] border border-cyan-500/20 flex flex-col flex-1">
                 <div className="flex-1 flex flex-col gap-6 overflow-y-auto pr-2">
                   {dynamicsData.map(item => (
                     <div key={item.id} className="flex gap-4">
@@ -956,10 +956,10 @@ const PlatformOperationsDashboard: React.FC = () => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-col mb-0.5 gap-0.5">
-                          <h4 className="text-[13px] font-bold text-slate-800 truncate">{item.title}</h4>
-                          <span className="text-[10px] text-slate-400 shrink-0 font-din">{item.time}</span>
+                          <h4 className="text-[13px] font-bold text-cyan-400 font-bold tracking-wider truncate">{item.title}</h4>
+                          <span className="text-[10px] text-cyan-600 shrink-0 font-din">{item.time}</span>
                         </div>
-                        <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed mt-1">{item.desc}</p>
+                        <p className="text-[11px] text-cyan-500 line-clamp-2 leading-relaxed mt-1">{item.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -972,17 +972,17 @@ const PlatformOperationsDashboard: React.FC = () => {
           <div className="flex flex-col xl:flex-row justify-between gap-6">
             {/* Section 4: 数据概览 (今日) */}
             <section className="w-full xl:w-[68%] flex flex-col">
-              <SectionTitle icon={BarChart3} title="数据概览 (今日)" color="text-blue-600" />
+              <SectionTitle icon={BarChart3} title="数据概览 (今日)" color="text-cyan-400" />
               <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5 flex-1">
                 {todayData.map((item, idx) => (
-                  <div key={idx} className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex items-center gap-3 h-full">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
+                  <div key={idx} className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-xl p-4 shadow-[0_0_15px_rgba(6,182,212,0.15)] border border-cyan-500/20 flex items-center gap-3 h-full">
+                    <div className="w-10 h-10 rounded-xl bg-blue-900/30 text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.8)] flex items-center justify-center shrink-0">
                       <item.icon className="w-5 h-5" />
                     </div>
                     <div className="flex flex-col min-w-0 flex-1">
-                      <h3 className="text-xs font-medium text-slate-700 mb-0.5 truncate">{item.title}</h3>
-                      <div className="text-lg font-bold text-slate-900 font-din truncate">{item.value.toLocaleString()}</div>
-                      <div className="text-[10px] text-slate-500 truncate mt-0.5">较昨日 <span className="font-medium text-emerald-500 ml-0.5">{item.trend}</span></div>
+                      <h3 className="text-xs font-medium text-cyan-100 mb-0.5 truncate">{item.title}</h3>
+                      <div className="text-lg font-bold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] font-din truncate">{item.value.toLocaleString()}</div>
+                      <div className="text-[10px] text-cyan-500 truncate mt-0.5">较昨日 <span className="font-medium text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.8)] ml-0.5">{item.trend}</span></div>
                     </div>
                   </div>
                 ))}
@@ -993,26 +993,26 @@ const PlatformOperationsDashboard: React.FC = () => {
             <section className="w-full xl:w-[30%] flex flex-col">
               {/* Invisible spacer title to align exactly with left side title */}
               <div className="invisible min-h-[36px] mb-4">Spacer</div>
-              <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 flex flex-col justify-center flex-1 relative overflow-hidden">
+              <div className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-xl p-5 shadow-[0_0_15px_rgba(6,182,212,0.15)] border border-cyan-500/20 flex flex-col justify-center flex-1 relative overflow-hidden">
                 <div className="relative z-10 flex flex-col items-start pr-10">
-                  <h3 className="text-[13px] font-bold text-slate-800 mb-2">数据时间范围</h3>
-                  <div className="flex items-center gap-2 text-blue-600 font-din font-medium text-[15px] mt-1 bg-blue-50/50 px-3 py-1.5 rounded-lg border border-blue-100/50">
-                    <Calendar className="w-4 h-4 text-blue-500" />
+                  <h3 className="text-[13px] font-bold text-cyan-400 font-bold tracking-wider mb-2">数据时间范围</h3>
+                  <div className="flex items-center gap-2 text-cyan-400 font-din font-medium text-[15px] mt-1 bg-blue-900/30/50 px-3 py-1.5 rounded-lg border border-blue-100/50">
+                    <Calendar className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]" />
                     <span>2025 年 10 月 1 日 - 2026 年 3 月 31 日</span>
                   </div>
-                  <div className="text-[11px] text-slate-500 mt-3 flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
+                  <div className="text-[11px] text-cyan-500 mt-3 flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-900/300/50" />
                     数据每日更新，统计周期为自然日
                   </div>
                 </div>
                 <div className="absolute right-[-15px] bottom-[-15px] opacity-[0.04]">
-                  <Calendar className="w-40 h-40 text-blue-600" />
+                  <Calendar className="w-40 h-40 text-cyan-400" />
                 </div>
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-20">
                   <div className="flex gap-1">
-                    <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
-                    <div className="w-1.5 h-10 bg-blue-500 rounded-full" />
-                    <div className="w-1.5 h-4 bg-blue-500 rounded-full" />
+                    <div className="w-1.5 h-6 bg-blue-900/300 rounded-full" />
+                    <div className="w-1.5 h-10 bg-blue-900/300 rounded-full" />
+                    <div className="w-1.5 h-4 bg-blue-900/300 rounded-full" />
                   </div>
                 </div>
               </div>
@@ -1025,19 +1025,19 @@ const PlatformOperationsDashboard: React.FC = () => {
       {/* Data Modal */}
       {modalConfig.isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-              <h2 className="text-lg font-bold text-slate-800">{modalConfig.title}</h2>
+          <div className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-2xl shadow-[0_0_30px_rgba(6,182,212,0.3)] w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-cyan-500/20">
+              <h2 className="text-lg font-bold text-cyan-400 font-bold tracking-wider">{modalConfig.title}</h2>
               <button 
                 onClick={closeModal}
-                className="p-2 rounded-full hover:bg-slate-100 text-slate-500 transition-colors"
+                className="p-2 rounded-full hover:bg-cyan-900/40 text-cyan-500 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="flex-1 overflow-y-auto p-6">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-slate-500 border-b border-slate-200 sticky top-0 bg-white z-10">
+                <thead className="text-xs text-cyan-500 border-b border-cyan-500/30 sticky top-0 bg-[#111827] ring-1 ring-cyan-500/20 z-10">
                   <tr>
                     {modalConfig.columns.map((col: string, idx: number) => (
                       <th key={idx} className={`pb-3 pt-2 font-medium ${idx > 1 ? 'text-right' : ''}`}>{col}</th>
@@ -1046,22 +1046,22 @@ const PlatformOperationsDashboard: React.FC = () => {
                 </thead>
                 <tbody>
                   {modalConfig.data.map((row: any, idx: number) => (
-                    <tr key={idx} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                    <tr key={idx} className="border-b border-cyan-500/10 hover:bg-[#0B0F19]/80/50 transition-colors">
                       <td className="py-3 w-16">
                         <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
                           row.rank === 1 ? 'bg-amber-100 text-amber-600' :
-                          row.rank === 2 ? 'bg-slate-100 text-slate-600' :
-                          row.rank === 3 ? 'bg-orange-100 text-orange-600' :
-                          'bg-slate-50 text-slate-500'
+                          row.rank === 2 ? 'bg-cyan-900/40 text-cyan-300' :
+                          row.rank === 3 ? 'bg-orange-800/30 text-orange-400' :
+                          'bg-[#0B0F19]/80 text-cyan-500'
                         }`}>
                           {row.rank}
                         </div>
                       </td>
-                      <td className="py-3 font-medium text-slate-700">
+                      <td className="py-3 font-medium text-cyan-100">
                         {['leaderboardSchools', 'activeSchools', 'trendCourseDetails', 'trendLabDetails', 'trendNewSchoolsDetails'].includes(modalConfig.type) ? (
                           <Link 
                             to={`/school-dashboard/${encodeURIComponent(row.name)}`}
-                            className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                            className="text-cyan-400 hover:text-cyan-200 hover:underline transition-colors"
                           >
                             {row.name}
                           </Link>
@@ -1073,45 +1073,45 @@ const PlatformOperationsDashboard: React.FC = () => {
                       {/* Dynamic columns based on type */}
                       {modalConfig.type === 'activeSchools' && (
                         <>
-                          <td className="py-3 text-right text-slate-600">{row.lab?.toLocaleString()}</td>
-                          <td className="py-3 text-right text-slate-600">{row.login?.toLocaleString()}</td>
-                          <td className="py-3 text-right text-slate-600">{row.course?.toLocaleString()}</td>
+                          <td className="py-3 text-right text-cyan-300">{row.lab?.toLocaleString()}</td>
+                          <td className="py-3 text-right text-cyan-300">{row.login?.toLocaleString()}</td>
+                          <td className="py-3 text-right text-cyan-300">{row.course?.toLocaleString()}</td>
                         </>
                       )}
                       {modalConfig.type === 'activeCourses' && (
                         <>
-                          <td className="py-3 text-right text-slate-600">{row.duration?.toLocaleString()}</td>
-                          <td className="py-3 text-right text-slate-600">{row.visits?.toLocaleString()}</td>
+                          <td className="py-3 text-right text-cyan-300">{row.duration?.toLocaleString()}</td>
+                          <td className="py-3 text-right text-cyan-300">{row.visits?.toLocaleString()}</td>
                         </>
                       )}
                       {modalConfig.type === 'activeLabs' && (
                         <>
-                          <td className="py-3 text-right text-slate-600">{row.duration?.toLocaleString()}</td>
+                          <td className="py-3 text-right text-cyan-300">{row.duration?.toLocaleString()}</td>
                         </>
                       )}
                       {modalConfig.type === 'leaderboardSchools' && (
                         <>
-                          <td className="py-3 text-right text-slate-600">{row.duration}</td>
-                          <td className="py-3 text-right text-slate-600">{row.courseDuration}</td>
-                          <td className="py-3 text-right text-slate-600">{row.token}</td>
+                          <td className="py-3 text-right text-cyan-300">{row.duration}</td>
+                          <td className="py-3 text-right text-cyan-300">{row.courseDuration}</td>
+                          <td className="py-3 text-right text-cyan-300">{row.token}</td>
                         </>
                       )}
                       {modalConfig.type === 'leaderboardCourses' && (
-                        <td className="py-3 text-right text-slate-600">{row.duration}</td>
+                        <td className="py-3 text-right text-cyan-300">{row.duration}</td>
                       )}
                       {modalConfig.type === 'leaderboardLabs' && (
-                        <td className="py-3 text-right text-slate-600">{row.duration}</td>
+                        <td className="py-3 text-right text-cyan-300">{row.duration}</td>
                       )}
                       {modalConfig.type === 'trendCourseDetails' && (
-                        <td className="py-3 text-right text-slate-600">{row.duration}</td>
+                        <td className="py-3 text-right text-cyan-300">{row.duration}</td>
                       )}
                       {modalConfig.type === 'trendLabDetails' && (
-                        <td className="py-3 text-right text-slate-600">{row.duration}</td>
+                        <td className="py-3 text-right text-cyan-300">{row.duration}</td>
                       )}
                       {modalConfig.type === 'trendNewSchoolsDetails' && (
                         <>
-                          <td className="py-3 text-right text-slate-600">{row.accountCount}</td>
-                          <td className="py-3 text-right text-slate-600">{row.duration}</td>
+                          <td className="py-3 text-right text-cyan-300">{row.accountCount}</td>
+                          <td className="py-3 text-right text-cyan-300">{row.duration}</td>
                         </>
                       )}
                     </tr>
@@ -1119,7 +1119,7 @@ const PlatformOperationsDashboard: React.FC = () => {
                 </tbody>
               </table>
             </div>
-            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 text-xs text-slate-500 text-right">
+            <div className="px-6 py-4 border-t border-cyan-500/20 bg-[#0B0F19]/80 text-xs text-cyan-500 text-right">
               共 {modalConfig.data.length} 条记录
             </div>
           </div>
