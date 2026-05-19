@@ -61,59 +61,59 @@ export default function PlatformApplicationDashboard() {
   ).size;
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans flex flex-col">
+    <div className="min-h-screen bg-[#0B0F19] font-sans flex flex-col overflow-y-auto pb-10">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-50">
+      <header className="bg-[#111827] ring-1 ring-cyan-500/20 border-b border-cyan-500/30 px-8 py-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-6">
           <button 
             onClick={() => navigate('/')}
-            className="p-2.5 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
+            className="p-2.5 rounded-full hover:bg-cyan-900/30 text-cyan-500 hover:text-cyan-300 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           
           <div className="flex items-center gap-3">
-            <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-600/20">
+            <div className="bg-cyan-500 p-2 rounded-xl shadow-lg shadow-cyan-500/20">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                 <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
                 <line x1="3" x2="21" y1="9" y2="9"/>
                 <line x1="9" x2="9" y1="21" y2="9"/>
               </svg>
             </div>
-            <h1 className="text-2xl font-black tracking-widest text-slate-900">
+            <h1 className="text-2xl font-black tracking-widest text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">
               UUSIMA 运营决策大屏
             </h1>
           </div>
           
           {/* Tab Switcher */}
-          <div className="flex bg-slate-100 border-slate-200 p-1 rounded-2xl border ml-8">
+          <div className="flex bg-cyan-900/40 border-cyan-500/30 p-1 rounded-2xl border ml-8">
             <button
               onClick={() => navigate('/platform-operations-dashboard')}
-              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-slate-500 hover:text-slate-700"
+              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-cyan-500 hover:text-cyan-100"
             >
-              平台运营
+              运营总览
             </button>
             <button
-              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all bg-white text-blue-600 shadow-sm"
+              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all bg-[#111827] ring-1 ring-cyan-500/20 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)]"
             >
-              平台应用情况
+              应用开通
             </button>
             <button
               onClick={() => navigate('/big-screen-dashboard', { state: { activeTab: 'operations' } })}
-              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-slate-500 hover:text-slate-700"
+              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-cyan-500 hover:text-cyan-100"
             >
-              平台运维
+              运维健康
             </button>
             <button
               onClick={() => navigate('/big-screen-dashboard', { state: { activeTab: 'business' } })}
-              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-slate-500 hover:text-slate-700"
+              className="hidden px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-cyan-500 hover:text-cyan-100"
             >
               运营情况
             </button>
           </div>
         </div>
-        <div className="text-sm text-slate-500 flex items-center gap-2">
-          最后更新: <span className="font-din font-medium text-slate-700">{currentTime.toLocaleTimeString('zh-CN', { hour12: false })}</span>
+        <div className="text-sm text-cyan-500 flex items-center gap-2">
+          最后更新: <span className="font-din font-medium text-cyan-100">{currentTime.toLocaleTimeString('zh-CN', { hour12: false })}</span>
         </div>
       </header>
 
@@ -122,116 +122,116 @@ export default function PlatformApplicationDashboard() {
         
         {/* Controls */}
         <div className="flex flex-col gap-6 mb-6">
-          <h2 className="text-xl font-bold text-slate-800">平台应用情况</h2>
+          <h2 className="text-xl font-bold text-cyan-400">应用开通</h2>
 
           <div className="grid grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-              <span className="text-slate-500 text-sm font-medium">开通账号院校数</span>
-              <div className="mt-2 text-3xl font-din font-black text-slate-800">{totalSchools}<span className="text-sm font-medium text-slate-500 ml-1">所</span></div>
+            <div className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-xl p-5 shadow-[0_0_15px_rgba(6,182,212,0.15)] border border-cyan-500/20 flex flex-col justify-between">
+              <span className="text-cyan-500 text-sm font-medium">开通账号院校数</span>
+              <div className="mt-2 text-3xl font-din font-black text-cyan-100">{totalSchools}<span className="text-sm font-medium text-cyan-600 ml-1">所</span></div>
             </div>
-            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-              <span className="text-slate-500 text-sm font-medium">开通账号总数</span>
-              <div className="mt-2 text-3xl font-din font-black text-blue-600">{totalAccounts}<span className="text-sm font-medium text-slate-500 ml-1">个</span></div>
+            <div className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-xl p-5 shadow-[0_0_15px_rgba(6,182,212,0.15)] border border-cyan-500/20 flex flex-col justify-between">
+              <span className="text-cyan-500 text-sm font-medium">开通账号总数</span>
+              <div className="mt-2 text-3xl font-din font-black text-cyan-400">{totalAccounts}<span className="text-sm font-medium text-cyan-600 ml-1">个</span></div>
             </div>
-            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-              <span className="text-slate-500 text-sm font-medium">&gt; 30 个账号学校数</span>
-              <div className="mt-2 text-3xl font-din font-black text-emerald-600">{schoolsOver30}<span className="text-sm font-medium text-slate-500 ml-1">所</span></div>
+            <div className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-xl p-5 shadow-[0_0_15px_rgba(6,182,212,0.15)] border border-cyan-500/20 flex flex-col justify-between">
+              <span className="text-cyan-500 text-sm font-medium">&gt; 30 个账号学校数</span>
+              <div className="mt-2 text-3xl font-din font-black text-emerald-400">{schoolsOver30}<span className="text-sm font-medium text-cyan-600 ml-1">所</span></div>
             </div>
-            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-              <span className="text-slate-500 text-sm font-medium">近一年即将到期学校数</span>
-              <div className="mt-2 text-3xl font-din font-black text-yellow-600">{expiringSchools}<span className="text-sm font-medium text-slate-500 ml-1">所</span></div>
+            <div className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-xl p-5 shadow-[0_0_15px_rgba(6,182,212,0.15)] border border-cyan-500/20 flex flex-col justify-between">
+              <span className="text-cyan-500 text-sm font-medium">近一年即将到期学校数</span>
+              <div className="mt-2 text-3xl font-din font-black text-amber-400">{expiringSchools}<span className="text-sm font-medium text-cyan-600 ml-1">所</span></div>
             </div>
           </div>
             
           <div className="flex items-center justify-start gap-4">
-            <div className="flex bg-white rounded-lg border border-slate-200 p-1 shadow-sm">
+            <div className="flex bg-[#0B0F19]/80 rounded-lg border border-cyan-500/20 p-1">
               <button 
                 onClick={() => setTimeRange("全部")}
-                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${timeRange === "全部" ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-50"}`}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${timeRange === "全部" ? "bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-cyan-400" : "text-cyan-500 hover:text-cyan-100"}`}
               >全部时间</button>
               <button 
                 onClick={() => setTimeRange("2024")}
-                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${timeRange === "2024" ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-50"}`}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${timeRange === "2024" ? "bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-cyan-400" : "text-cyan-500 hover:text-cyan-100"}`}
               >2024年</button>
               <button 
                 onClick={() => setTimeRange("2025")}
-                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${timeRange === "2025" ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-50"}`}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${timeRange === "2025" ? "bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-cyan-400" : "text-cyan-500 hover:text-cyan-100"}`}
               >2025年</button>
               <button 
                 onClick={() => setTimeRange("2026")}
-                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${timeRange === "2026" ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-50"}`}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${timeRange === "2026" ? "bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-cyan-400" : "text-cyan-500 hover:text-cyan-100"}`}
               >2026年</button>
             </div>
 
-            <div className="flex bg-white rounded-lg border border-slate-200 p-1 shadow-sm">
+            <div className="flex bg-[#0B0F19]/80 rounded-lg border border-cyan-500/20 p-1">
               <button 
                 onClick={() => setFilterFormat("all")}
-                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${filterFormat === "all" ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-50"}`}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${filterFormat === "all" ? "bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-cyan-400" : "text-cyan-500 hover:text-cyan-100"}`}
               >全部形式</button>
               <button 
                 onClick={() => setFilterFormat("在线")}
-                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${filterFormat === "在线" ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-50"}`}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${filterFormat === "在线" ? "bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-cyan-400" : "text-cyan-500 hover:text-cyan-100"}`}
               >仅在线</button>
               <button 
                 onClick={() => setFilterFormat("私有化")}
-                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${filterFormat === "私有化" ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-50"}`}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${filterFormat === "私有化" ? "bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-cyan-400" : "text-cyan-500 hover:text-cyan-100"}`}
               >仅私有化</button>
             </div>
             
             <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-cyan-500 absolute left-3 top-1/2 -translate-y-1/2" />
               <input 
                 type="text" 
                 placeholder="搜索院校名称或平台..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all bg-white shadow-sm"
+                className="pl-9 pr-4 py-2 border border-cyan-500/30 rounded-lg text-sm w-64 focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:border-cyan-400 transition-all bg-[#0B0F19]/80 text-cyan-100 placeholder:text-cyan-800"
               />
             </div>
           </div>
         </div>
 
         {/* Data Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex-1 flex flex-col">
+        <div className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-xl shadow-[0_0_15px_rgba(6,182,212,0.15)] overflow-hidden flex-1 flex flex-col pt-2">
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-left border-collapse">
-              <thead className="bg-[#eef5fd] sticky top-0 z-10 border-b border-slate-200">
+              <thead className="bg-[#0B0F19]/80 sticky top-0 z-10 border-b border-cyan-500/20">
                 <tr>
-                  <th className="px-6 py-4 text-sm font-bold text-slate-700 whitespace-nowrap border-r border-[#d5e7fc]">院校名称 <Filter className="w-3 h-3 inline ml-1 text-emerald-500" /></th>
-                  <th className="px-6 py-4 text-sm font-bold text-slate-700 whitespace-nowrap border-r border-[#d5e7fc] w-[120px]">形式 <Filter className="w-3 h-3 inline ml-1 text-emerald-500" /></th>
-                  <th className="px-6 py-4 text-sm font-bold text-slate-700 whitespace-nowrap border-r border-[#d5e7fc] w-[120px]">开通时间 <Filter className="w-3 h-3 inline ml-1 text-emerald-500" /></th>
-                  <th className="px-6 py-4 text-sm font-bold text-slate-700 whitespace-nowrap border-r border-[#d5e7fc]">开通/部署平台 <Filter className="w-3 h-3 inline ml-1 text-emerald-500" /></th>
-                  <th className="px-6 py-4 text-sm font-bold text-slate-700 whitespace-nowrap border-r border-[#d5e7fc] w-[100px]">账号数量 <Filter className="w-3 h-3 inline ml-1 text-emerald-500" /></th>
-                  <th className="px-6 py-4 text-sm font-bold text-slate-700 whitespace-nowrap border-r border-[#d5e7fc] w-[120px]">使用时长 <Filter className="w-3 h-3 inline ml-1 text-emerald-500" /></th>
-                  <th className="px-6 py-4 text-sm font-bold text-slate-700 whitespace-nowrap border-r border-[#d5e7fc] w-[120px]">时长(小) <Filter className="w-3 h-3 inline ml-1 text-emerald-500" /></th>
-                  <th className="px-6 py-4 text-sm font-bold text-slate-700 whitespace-nowrap border-r border-[#d5e7fc] w-[100px]">年份 <Filter className="w-3 h-3 inline ml-1 text-emerald-500" /></th>
-                  <th className="px-6 py-4 text-sm font-bold text-slate-700 whitespace-nowrap border-r border-[#d5e7fc] w-[100px]">年限(年) <Filter className="w-3 h-3 inline ml-1 text-emerald-500" /></th>
-                  <th className="px-6 py-4 text-sm font-bold text-slate-700 whitespace-nowrap border-r border-[#d5e7fc] w-[130px]">账号数量区间 <Filter className="w-3 h-3 inline ml-1 text-emerald-500" /></th>
-                  <th className="px-6 py-4 text-sm font-bold text-slate-700 whitespace-nowrap w-[100px]">剩余年份 <Filter className="w-3 h-3 inline ml-1 text-emerald-500" /></th>
+                  <th className="px-6 py-4 text-sm font-bold text-cyan-400 whitespace-nowrap">院校名称 <Filter className="w-3 h-3 inline ml-1 text-cyan-500" /></th>
+                  <th className="px-6 py-4 text-sm font-bold text-cyan-400 whitespace-nowrap w-[120px]">形式 <Filter className="w-3 h-3 inline ml-1 text-cyan-500" /></th>
+                  <th className="px-6 py-4 text-sm font-bold text-cyan-400 whitespace-nowrap w-[120px]">开通时间 <Filter className="w-3 h-3 inline ml-1 text-cyan-500" /></th>
+                  <th className="px-6 py-4 text-sm font-bold text-cyan-400 whitespace-nowrap">开通/部署平台 <Filter className="w-3 h-3 inline ml-1 text-cyan-500" /></th>
+                  <th className="px-6 py-4 text-sm font-bold text-cyan-400 whitespace-nowrap w-[100px]">账号数量 <Filter className="w-3 h-3 inline ml-1 text-cyan-500" /></th>
+                  <th className="px-6 py-4 text-sm font-bold text-cyan-400 whitespace-nowrap w-[120px]">使用时长 <Filter className="w-3 h-3 inline ml-1 text-cyan-500" /></th>
+                  <th className="px-6 py-4 text-sm font-bold text-cyan-400 whitespace-nowrap w-[120px]">时长(小) <Filter className="w-3 h-3 inline ml-1 text-cyan-500" /></th>
+                  <th className="px-6 py-4 text-sm font-bold text-cyan-400 whitespace-nowrap w-[100px]">年份 <Filter className="w-3 h-3 inline ml-1 text-cyan-500" /></th>
+                  <th className="px-6 py-4 text-sm font-bold text-cyan-400 whitespace-nowrap w-[100px]">年限(年) <Filter className="w-3 h-3 inline ml-1 text-cyan-500" /></th>
+                  <th className="px-6 py-4 text-sm font-bold text-cyan-400 whitespace-nowrap w-[130px]">账号数量区间 <Filter className="w-3 h-3 inline ml-1 text-cyan-500" /></th>
+                  <th className="px-6 py-4 text-sm font-bold text-cyan-400 whitespace-nowrap w-[100px]">剩余年份 <Filter className="w-3 h-3 inline ml-1 text-cyan-500" /></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-cyan-500/10">
                 {filteredData.length > 0 ? filteredData.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 text-sm text-slate-800 border-r border-slate-200 font-medium">{item.school}</td>
-                    <td className="px-6 py-4 border-r border-slate-200 whitespace-nowrap">
-                      <span className={`px-2 py-1 rounded text-xs font-semibold ${item.isPrivate ? 'bg-[#dae8fa] text-[#4876b5]' : 'bg-[#fff5cc] text-[#9c8430]'}`}>
+                  <tr key={idx} className="hover:bg-[#0B0F19]/80 transition-colors">
+                    <td className="px-6 py-4 text-sm text-cyan-100 font-medium">{item.school}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 rounded text-xs font-semibold border ${item.isPrivate ? 'bg-purple-900/30 text-purple-400 border-purple-500/30' : 'bg-emerald-900/30 text-emerald-400 border-emerald-500/30'}`}>
                         {item.format}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-600 border-r border-slate-200 font-din">{item.startDate}</td>
-                    <td className="px-6 py-4 text-sm text-slate-800 border-r border-slate-200">{item.platform}</td>
-                    <td className="px-6 py-4 text-sm text-slate-600 border-r border-slate-200 font-din">{item.accountQuantity}</td>
-                    <td className="px-6 py-4 text-sm text-slate-600 border-r border-slate-200 font-din">{item.usageDuration !== null ? `${item.usageDuration}h` : ''}</td>
-                    <td className="px-6 py-4 text-sm text-slate-600 border-r border-slate-200 font-din">{item.duration}</td>
-                    <td className="px-6 py-4 text-sm text-slate-600 border-r border-slate-200 font-din">{item.year}</td>
-                    <td className="px-6 py-4 text-sm text-slate-600 border-r border-slate-200 font-din">{item.limitYears}</td>
-                    <td className="px-6 py-4 text-sm text-slate-600 border-r border-slate-200 font-din">{item.range}</td>
-                    <td className="px-6 py-4 text-sm text-slate-600 font-din">{item.remainingYears}</td>
+                    <td className="px-6 py-4 text-sm text-cyan-500 font-din">{item.startDate}</td>
+                    <td className="px-6 py-4 text-sm text-cyan-300">{item.platform}</td>
+                    <td className="px-6 py-4 text-sm text-cyan-500 font-din">{item.accountQuantity}</td>
+                    <td className="px-6 py-4 text-sm text-cyan-500 font-din">{item.usageDuration !== null ? `${item.usageDuration}h` : ''}</td>
+                    <td className="px-6 py-4 text-sm text-cyan-500 font-din">{item.duration}</td>
+                    <td className="px-6 py-4 text-sm text-cyan-500 font-din">{item.year}</td>
+                    <td className="px-6 py-4 text-sm text-cyan-500 font-din">{item.limitYears}</td>
+                    <td className="px-6 py-4 text-sm text-cyan-500 font-din">{item.range}</td>
+                    <td className="px-6 py-4 text-sm text-cyan-500 font-din">{item.remainingYears}</td>
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan={11} className="px-6 py-12 text-center text-slate-500">
+                    <td colSpan={11} className="px-6 py-12 text-center text-cyan-500/50">
                       没有找到匹配的数据
                     </td>
                   </tr>
@@ -240,12 +240,12 @@ export default function PlatformApplicationDashboard() {
             </table>
           </div>
           
-          <div className="bg-slate-50 border-t border-slate-200 px-6 py-4 flex items-center justify-between text-sm text-slate-600">
-            <div>共查询到 <span className="font-bold text-blue-600">{filteredData.length}</span> 条数据</div>
+          <div className="bg-[#0B0F19]/80 border-t border-cyan-500/20 px-6 py-4 flex items-center justify-between text-sm text-cyan-500">
+            <div>共查询到 <span className="font-bold text-cyan-400">{filteredData.length}</span> 条数据</div>
             <div className="flex gap-1">
-              <button className="px-3 py-1 border border-slate-200 bg-white rounded hover:bg-slate-100 disabled:opacity-50" disabled>上一页</button>
-              <button className="px-3 py-1 border border-blue-500 bg-blue-50 text-blue-600 rounded">1</button>
-              <button className="px-3 py-1 border border-slate-200 bg-white rounded hover:bg-slate-100 disabled:opacity-50" disabled>下一页</button>
+              <button className="px-3 py-1 border border-cyan-500/20 bg-[#111827] text-cyan-600 rounded hover:bg-[#0B0F19]/80 disabled:opacity-50" disabled>上一页</button>
+              <button className="px-3 py-1 border border-cyan-400 bg-cyan-900/30 text-cyan-400 rounded">1</button>
+              <button className="px-3 py-1 border border-cyan-500/20 bg-[#111827] text-cyan-600 rounded hover:bg-[#0B0F19]/80 disabled:opacity-50" disabled>下一页</button>
             </div>
           </div>
         </div>

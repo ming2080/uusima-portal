@@ -385,7 +385,7 @@ const BigScreenDashboard: React.FC = () => {
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              平台运营
+              运营总览
             </button>
             <button
               onClick={() => navigate('/platform-application-dashboard')}
@@ -395,7 +395,7 @@ const BigScreenDashboard: React.FC = () => {
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              平台应用情况
+              应用开通
             </button>
             <button
               onClick={() => setActiveTab('operations')}
@@ -413,11 +413,11 @@ const BigScreenDashboard: React.FC = () => {
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              平台运维
+              运维健康
             </button>
             <button
               onClick={() => setActiveTab('business')}
-              className={`px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all ${
+              className={`hidden px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all ${
                 activeTab === 'business' 
                   ? theme === 'light'
                     ? 'bg-white text-blue-600 shadow-sm'

@@ -39,7 +39,7 @@ const overallData = {
   courses: { total: 2850, detail: '线上: 2,120 | 私有化: 730' },
   toolUsage: { total: 45680, detail: 'AI 教学工具总使用次数' },
   agentInvocations: { total: 128500, detail: '软件: 95,200 | 硬件: 33,300' },
-  labDuration: { total: 68900, detail: '总时长: 12,580 小时' }
+  labDuration: { total: 68900, detail: '容器型: 48,900 | 平台型: 20,000' }
 };
 
 const dynamicsData = [
@@ -239,20 +239,22 @@ const SectionTitle = ({ icon: Icon, title, color, children }: { icon: any, title
   </div>
 );
 
-const SectionFilter = ({ filter, onFilterChange }: { filter: string, onFilterChange: (f: string) => void }) => {
+const SectionFilter = ({ filter, onFilterChange, showShortcuts = true }: { filter: string, onFilterChange: (f: string) => void, showShortcuts?: boolean }) => {
   return (
     <div className="flex items-center gap-3 font-normal">
-      <div className="flex items-center bg-[#111827] ring-1 ring-cyan-500/20 border border-cyan-500/30 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.15)] text-xs p-1">
-        {['按日', '按周', '按月', '按年'].map(f => (
-          <button
-            key={f}
-            onClick={() => onFilterChange(f)}
-            className={`px-3 py-1.5 rounded-md transition-colors ${filter === f ? 'bg-cyan-900/40 text-cyan-400 font-bold tracking-wider font-medium' : 'text-cyan-500 hover:text-cyan-100'}`}
-          >
-            {f}
-          </button>
-        ))}
-      </div>
+      {showShortcuts && (
+        <div className="flex items-center bg-[#111827] ring-1 ring-cyan-500/20 border border-cyan-500/30 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.15)] text-xs p-1">
+          {['按日', '按周', '按月', '按年'].map(f => (
+            <button
+              key={f}
+              onClick={() => onFilterChange(f)}
+              className={`px-3 py-1.5 rounded-md transition-colors ${filter === f ? 'bg-cyan-900/40 text-cyan-400 font-bold tracking-wider font-medium' : 'text-cyan-500 hover:text-cyan-100'}`}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="flex items-center bg-[#111827] ring-1 ring-cyan-500/20 border border-cyan-500/30 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.15)] px-2 py-1 text-xs text-cyan-300 gap-2 transition-colors">
         <Calendar className="w-3.5 h-3.5 text-cyan-600" />
         <input type="date" className="bg-transparent border-none outline-none cursor-pointer text-cyan-300 w-[100px]" defaultValue="2024-01-01" />
@@ -526,23 +528,23 @@ const PlatformOperationsDashboard: React.FC = () => {
             <button
               className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all bg-[#111827] ring-1 ring-cyan-500/20 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)]"
             >
-              平台运营
+              运营总览
             </button>
             <button
               onClick={() => navigate('/platform-application-dashboard')}
               className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-cyan-500 hover:text-cyan-100"
             >
-              平台应用情况
+              应用开通
             </button>
             <button
               onClick={() => navigate('/big-screen-dashboard', { state: { activeTab: 'operations' } })}
               className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-cyan-500 hover:text-cyan-100"
             >
-              平台运维
+              运维健康
             </button>
             <button
               onClick={() => navigate('/big-screen-dashboard', { state: { activeTab: 'business' } })}
-              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-cyan-500 hover:text-cyan-100"
+              className="px-6 py-2 rounded-xl text-sm font-bold tracking-widest transition-all text-cyan-500 hover:text-cyan-100 hidden"
             >
               运营情况
             </button>
@@ -717,35 +719,59 @@ const PlatformOperationsDashboard: React.FC = () => {
           <div className="w-full xl:w-[30%] flex flex-col">
             <SectionTitle icon={Award} title="业务总榜" color="text-amber-500" />
             <div className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-xl p-5 shadow-[0_0_15px_rgba(6,182,212,0.15)] border border-cyan-500/20 flex flex-col flex-1">
-              <div className="flex bg-[#0B0F19]/80 p-1 rounded-lg mb-4 text-xs font-medium border border-cyan-500/20">
-                <button
-                  className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'schools' ? 'bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-cyan-400' : 'text-cyan-500 hover:text-cyan-100'}`}
-                  onClick={() => setActiveLeaderboardTab('schools')}
+              <div className="flex items-center gap-4 justify-between mb-4">
+                <div className="flex bg-[#0B0F19]/80 p-1 rounded-lg text-xs font-medium border border-cyan-500/20 w-[60%]">
+                  <button
+                    className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'schools' ? 'bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-cyan-400' : 'text-cyan-500 hover:text-cyan-100'}`}
+                    onClick={() => setActiveLeaderboardTab('schools')}
+                  >
+                    院校
+                  </button>
+                  <button
+                    className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'courses' ? 'bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-emerald-400' : 'text-cyan-500 hover:text-cyan-100'}`}
+                    onClick={() => setActiveLeaderboardTab('courses')}
+                  >
+                    课程
+                  </button>
+                  <button
+                    className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'labs' ? 'bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-purple-400' : 'text-cyan-500 hover:text-cyan-100'}`}
+                    onClick={() => setActiveLeaderboardTab('labs')}
+                  >
+                    实验
+                  </button>
+                </div>
+                <button 
+                  onClick={() => {
+                    if (activeLeaderboardTab === 'schools') {
+                      handleViewAll('院校资源用量榜', ['排名', '学校名称', '累计实训时长', '累计课程时长', 'AI 算力消耗'], fullData.leaderboardSchools, 'leaderboardSchools');
+                    } else if (activeLeaderboardTab === 'courses') {
+                      handleViewAll('热门课程学时榜单', ['排名', '课程名称', '累计学时'], fullData.leaderboardCourses, 'leaderboardCourses');
+                    } else {
+                      handleViewAll('实训环境调用排行', ['排名', '实验环境名称', '环境运行总时长'], fullData.leaderboardLabs, 'leaderboardLabs');
+                    }
+                  }} 
+                  className={`text-[11px] whitespace-nowrap shrink-0 hover:underline ${activeLeaderboardTab === 'schools' ? 'text-cyan-400 hover:text-cyan-200' : activeLeaderboardTab === 'courses' ? 'text-emerald-400 hover:text-emerald-200' : 'text-purple-400 hover:text-purple-200'}`}
                 >
-                  院校
-                </button>
-                <button
-                  className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'courses' ? 'bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-emerald-400' : 'text-cyan-500 hover:text-cyan-100'}`}
-                  onClick={() => setActiveLeaderboardTab('courses')}
-                >
-                  课程
-                </button>
-                <button
-                  className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'labs' ? 'bg-[#111827] ring-1 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] text-purple-400' : 'text-cyan-500 hover:text-cyan-100'}`}
-                  onClick={() => setActiveLeaderboardTab('labs')}
-                >
-                  实验
+                  查看全部 &gt;
                 </button>
               </div>
 
               {activeLeaderboardTab === 'schools' && (
                 <div className="flex-1 flex flex-col min-h-0">
-                  <div className="flex items-center justify-between mb-3 text-sm">
+                  <div className="mb-3 text-sm">
                     <span className="font-bold text-cyan-400 font-bold tracking-wider text-xs">院校资源用量榜</span>
-                    <button onClick={() => handleViewAll('院校资源用量榜', ['排名', '学校名称', '累计实训时长', '累计课程时长', 'AI 算力消耗'], fullData.leaderboardSchools, 'leaderboardSchools')} className="text-[11px] text-cyan-400 hover:text-cyan-200 hover:underline">查看全部</button>
                   </div>
                   <div className="overflow-y-auto pr-1 text-xs">
-                    <table className="w-full text-left">
+                    <table className="w-full text-left table-fixed">
+                      <thead>
+                        <tr>
+                          <th className="w-8 font-normal"></th>
+                          <th className="font-normal truncate"></th>
+                          <th className="w-10 text-right text-[10px] text-cyan-600 font-normal">实训</th>
+                          <th className="w-12 text-right text-[10px] text-cyan-600 font-normal">课程</th>
+                          <th className="w-8 text-right text-[10px] text-cyan-600 font-normal">算力</th>
+                        </tr>
+                      </thead>
                       <tbody>
                         {leaderboardData.schools.map((row: any, idx: number) => (
                           <tr key={idx} className="border-b border-cyan-500/10 last:border-0 hover:bg-[#0B0F19]/80/50">
@@ -759,15 +785,17 @@ const PlatformOperationsDashboard: React.FC = () => {
                                 {row.rank}
                               </div>
                             </td>
-                            <td className="py-2">
-                              <div className="flex items-center justify-between gap-2">
-                                <Link to={`/school-dashboard/${encodeURIComponent(row.name)}`} className="font-medium text-cyan-400 hover:text-cyan-200 hover:underline truncate min-w-0" title={row.name}>{row.name}</Link>
-                                <div className="flex items-center gap-2 text-[10px] text-cyan-500 shrink-0">
-                                  <div className="flex items-center"><span className="text-cyan-600 mr-1">实训</span><span className="font-din text-purple-400 font-medium">{row.duration.replace(' 分钟', 'm').replace(/,/g, '')}</span></div>
-                                  <div className="flex items-center"><span className="text-cyan-600 mr-1">课程</span><span className="font-din text-emerald-400 font-medium">{row.courseDuration.replace(' 分钟', 'm').replace(/,/g, '')}</span></div>
-                                  <div className="flex items-center"><span className="text-cyan-600 mr-1">算力</span><span className="font-din text-cyan-400 font-medium">{row.token.replace(/,/g, '')}</span></div>
-                                </div>
-                              </div>
+                            <td className="py-2 pr-1 truncate">
+                              <Link to={`/school-dashboard/${encodeURIComponent(row.name)}`} className="font-medium text-cyan-400 hover:text-cyan-200 hover:underline" title={row.name}>{row.name}</Link>
+                            </td>
+                            <td className="py-2 text-right font-din text-purple-400 font-medium text-[10px]">
+                              {row.duration.replace(' 分钟', 'm').replace(/,/g, '')}
+                            </td>
+                            <td className="py-2 text-right font-din text-emerald-400 font-medium text-[10px]">
+                              {row.courseDuration.replace(' 分钟', 'm').replace(/,/g, '')}
+                            </td>
+                            <td className="py-2 text-right font-din text-cyan-400 font-medium text-[10px]">
+                              {row.token.replace(/,/g, '')}
                             </td>
                           </tr>
                         ))}
@@ -779,9 +807,8 @@ const PlatformOperationsDashboard: React.FC = () => {
 
               {activeLeaderboardTab === 'courses' && (
                 <div className="flex-1 flex flex-col min-h-0">
-                  <div className="flex items-center justify-between mb-3 text-sm">
+                  <div className="mb-3 text-sm">
                     <span className="font-bold text-cyan-400 font-bold tracking-wider text-xs">热门课程榜</span>
-                    <button onClick={() => handleViewAll('热门课程学时榜单', ['排名', '课程名称', '累计学时'], fullData.leaderboardCourses, 'leaderboardCourses')} className="text-[11px] text-emerald-400 hover:text-emerald-800 hover:underline">查看全部</button>
                   </div>
                   <div className="overflow-y-auto pr-1 text-xs">
                     <table className="w-full text-left">
@@ -810,9 +837,8 @@ const PlatformOperationsDashboard: React.FC = () => {
 
               {activeLeaderboardTab === 'labs' && (
                 <div className="flex-1 flex flex-col min-h-0">
-                  <div className="flex items-center justify-between mb-3 text-sm">
+                  <div className="mb-3 text-sm">
                     <span className="font-bold text-cyan-400 font-bold tracking-wider text-xs">实验环境使用榜单</span>
-                    <button onClick={() => handleViewAll('实训环境调用排行', ['排名', '实验环境名称', '环境运行总时长'], fullData.leaderboardLabs, 'leaderboardLabs')} className="text-[11px] text-purple-400 hover:text-purple-800 hover:underline">查看全部</button>
                   </div>
                   <div className="overflow-y-auto pr-1 text-xs">
                     <table className="w-full text-left">
@@ -844,12 +870,12 @@ const PlatformOperationsDashboard: React.FC = () => {
 
         {/* Section 3 & 4 Layout */}
         <div className="flex flex-col gap-6 pb-6 mt-6">
-          {/* Row 1: Section 3 & Operations Dynamics */}
-          <div className="flex flex-col xl:flex-row justify-between gap-6">
+          {/* Row 1: Section 3 */}
+          <div className="flex flex-col gap-6">
             {/* Section 3: 教学与实训活动情况 */}
-            <section className="w-full xl:w-[68%] flex flex-col">
+            <section className="w-full flex flex-col">
               <SectionTitle icon={Flame} title="教学与实训活动情况" color="text-cyan-400">
-                <SectionFilter filter={activityFilter} onFilterChange={setActivityFilter} />
+                <SectionFilter filter={activityFilter} onFilterChange={setActivityFilter} showShortcuts={false} />
               </SectionTitle>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 flex-1">
                 <ChartCard 
@@ -941,37 +967,12 @@ const PlatformOperationsDashboard: React.FC = () => {
                 </ChartCard>
               </div>
             </section>
-            
-            {/* 运营动态 */}
-            <section className="w-full xl:w-[30%] flex flex-col">
-              <SectionTitle icon={Rocket} title="运营动态" color="text-cyan-400">
-                <button className="text-xs text-cyan-400 hover:text-cyan-200 transition-colors flex items-center gap-1 font-normal">查看更多 {'>'}</button>
-              </SectionTitle>
-              <div className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-xl p-6 shadow-[0_0_15px_rgba(6,182,212,0.15)] border border-cyan-500/20 flex flex-col flex-1">
-                <div className="flex-1 flex flex-col gap-6 overflow-y-auto pr-2">
-                  {dynamicsData.map(item => (
-                    <div key={item.id} className="flex gap-4">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${item.bg}`}>
-                        <item.icon className={`w-4 h-4 ${item.color}`} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-col mb-0.5 gap-0.5">
-                          <h4 className="text-[13px] font-bold text-cyan-400 font-bold tracking-wider truncate">{item.title}</h4>
-                          <span className="text-[10px] text-cyan-600 shrink-0 font-din">{item.time}</span>
-                        </div>
-                        <p className="text-[11px] text-cyan-500 line-clamp-2 leading-relaxed mt-1">{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
           </div>
 
-          {/* Row 2: Section 4 & Data Time Range */}
-          <div className="flex flex-col xl:flex-row justify-between gap-6">
+          {/* Row 2: Section 4 */}
+          <div className="flex flex-col gap-6">
             {/* Section 4: 数据概览 (今日) */}
-            <section className="w-full xl:w-[68%] flex flex-col">
+            <section className="w-full flex flex-col">
               <SectionTitle icon={BarChart3} title="数据概览 (今日)" color="text-cyan-400" />
               <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5 flex-1">
                 {todayData.map((item, idx) => (
@@ -986,35 +987,6 @@ const PlatformOperationsDashboard: React.FC = () => {
                     </div>
                   </div>
                 ))}
-              </div>
-            </section>
-
-            {/* 数据时间范围 */}
-            <section className="w-full xl:w-[30%] flex flex-col">
-              {/* Invisible spacer title to align exactly with left side title */}
-              <div className="invisible min-h-[36px] mb-4">Spacer</div>
-              <div className="bg-[#111827] ring-1 ring-cyan-500/20 rounded-xl p-5 shadow-[0_0_15px_rgba(6,182,212,0.15)] border border-cyan-500/20 flex flex-col justify-center flex-1 relative overflow-hidden">
-                <div className="relative z-10 flex flex-col items-start pr-10">
-                  <h3 className="text-[13px] font-bold text-cyan-400 font-bold tracking-wider mb-2">数据时间范围</h3>
-                  <div className="flex items-center gap-2 text-cyan-400 font-din font-medium text-[15px] mt-1 bg-blue-900/30/50 px-3 py-1.5 rounded-lg border border-blue-100/50">
-                    <Calendar className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]" />
-                    <span>2025 年 10 月 1 日 - 2026 年 3 月 31 日</span>
-                  </div>
-                  <div className="text-[11px] text-cyan-500 mt-3 flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-900/300/50" />
-                    数据每日更新，统计周期为自然日
-                  </div>
-                </div>
-                <div className="absolute right-[-15px] bottom-[-15px] opacity-[0.04]">
-                  <Calendar className="w-40 h-40 text-cyan-400" />
-                </div>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-20">
-                  <div className="flex gap-1">
-                    <div className="w-1.5 h-6 bg-blue-900/300 rounded-full" />
-                    <div className="w-1.5 h-10 bg-blue-900/300 rounded-full" />
-                    <div className="w-1.5 h-4 bg-blue-900/300 rounded-full" />
-                  </div>
-                </div>
               </div>
             </section>
           </div>
