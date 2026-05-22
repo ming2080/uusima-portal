@@ -211,7 +211,7 @@ const BigScreenDashboard: React.FC = () => {
   const location = useLocation();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [tooltipContent, setTooltipContent] = useState("");
-  const [theme, setTheme] = useState<'obsidian' | 'light' | 'neon' | 'spatial'>('light');
+  const [theme, setTheme] = useState<'obsidian' | 'light' | 'neon' | 'spatial'>('obsidian');
   const [activeTab, setActiveTab] = useState<'business' | 'operations'>(
     location.state?.activeTab || 'business'
   );
