@@ -471,7 +471,7 @@ const EtherealHome: React.FC = () => {
                    {name: '山东商业职业技术学院', abbr: 'SDCIC', color: 'text-orange-600'},
                    {name: '九江职业技术学院', abbr: 'JJVT', color: 'text-blue-500'},
                    {name: '承德石油高等专科学校', abbr: 'CDPC', color: 'text-indigo-700'}
-                 ].map((school, i) => (
+                 ].slice(0, 12).map((school, i) => (
                    <SchoolBadge key={`r1-${i}`} name={school.name} abbr={school.abbr} color={school.color} />
                  ))}
               </div>

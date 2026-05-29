@@ -29,17 +29,25 @@ import {
   X,
   Calendar,
   Search,
-  Rocket
+  Rocket,
+  History,
+  ArrowRightLeft,
+  CalendarClock
 } from "lucide-react";
 
 // --- Mock Data ---
+const getComparisonValue = (value: number, type: 'up' | 'down') => {
+  const factor = type === 'up' ? 0.85 : 1.15;
+  return Math.floor(value * (factor + Math.random() * 0.1));
+};
+
 const overallData = {
-  users: { total: 12580, detail: '体验账号: 3,200 | 正式账号: 9,380' },
-  schools: { total: 156, detail: '线上: 128 | 私有化: 28' },
-  courses: { total: 2850, detail: '线上: 2,120 | 私有化: 730' },
-  toolUsage: { total: 45680, detail: 'AI 教学工具总使用次数' },
-  agentInvocations: { total: 128500, detail: '软件: 95,200 | 硬件: 33,300' },
-  labDuration: { total: 68900, detail: '容器型: 48,900 | 平台型: 20,000' }
+  users: { total: 12580, prev: 10800, detail: '体验账号: 3,200 | 正式账号: 9,380' },
+  schools: { total: 156, prev: 142, detail: '线上: 128 | 私有化: 28' },
+  courses: { total: 2850, prev: 2640, detail: '线上: 2,120 | 私有化: 730' },
+  toolUsage: { total: 45680, prev: 41200, detail: 'AI 教学工具总使用次数' },
+  agentInvocations: { total: 128500, prev: 112000, detail: '软件: 95,200 | 硬件: 33,300' },
+  labDuration: { total: 68900, prev: 62400, detail: '容器型: 48,900 | 平台型: 20,000' }
 };
 
 const dynamicsData = [
@@ -110,6 +118,13 @@ const leaderboardData = {
     { rank: 3, name: '广东轻工职业技术学院', duration: '6,910 分钟', courseDuration: '9,800 分钟', token: '7,540' },
     { rank: 4, name: '顺德职业技术学院', duration: '5,840 分钟', courseDuration: '8,600 分钟', token: '6,210' },
     { rank: 5, name: '广东科学技术职业学院', duration: '4,520 分钟', courseDuration: '7,500 分钟', token: '5,180' },
+  ],
+  province: [
+    { rank: 1, name: '广东省', amount: '12,500,000', schools: 45, users: 4500 },
+    { rank: 2, name: '江苏省', amount: '10,200,000', schools: 38, users: 3800 },
+    { rank: 3, name: '浙江省', amount: '9,800,000', schools: 35, users: 3500 },
+    { rank: 4, name: '山东省', amount: '8,500,000', schools: 32, users: 3200 },
+    { rank: 5, name: '四川省', amount: '7,200,000', schools: 28, users: 2800 },
   ],
   courses: [
     { rank: 1, name: 'Python 程序设计', duration: '9,120 分钟' },
@@ -255,31 +270,38 @@ const SectionFilter = ({ filter, onFilterChange, showShortcuts = true }: { filte
           ))}
         </div>
       )}
-      <div className="flex items-center bg-[#091024]/80 ring-1 ring-cyan-500/10 border border-cyan-500/20 rounded-lg shadow-[0_4px_25px_rgba(0,0,0,0.4)] px-2.5 py-1 text-xs text-cyan-300 gap-2 hover:border-cyan-400/30 transition-all duration-300">
-        <Calendar className="w-3.5 h-3.5 text-cyan-500" />
-        <input type="date" className="bg-transparent border-none outline-none cursor-pointer text-cyan-300 w-[100px] focus:text-[#00f3ff]" defaultValue="2024-01-01" />
-        <span className="text-cyan-700/80">-</span>
-        <input type="date" className="bg-transparent border-none outline-none cursor-pointer text-cyan-300 w-[100px] focus:text-[#00f3ff]" defaultValue="2024-12-31" />
-      </div>
     </div>
   );
 };
 
-const StatCard = ({ title, value, detail, icon: Icon, iconColor, iconBg }: any) => {
+const StatCard = ({ title, value, detail, prevValue, showTrend, icon: Icon, iconColor, iconBg }: any) => {
+  const trend = prevValue ? ((value - prevValue) / prevValue * 100).toFixed(1) : null;
+  const isUp = trend && parseFloat(trend) >= 0;
+
   return (
-    <div className="bg-gradient-to-br from-[#0c142b] to-[#040815] border-t border-t-cyan-400/20 border border-cyan-500/10 hover:border-cyan-400/30 rounded-xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.5)] hover:shadow-[0_8px_30px_rgba(6,182,212,0.15)] flex flex-col justify-between transition-all duration-300 group">
-      <div className="flex justify-between items-start mb-2">
+    <div className="bg-gradient-to-br from-[#0c142b] to-[#040815] border-t border-t-cyan-400/20 border border-cyan-500/10 hover:border-cyan-400/30 rounded-xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.5)] hover:shadow-[0_8px_30px_rgba(6,182,212,0.15)] flex flex-col justify-between transition-all duration-300 group relative overflow-hidden">
+      <div className="flex justify-between items-start mb-2 relative z-10">
         <h3 className="text-[13px] font-bold tracking-wider text-cyan-400/80 group-hover:text-cyan-300 transition-colors">{title}</h3>
         <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 ${iconBg}`}>
           <Icon className={`w-4 h-4 ${iconColor}`} />
         </div>
       </div>
-      <div>
-        <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-cyan-50 to-cyan-300 drop-shadow-[0_2px_8px_rgba(6,182,212,0.35)] mb-1.5 font-din tracking-tight truncate">
-          {typeof value === 'number' ? value.toLocaleString() : value}
+      <div className="relative z-10">
+        <div className="flex items-baseline gap-2">
+          <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-cyan-50 to-cyan-300 drop-shadow-[0_2px_8px_rgba(6,182,212,0.35)] mb-1.5 font-din tracking-tight truncate">
+            {typeof value === 'number' ? value.toLocaleString() : value}
+          </div>
+          {showTrend && trend && (
+            <div className={`flex items-center text-[10px] font-bold ${isUp ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {isUp ? <TrendingUp className="w-2.5 h-2.5 mr-0.5" /> : <TrendingUp className="w-2.5 h-2.5 mr-0.5 rotate-180" />}
+              {isUp ? '+' : ''}{trend}%
+            </div>
+          )}
         </div>
         {detail && <div className="text-[10px] text-cyan-600/80 group-hover:text-cyan-500 font-medium truncate transition-colors">{detail}</div>}
       </div>
+      {/* Background Decorative Element */}
+      <div className={`absolute -right-4 -bottom-4 w-24 h-24 rounded-full blur-3xl opacity-0 group-hover:opacity-10 transition-opacity ${iconBg}`} />
     </div>
   );
 };
@@ -365,6 +387,13 @@ const PlatformOperationsDashboard: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isChartAnimationActive, setIsChartAnimationActive] = useState(true);
   
+  // Date selection state
+  const [dateRange, setDateRange] = useState({ start: '2024-01-01', end: '2024-12-31' });
+  const [comparisonEnabled, setComparisonEnabled] = useState(false);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [datePreset, setDatePreset] = useState('本年');
+  const datePickerRef = useRef<HTMLDivElement>(null);
+
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
@@ -377,10 +406,32 @@ const PlatformOperationsDashboard: React.FC = () => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
         setIsSearchDropdownOpen(false);
       }
+      if (datePickerRef.current && !datePickerRef.current.contains(event.target as Node)) {
+        setIsDatePickerOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const handleDatePreset = (preset: string) => {
+    setDatePreset(preset);
+    const now = new Date();
+    let start = '';
+    let end = now.toISOString().split('T')[0];
+
+    if (preset === '今日') start = end;
+    else if (preset === '本周') {
+      const first = now.getDate() - now.getDay();
+      start = new Date(now.setDate(first)).toISOString().split('T')[0];
+    } else if (preset === '本月') {
+      start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+    } else if (preset === '本年') {
+      start = new Date(now.getFullYear(), 0, 1).toISOString().split('T')[0];
+    }
+    
+    if (start) setDateRange({ start, end });
+  };
 
   useEffect(() => {
     setSearchVisibleCount(20);
@@ -427,6 +478,34 @@ const PlatformOperationsDashboard: React.FC = () => {
     const timer = setTimeout(() => setIsChartAnimationActive(false), 1500);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleExportDashboard = () => {
+    // Basic dashboard summary export
+    const headers = ["分类", "指标名称", "指标数值", "详情说明"];
+    const rows = [
+      ["用户数据", "平台用户数", overallData.users.total, overallData.users.detail],
+      ["结构数据", "学校总数", overallData.schools.total, overallData.schools.detail],
+      ["资源数据", "课程数量", overallData.courses.total, overallData.courses.detail],
+      ["行为数据", "教学工具使用量", overallData.toolUsage.total, overallData.toolUsage.detail],
+      ["AI行为", "AI技能助手调用次数", overallData.agentInvocations.total, overallData.agentInvocations.detail],
+      ["实训数据", "实训使用时长(小时)", overallData.labDuration.total, overallData.labDuration.detail],
+    ];
+
+    const csvContent = "\ufeff" + [
+      headers.join(","),
+      ...rows.map(r => r.map(v => `"${v}"`).join(","))
+    ].join("\n");
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `UUSIMA_运营决策报表_${new Date().toLocaleDateString()}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   const handleViewAll = (title: string, columns: string[], data: any[], type: string) => {
     setModalConfig({
@@ -555,8 +634,99 @@ const PlatformOperationsDashboard: React.FC = () => {
             </button>
           </div>
         </div>
-        <div className="text-sm text-cyan-500/90 flex items-center gap-2">
-          最后更新: <span className="font-din font-semibold text-[#00f3ff] drop-shadow-[0_0_6px_rgba(0,243,255,0.4)]">{currentTime.toLocaleTimeString('zh-CN', { hour12: false })}</span>
+        <div className="text-sm text-cyan-500/90 flex items-center gap-6">
+          <div className="relative" ref={datePickerRef}>
+            <button 
+              onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
+              className="flex items-center gap-2.5 px-4 py-2 bg-[#091024]/80 border border-cyan-500/30 rounded-xl text-xs font-bold text-cyan-200 hover:border-cyan-400 hover:bg-cyan-900/40 transition-all shadow-lg active:scale-95 group"
+            >
+              <CalendarClock className="w-4 h-4 text-cyan-400 group-hover:rotate-12 transition-transform" />
+              <span>{dateRange.start} ~ {dateRange.end}</span>
+              <span className="px-1.5 py-0.5 rounded-md bg-cyan-500/20 text-cyan-400 text-[10px]">{datePreset}</span>
+              <ChevronDown className={`w-3.5 h-3.5 text-cyan-600 transition-transform ${isDatePickerOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isDatePickerOpen && (
+              <div className="absolute top-full right-0 mt-3 w-80 bg-[#091024]/95 backdrop-blur-xl ring-1 ring-cyan-500/30 border border-cyan-500/20 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-[100] animate-in fade-in zoom-in-95 duration-200">
+                <div className="p-5 space-y-5">
+                  <div>
+                    <h4 className="text-[10px] uppercase tracking-widest text-cyan-600 font-black mb-3">预设范围</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {['今日', '本周', '本月', '本年'].map(p => (
+                        <button
+                          key={p}
+                          onClick={() => handleDatePreset(p)}
+                          className={`px-3 py-2 rounded-lg text-xs transition-all border ${datePreset === p ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-100' : 'bg-transparent border-cyan-500/10 text-cyan-700 hover:border-cyan-500/30 hover:text-cyan-400'}`}
+                        >
+                          {p}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-[10px] uppercase tracking-widest text-cyan-600 font-black mb-3">自定义日期</h4>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2 p-2 bg-[#040815] rounded-xl border border-cyan-500/10">
+                        <Calendar className="w-4 h-4 text-cyan-500" />
+                        <input 
+                          type="date" 
+                          value={dateRange.start}
+                          onChange={(e) => {
+                            setDateRange({...dateRange, start: e.target.value});
+                            setDatePreset('自定义');
+                          }}
+                          className="bg-transparent border-none outline-none text-xs text-cyan-200 w-full"
+                        />
+                      </div>
+                      <div className="flex items-center gap-2 p-2 bg-[#040815] rounded-xl border border-cyan-500/10">
+                        <Calendar className="w-4 h-4 text-cyan-500" />
+                        <input 
+                          type="date" 
+                          value={dateRange.end}
+                          onChange={(e) => {
+                            setDateRange({...dateRange, end: e.target.value});
+                            setDatePreset('自定义');
+                          }}
+                          className="bg-transparent border-none outline-none text-xs text-cyan-200 w-full"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-cyan-500/10 flex items-center justify-between">
+                    <div className="flex items-center gap-2 cursor-pointer group" onClick={() => setComparisonEnabled(!comparisonEnabled)}>
+                      <div className={`w-8 h-4 rounded-full p-0.5 transition-colors ${comparisonEnabled ? 'bg-cyan-500' : 'bg-cyan-900/50'}`}>
+                        <div className={`w-3 h-3 rounded-full bg-white transition-transform ${comparisonEnabled ? 'translate-x-4' : 'translate-x-0'}`} />
+                      </div>
+                      <span className="text-[11px] text-cyan-600 group-hover:text-cyan-400 transition-colors">对比上一周期</span>
+                    </div>
+                    <button 
+                      onClick={() => setIsDatePickerOpen(false)}
+                      className="px-4 py-1.5 bg-cyan-500 rounded-lg text-xs font-bold text-[#040815] hover:bg-cyan-400 transition-colors"
+                    >
+                      应用
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="h-6 w-px bg-cyan-500/20" />
+          
+          <button 
+            onClick={handleExportDashboard}
+            className="flex items-center gap-2 px-4 py-1.5 bg-cyan-950/40 border border-cyan-500/30 rounded-lg text-xs font-bold text-cyan-300 hover:bg-cyan-900/50 hover:border-cyan-400 transition-all shadow-[0_0_15px_rgba(6,182,212,0.1)] group"
+          >
+            <svg className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            导出报表
+          </button>
+          <div className="flex items-center gap-2 border-l border-cyan-500/20 pl-6">
+            最后更新: <span className="font-din font-semibold text-[#00f3ff] drop-shadow-[0_0_6px_rgba(0,243,255,0.4)]">{currentTime.toLocaleTimeString('zh-CN', { hour12: false })}</span>
+          </div>
         </div>
       </header>
 
@@ -621,12 +791,66 @@ const PlatformOperationsDashboard: React.FC = () => {
             </div>
           </SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4">
-            <StatCard title="平台用户数" value={overallData.users.total} detail={overallData.users.detail} icon={Users} iconColor="text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]" iconBg="bg-blue-900/30" />
-            <StatCard title="学校总数" value={overallData.schools.total} detail={overallData.schools.detail} icon={School} iconColor="text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.8)]" iconBg="bg-emerald-900/30" />
-            <StatCard title="课程数量" value={overallData.courses.total} detail={overallData.courses.detail} icon={BookOpen} iconColor="text-purple-400 drop-shadow-[0_0_5px_rgba(192,132,252,0.8)]" iconBg="bg-purple-900/30" />
-            <StatCard title="教学工具使用量" value={overallData.toolUsage.total} detail={overallData.toolUsage.detail} icon={Rocket} iconColor="text-orange-400 drop-shadow-[0_0_5px_rgba(251,146,60,0.8)]" iconBg="bg-orange-900/30" />
-            <StatCard title="AI技能助手调用次数" value={overallData.agentInvocations.total} detail={overallData.agentInvocations.detail} icon={Cpu} iconColor="text-pink-400 drop-shadow-[0_0_5px_rgba(244,114,182,0.8)]" iconBg="bg-pink-900/30" />
-            <StatCard title="实训使用时长(小时)" value={overallData.labDuration.total} detail={overallData.labDuration.detail} icon={Clock} iconColor="text-cyan-400" iconBg="bg-blue-800/30" />
+            <StatCard 
+              title="平台用户数" 
+              value={overallData.users.total} 
+              prevValue={comparisonEnabled ? overallData.users.prev : null}
+              showTrend={comparisonEnabled}
+              detail={overallData.users.detail} 
+              icon={Users} 
+              iconColor="text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]" 
+              iconBg="bg-blue-900/30" 
+            />
+            <StatCard 
+              title="学校总数" 
+              value={overallData.schools.total} 
+              prevValue={comparisonEnabled ? overallData.schools.prev : null}
+              showTrend={comparisonEnabled}
+              detail={overallData.schools.detail} 
+              icon={School} 
+              iconColor="text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.8)]" 
+              iconBg="bg-emerald-900/30" 
+            />
+            <StatCard 
+              title="课程数量" 
+              value={overallData.courses.total} 
+              prevValue={comparisonEnabled ? overallData.courses.prev : null}
+              showTrend={comparisonEnabled}
+              detail={overallData.courses.detail} 
+              icon={BookOpen} 
+              iconColor="text-purple-400 drop-shadow-[0_0_5px_rgba(192,132,252,0.8)]" 
+              iconBg="bg-purple-900/30" 
+            />
+            <StatCard 
+              title="教学工具使用量" 
+              value={overallData.toolUsage.total} 
+              prevValue={comparisonEnabled ? overallData.toolUsage.prev : null}
+              showTrend={comparisonEnabled}
+              detail={overallData.toolUsage.detail} 
+              icon={Rocket} 
+              iconColor="text-orange-400 drop-shadow-[0_0_5px_rgba(251,146,60,0.8)]" 
+              iconBg="bg-orange-900/30" 
+            />
+            <StatCard 
+              title="AI技能助手调用次数" 
+              value={overallData.agentInvocations.total} 
+              prevValue={comparisonEnabled ? overallData.agentInvocations.prev : null}
+              showTrend={comparisonEnabled}
+              detail={overallData.agentInvocations.detail} 
+              icon={Cpu} 
+              iconColor="text-pink-400 drop-shadow-[0_0_5px_rgba(244,114,182,0.8)]" 
+              iconBg="bg-pink-900/30" 
+            />
+            <StatCard 
+              title="实训使用时长(小时)" 
+              value={overallData.labDuration.total} 
+              prevValue={comparisonEnabled ? overallData.labDuration.prev : null}
+              showTrend={comparisonEnabled}
+              detail={overallData.labDuration.detail} 
+              icon={Clock} 
+              iconColor="text-cyan-400" 
+              iconBg="bg-blue-800/30" 
+            />
           </div>
         </section>
 
@@ -731,21 +955,27 @@ const PlatformOperationsDashboard: React.FC = () => {
             <SectionTitle icon={Award} title="业务总榜" color="text-amber-500" />
             <div className="bg-gradient-to-br from-[#0c142b]/80 to-[#040815]/90 border-t border-t-cyan-500/20 border border-cyan-500/10 rounded-xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.5)] hover:shadow-[0_8px_30px_rgba(6,182,212,0.15)] flex flex-col flex-1 transition-all duration-300">
               <div className="flex items-center gap-4 justify-between mb-4">
-                <div className="flex bg-[#040815]/80 p-1 rounded-lg text-xs font-medium border border-cyan-500/15 w-[68%] shadow-inner">
+                <div className="flex bg-[#040815]/80 p-1 rounded-lg text-xs font-medium border border-cyan-500/15 w-[85%] shadow-inner">
                   <button
-                    className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'schools' ? 'bg-[#0c142b] ring-1 ring-cyan-400/30 text-cyan-300 shadow-[0_2px_8px_rgba(6,182,212,0.2)] font-bold' : 'text-cyan-600 hover:text-cyan-200'}`}
+                    className={`flex-1 py-1.5 px-3 rounded-md transition-all whitespace-nowrap ${activeLeaderboardTab === 'schools' ? 'bg-[#0c142b] ring-1 ring-cyan-400/30 text-cyan-300 shadow-[0_2px_8px_rgba(6,182,212,0.2)] font-bold' : 'text-cyan-600 hover:text-cyan-200'}`}
                     onClick={() => setActiveLeaderboardTab('schools')}
                   >
-                    院校
+                    院校排行
                   </button>
                   <button
-                    className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'courses' ? 'bg-[#0c142b] ring-1 ring-emerald-400/30 text-emerald-300 shadow-[0_2px_8px_rgba(16,185,129,0.2)] font-bold' : 'text-cyan-600 hover:text-cyan-200'}`}
+                    className={`flex-1 py-1.5 px-3 rounded-md transition-all whitespace-nowrap ${activeLeaderboardTab === 'province' ? 'bg-[#0c142b] ring-1 ring-orange-400/30 text-orange-300 shadow-[0_2px_8px_rgba(249,115,22,0.2)] font-bold' : 'text-cyan-600 hover:text-cyan-200'}`}
+                    onClick={() => setActiveLeaderboardTab('province')}
+                  >
+                    区域销量
+                  </button>
+                  <button
+                    className={`flex-1 py-1.5 px-3 rounded-md transition-all whitespace-nowrap ${activeLeaderboardTab === 'courses' ? 'bg-[#0c142b] ring-1 ring-emerald-400/30 text-emerald-300 shadow-[0_2px_8px_rgba(16,185,129,0.2)] font-bold' : 'text-cyan-600 hover:text-cyan-200'}`}
                     onClick={() => setActiveLeaderboardTab('courses')}
                   >
                     课程
                   </button>
                   <button
-                    className={`flex-1 py-1.5 rounded-md transition-all ${activeLeaderboardTab === 'labs' ? 'bg-[#0c142b] ring-1 ring-purple-400/30 text-purple-300 shadow-[0_2px_8px_rgba(168,85,247,0.2)] font-bold' : 'text-cyan-600 hover:text-cyan-200'}`}
+                    className={`flex-1 py-1.5 px-3 rounded-md transition-all whitespace-nowrap ${activeLeaderboardTab === 'labs' ? 'bg-[#0c142b] ring-1 ring-purple-400/30 text-purple-300 shadow-[0_2px_8px_rgba(168,85,247,0.2)] font-bold' : 'text-cyan-600 hover:text-cyan-200'}`}
                     onClick={() => setActiveLeaderboardTab('labs')}
                   >
                     实验
@@ -755,13 +985,15 @@ const PlatformOperationsDashboard: React.FC = () => {
                   onClick={() => {
                     if (activeLeaderboardTab === 'schools') {
                       handleViewAll('院校资源用量榜', ['排名', '学校名称', '累计实训时长', '累计课程时长', 'AI 算力消耗'], fullData.leaderboardSchools, 'leaderboardSchools');
+                    } else if (activeLeaderboardTab === 'province') {
+                      handleViewAll('省份销量排行', ['排名', '省份', '成交金额', '合作学校数', '活跃用户'], leaderboardData.province, 'province');
                     } else if (activeLeaderboardTab === 'courses') {
-                      handleViewAll('热门课程学时榜单', ['排名', '课程名称', '累计学时'], fullData.leaderboardCourses, 'leaderboardCourses');
+                      handleViewAll('热门课程学时榜单', ['排名', '课程名称', '累计学时'], leaderboardData.courses, 'courses');
                     } else {
-                      handleViewAll('实训环境调用排行', ['排名', '实验环境名称', '环境运行总时长'], fullData.leaderboardLabs, 'leaderboardLabs');
+                      handleViewAll('实训环境调用排行', ['排名', '实验环境名称', '环境运行总时长'], leaderboardData.labs, 'labs');
                     }
                   }} 
-                  className={`text-[11px] whitespace-nowrap shrink-0 hover:underline ${activeLeaderboardTab === 'schools' ? 'text-cyan-400 hover:text-cyan-200' : activeLeaderboardTab === 'courses' ? 'text-emerald-400 hover:text-emerald-200' : 'text-purple-400 hover:text-purple-200'}`}
+                  className={`text-[11px] whitespace-nowrap shrink-0 hover:underline ${activeLeaderboardTab === 'schools' ? 'text-cyan-400 hover:text-cyan-200' : activeLeaderboardTab === 'province' ? 'text-orange-400 hover:text-orange-200' : activeLeaderboardTab === 'courses' ? 'text-emerald-400 hover:text-emerald-200' : 'text-purple-400 hover:text-purple-200'}`}
                 >
                   查看全部 &gt;
                 </button>
@@ -808,6 +1040,45 @@ const PlatformOperationsDashboard: React.FC = () => {
                             <td className="py-2 text-right font-din text-cyan-400 font-medium text-[10px]">
                               {row.token.replace(/,/g, '')}
                             </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {activeLeaderboardTab === 'province' && (
+                <div className="flex-1 flex flex-col min-h-0">
+                  <div className="mb-3 text-sm">
+                    <span className="font-bold text-orange-400 font-bold tracking-wider text-xs">省份销量排行 (年度累计)</span>
+                  </div>
+                  <div className="overflow-y-auto pr-1 text-xs">
+                    <table className="w-full text-left table-fixed">
+                      <thead>
+                        <tr>
+                          <th className="w-8 font-normal"></th>
+                          <th className="font-normal">区域/省份</th>
+                          <th className="text-right text-[10px] text-cyan-600 font-normal">成交额</th>
+                          <th className="w-16 text-right text-[10px] text-cyan-600 font-normal">合作学校</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {leaderboardData.province.map((row: any, idx: number) => (
+                          <tr key={idx} className="border-b border-cyan-500/10 last:border-0 hover:bg-[#0B0F19]/80/50">
+                            <td className="py-2 w-8">
+                              <div className={`w-5 h-5 mx-auto rounded flex items-center justify-center font-bold text-[10px] ${
+                                row.rank === 1 ? 'bg-amber-100 text-amber-600' :
+                                row.rank === 2 ? 'bg-cyan-900/40 text-cyan-300' :
+                                row.rank === 3 ? 'bg-orange-800/30 text-orange-400' :
+                                'bg-[#0B0F19]/80 text-cyan-500'
+                              }`}>
+                                {row.rank}
+                              </div>
+                            </td>
+                            <td className="py-2 font-medium text-cyan-100">{row.name}</td>
+                            <td className="py-2 text-right text-orange-400 font-din font-bold whitespace-nowrap">¥{row.amount}</td>
+                            <td className="py-2 text-right text-cyan-300 font-din">{row.schools}</td>
                           </tr>
                         ))}
                       </tbody>
