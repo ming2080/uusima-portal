@@ -53,7 +53,6 @@ const SchoolDashboard: React.FC = () => {
     { name: 'Python 程序设计 (AI 辅导版)', students: 320, interactions: 15400, hours: 8500 },
     { name: '数据结构与算法 (AI 伴学版)', students: 280, interactions: 12200, hours: 7600 },
     { name: '人工智能基础 (智能实训)', students: 240, interactions: 9800, hours: 6200 },
-    { name: 'JavaScript 全栈开发 (AI 助手)', students: 200, interactions: 7400, hours: 4100 },
   ];
 
   const departmentUsage = [
@@ -142,7 +141,7 @@ const SchoolDashboard: React.FC = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 mt-8 space-y-8 relative">
+      <main className="max-w-[1600px] mx-auto px-8 mt-6 space-y-8 relative">
         {/* Background micro grid aura */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(6,182,212,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(6,182,212,0.02)_1px,transparent_1px)] bg-[size:30px_30px] pointer-events-none"></div>
 
@@ -484,7 +483,7 @@ const SchoolDashboard: React.FC = () => {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 relative z-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 relative z-10">
               {aiTutorCourses.map((course, idx) => (
                 <div key={idx} className="bg-[#050b1a]/90 rounded-xl p-4 border border-cyan-500/10 hover:border-cyan-400/35 hover:shadow-[0_8px_20px_rgba(6,182,212,0.15)] hover:bg-cyan-950/10 transition-all duration-300 group">
                   <div className="text-[10px] font-bold text-cyan-500 font-din mb-2">{String(idx + 1).padStart(2, '0')}</div>

@@ -428,6 +428,17 @@ const PlatformOperationsDashboard: React.FC = () => {
       start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
     } else if (preset === '本年') {
       start = new Date(now.getFullYear(), 0, 1).toISOString().split('T')[0];
+    } else if (preset === '本月 vs 上月') {
+      start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+      setDateRange({ start, end });
+      setComparisonEnabled(true);
+      return;
+    } else if (preset === '本周 vs 上周') {
+      const first = now.getDate() - now.getDay();
+      start = new Date(now.setDate(first)).toISOString().split('T')[0];
+      setDateRange({ start, end });
+      setComparisonEnabled(true);
+      return;
     }
     
     if (start) setDateRange({ start, end });
@@ -491,16 +502,30 @@ const PlatformOperationsDashboard: React.FC = () => {
       ["实训数据", "实训使用时长(小时)", overallData.labDuration.total, overallData.labDuration.detail],
     ];
 
+    // Provincial sales ranking section
+    const provinceTitle = ["各省合作与累计成交排行", "", "", ""];
+    const provinceHeaders = ["排名", "区域/省份", "成交金额", "合作学校数"];
+    const provinceRows = leaderboardData.province.map(item => [
+      item.rank.toString(),
+      item.name,
+      `¥${item.amount}`,
+      `${item.schools} 所`
+    ]);
+
     const csvContent = "\ufeff" + [
       headers.join(","),
-      ...rows.map(r => r.map(v => `"${v}"`).join(","))
+      ...rows.map(r => r.map(v => `"${v}"`).join(",")),
+      "", // spacer line
+      provinceTitle.map(v => `"${v}"`).join(","),
+      provinceHeaders.join(","),
+      ...provinceRows.map(r => r.map(v => `"${v}"`).join(","))
     ].join("\n");
     
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `UUSIMA_运营决策报表_${new Date().toLocaleDateString()}.csv`;
+    link.download = `UUSIMA_运营决策与销量排行双表_${new Date().toLocaleDateString()}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -652,11 +677,11 @@ const PlatformOperationsDashboard: React.FC = () => {
                   <div>
                     <h4 className="text-[10px] uppercase tracking-widest text-cyan-600 font-black mb-3">预设范围</h4>
                     <div className="grid grid-cols-2 gap-2">
-                      {['今日', '本周', '本月', '本年'].map(p => (
+                      {['今日', '本周', '本月', '本年', '本月 vs 上月', '本周 vs 上周'].map(p => (
                         <button
                           key={p}
                           onClick={() => handleDatePreset(p)}
-                          className={`px-3 py-2 rounded-lg text-xs transition-all border ${datePreset === p ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-100' : 'bg-transparent border-cyan-500/10 text-cyan-700 hover:border-cyan-500/30 hover:text-cyan-400'}`}
+                          className={`px-3 py-1.5 rounded-lg text-[11px] transition-all border whitespace-nowrap ${datePreset === p ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-100 font-bold' : 'bg-transparent border-cyan-500/10 text-cyan-700 hover:border-cyan-500/30 hover:text-cyan-400'}`}
                         >
                           {p}
                         </button>
