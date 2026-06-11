@@ -4,12 +4,14 @@ import {
   Home, 
   FileText, 
   BookOpen, 
-  Users, 
   ClipboardCheck, 
   FileBadge, 
-  User as UserIcon
+  User as UserIcon,
+  Settings,
+  BarChart3,
+  Activity,
 } from 'lucide-react';
-import { UserRole } from '../types';
+import { User, UserRole } from '../types';
 
 interface MenuItem {
   label: string;
@@ -20,11 +22,23 @@ interface MenuItem {
 }
 
 interface SidebarProps {
-  role: UserRole;
+  user: User;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ role }) => {
+const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   const location = useLocation();
+  const { role } = user;
+  const schoolDashPath = `/school-dashboard/${encodeURIComponent(user.organizationSlug || 'default')}`;
+
+  const pathIsActive = (path: string) => {
+    if (path.startsWith('/school-dashboard/')) {
+      return location.pathname.startsWith('/school-dashboard/');
+    }
+    if (path === '/config' || path.startsWith('/config?')) {
+      return location.pathname === '/config';
+    }
+    return location.pathname === path;
+  };
 
   const getMenuItems = (): MenuItem[] => {
     const commonItems: MenuItem[] = [
@@ -50,6 +64,15 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
       case UserRole.ADMIN_SCHOOL:
         return [
           { label: '首页', path: '/my-home', icon: Home, color: 'text-emerald-500' },
+          { label: '配置管理', path: '/config', icon: Settings, color: 'text-slate-500' },
+          { label: '校级数据看板', path: schoolDashPath, icon: BarChart3, color: 'text-violet-500' },
+          ...commonItems,
+        ];
+      case UserRole.ADMIN_PLATFORM:
+        return [
+          { label: '首页', path: '/my-home', icon: Home, color: 'text-emerald-500' },
+          { label: '配置管理', path: '/config', icon: Settings, color: 'text-slate-500' },
+          { label: '平台运营大屏', path: '/platform-operations-dashboard', icon: Activity, color: 'text-cyan-500' },
           ...commonItems,
         ];
       default:
@@ -63,7 +86,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
   const menuItems = getMenuItems();
 
   const renderMenuItem = (item: MenuItem, depth = 0) => {
-    const isActive = item.path ? location.pathname === item.path : false;
+    const isActive = item.path ? pathIsActive(item.path) : false;
 
     return (
       <div key={item.label}>

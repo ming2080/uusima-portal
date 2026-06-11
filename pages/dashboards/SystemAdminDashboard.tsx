@@ -11,8 +11,8 @@ const SystemAdminDashboard: React.FC<Props> = ({ user }) => {
     <div>
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">校级系统管理员控制台</h1>
-          <p className="text-gray-500 mt-1">负责本校私有化部署环境的运行维护与全局配置。</p>
+          <h1 className="text-2xl font-bold text-gray-900">平台系统管理员控制台</h1>
+          <p className="text-gray-500 mt-1">负责跨校/全平台资源与运行态势监控，以及全局策略与接入配置（演示环境）。</p>
         </div>
         <div className="flex gap-3">
         </div>

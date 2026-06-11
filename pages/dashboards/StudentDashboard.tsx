@@ -3,6 +3,13 @@ import { Link } from 'react-router-dom';
 import { BookOpen, Monitor, Award, Clock, TrendingUp, Calendar, CheckSquare, ListTodo, FileText, BadgeCheck, GraduationCap, Building, NotebookTabs } from 'lucide-react';
 import { User } from '../../types';
 
+function greetingPeriodLabel(): string {
+  const h = new Date().getHours();
+  if (h < 12) return '上午好';
+  if (h < 18) return '下午好';
+  return '晚上好';
+}
+
 interface Props {
   user: User;
 }
@@ -18,7 +25,7 @@ const StudentDashboard: React.FC<Props> = ({ user }) => {
 
         <div className="flex-1 relative z-10">
           <h1 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight">
-            Hi, 15306915030 同学 下午好 欢迎回来~
+            Hi，{user.name}，{greetingPeriodLabel()}，欢迎回来～
           </h1>
           <div className="flex flex-wrap gap-8 items-center text-sm">
              <div className="flex items-center gap-2">
@@ -36,7 +43,7 @@ const StudentDashboard: React.FC<Props> = ({ user }) => {
                  </div>
                  <div>
                     <p className="text-gray-500 text-xs mb-0.5">学院</p>
-                    <p className="font-semibold text-gray-800">试用账号管理学校</p>
+                    <p className="font-semibold text-gray-800">{user.organizationName ?? '试用账号管理学校'}</p>
                  </div>
              </div>
              <div className="flex items-center gap-2">
@@ -127,7 +134,9 @@ const StudentDashboard: React.FC<Props> = ({ user }) => {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-bold text-gray-900">推荐实验</h2>
-              <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">进入实验大厅</button>
+              <Link to="/labs" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                进入实验大厅
+              </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[

@@ -28,6 +28,8 @@ interface LayoutProps {
   onLoginClick: () => void;
   onLogoutClick: () => void;
   onSwitchRole?: (role: any) => void;
+  accessNotice?: string | null;
+  onDismissAccessNotice?: () => void;
 }
 
 const defaultApps: AppConfigItem[] = [
@@ -69,6 +71,8 @@ const Layout: React.FC<LayoutProps> = ({
   onLoginClick,
   onLogoutClick,
   onSwitchRole,
+  accessNotice,
+  onDismissAccessNotice,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [language, setLanguage] = useState<"zh" | "en">("zh");
@@ -109,6 +113,10 @@ const Layout: React.FC<LayoutProps> = ({
       path: "/labs",
     },
     {
+      label: "产品中心",
+      path: "/products",
+    },
+    {
       label: "考试认证",
       path: "/exams",
     },
@@ -142,6 +150,23 @@ const Layout: React.FC<LayoutProps> = ({
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
+      {accessNotice && (
+        <div
+          className="sticky top-0 z-[60] flex items-center justify-center gap-3 border-b border-emerald-200 bg-emerald-50 px-4 py-2.5 text-center text-sm text-emerald-900 shadow-sm"
+          role="status"
+        >
+          <span className="flex-1">{accessNotice}</span>
+          {onDismissAccessNotice && (
+            <button
+              type="button"
+              onClick={onDismissAccessNotice}
+              className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-emerald-800 hover:bg-emerald-100"
+            >
+              关闭
+            </button>
+          )}
+        </div>
+      )}
       {/* Header - Optimized Design */}
       <header className={`sticky top-0 z-40 transition-all duration-300 ${location.pathname === '/' && !isScrolled ? 'bg-transparent' : 'bg-white/90 backdrop-blur-lg border-b border-gray-200/80 shadow-sm supports-[backdrop-filter]:bg-white/60'}`}>
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -155,7 +180,7 @@ const Layout: React.FC<LayoutProps> = ({
                 <div className="w-4 h-4 bg-yellow-400 rounded-sm"></div>
               </div>
               <span className="text-xl font-bold text-[#2C3A5A] tracking-tight">
-                UUSIMA 智慧教学验平台
+                UUSIMA 智慧教学实验平台
               </span>
             </Link>
 
@@ -485,6 +510,14 @@ const Layout: React.FC<LayoutProps> = ({
                     className="hover:text-white hover:translate-x-1 transition-transform inline-block"
                   >
                     实验大厅
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/products"
+                    className="hover:text-white hover:translate-x-1 transition-transform inline-block"
+                  >
+                    产品中心
                   </Link>
                 </li>
                 <li>

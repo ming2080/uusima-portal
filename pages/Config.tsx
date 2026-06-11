@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Navigate, useSearchParams } from "react-router-dom";
 import {
   BookOpen,
   Award,
@@ -56,6 +57,7 @@ interface ConfigProps {
 }
 
 const Config: React.FC<ConfigProps> = ({ user }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeModule, setActiveModule] = useState("course");
   const [activeSubModule, setActiveSubModule] = useState("course-list");
   const [view, setView] = useState<"list" | "editor" | "no-access">("list");
@@ -182,6 +184,30 @@ const Config: React.FC<ConfigProps> = ({ user }) => {
     }
     return [];
   }, [user]);
+
+  useEffect(() => {
+    if (!user || user.role === UserRole.STUDENT || !modules.length) return;
+    const m = searchParams.get("module");
+    const s = searchParams.get("sub");
+    const comboValid = (mid: string, sid: string) => {
+      const mod = modules.find((x) => x.id === mid);
+      return !!mod?.subModules.some((sub: { id: string }) => sub.id === sid);
+    };
+    if (m && s && comboValid(m, s)) {
+      setActiveModule(m);
+      setActiveSubModule(s);
+      setExpandedModules((prev) => [...new Set([...prev, m])]);
+      return;
+    }
+    const first = modules[0];
+    const sub0 = first?.subModules[0];
+    if (first && sub0) {
+      setActiveModule(first.id);
+      setActiveSubModule(sub0.id);
+      setExpandedModules((prev) => [...new Set([...prev, first.id])]);
+      setSearchParams({ module: first.id, sub: sub0.id }, { replace: true });
+    }
+  }, [user, modules, searchParams, setSearchParams]);
 
   const renderCourseManagement = () => {
     return (
@@ -460,6 +486,10 @@ const Config: React.FC<ConfigProps> = ({ user }) => {
     return renderPlaceholder(currentSubModule?.label || "未知模块");
   };
 
+  if (!user) {
+    return <Navigate to="/login" replace state={{ from: "/config" }} />;
+  }
+
   return (
     <div className="min-h-[calc(100vh-80px)] bg-slate-50/50">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row min-h-[calc(100vh-80px)] gap-6 lg:gap-8 py-6 lg:py-8">
@@ -488,8 +518,10 @@ const Config: React.FC<ConfigProps> = ({ user }) => {
                       onClick={() => {
                         setActiveModule(module.id);
                         toggleModule(module.id);
-                        if (!isExpanded && module.subModules.length > 0) {
-                          setActiveSubModule(module.subModules[0].id);
+                        const firstSub = module.subModules[0]?.id;
+                        if (firstSub) {
+                          setActiveSubModule(firstSub);
+                          setSearchParams({ module: module.id, sub: firstSub }, { replace: true });
                         }
                       }}
                     >
@@ -522,6 +554,7 @@ const Config: React.FC<ConfigProps> = ({ user }) => {
                               e.stopPropagation();
                               setActiveSubModule(sub.id);
                               setActiveModule(module.id);
+                              setSearchParams({ module: module.id, sub: sub.id }, { replace: true });
                             }}
                           >
                             {activeSubModule === sub.id && (

@@ -3,6 +3,19 @@ import { Users, BookOpen, Monitor, CheckSquare, FileText, Bell, BarChart2, Calen
 import { Link } from 'react-router-dom';
 import { User } from '../../types';
 
+function formatZhDate(d: Date): string {
+  try {
+    return d.toLocaleDateString('zh-CN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long',
+    });
+  } catch {
+    return d.toISOString().slice(0, 10);
+  }
+}
+
 interface Props {
   user: User;
 }
@@ -19,7 +32,7 @@ const TeacherDashboard: React.FC<Props> = ({ user }) => {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">您好，{user.name} 老师！</h1>
             <p className="text-gray-500 mt-1 flex items-center gap-2">
-              <Calendar className="w-4 h-4" /> 今天是 2024年3月20日，星期三
+              <Calendar className="w-4 h-4" /> {formatZhDate(new Date())}
             </p>
           </div>
         </div>

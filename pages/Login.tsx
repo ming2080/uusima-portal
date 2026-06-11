@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Moon, Sun, BookOpen } from 'lucide-react';
 import { UserRole } from '../types';
 
 interface LoginProps {
-  onLogin: (roles: UserRole[], name: string) => void;
+  onLogin: (
+    roles: UserRole[],
+    name: string,
+    org?: { organizationName?: string; organizationSlug?: string },
+  ) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
@@ -14,23 +18,71 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [error, setError] = useState('');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const navigate = useNavigate();
+  const location = useLocation();
+  const rawFrom = (location.state as { from?: string } | null)?.from;
+  const from =
+    rawFrom && rawFrom !== '/login' && rawFrom !== '/'
+      ? rawFrom
+      : '/my-home';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const accountMap: Record<string, { password: string, name: string, roles: UserRole[] }> = {
-      '1': { password: '1', name: '学生张三', roles: [UserRole.STUDENT] },
-      '2': { password: '2', name: '王老师', roles: [UserRole.TEACHER] },
-      '3': { password: '3', name: '李校长', roles: [UserRole.ADMIN_SCHOOL] },
-      '4': { password: '4', name: '系统管理员', roles: [UserRole.ADMIN_PLATFORM] },
-      '5': { password: '5', name: '多角色测试人员', roles: [UserRole.STUDENT, UserRole.TEACHER, UserRole.ADMIN_SCHOOL] },
+    const accountMap: Record<
+      string,
+      {
+        password: string;
+        name: string;
+        roles: UserRole[];
+        organizationName?: string;
+        organizationSlug?: string;
+      }
+    > = {
+      '1': {
+        password: '1',
+        name: '学生张三',
+        roles: [UserRole.STUDENT],
+        organizationName: '演示职业技术大学',
+        organizationSlug: 'demo-voc',
+      },
+      '2': {
+        password: '2',
+        name: '王老师',
+        roles: [UserRole.TEACHER],
+        organizationName: '演示职业技术大学',
+        organizationSlug: 'demo-voc',
+      },
+      '3': {
+        password: '3',
+        name: '李校长',
+        roles: [UserRole.ADMIN_SCHOOL],
+        organizationName: '演示职业技术大学',
+        organizationSlug: 'demo-voc',
+      },
+      '4': {
+        password: '4',
+        name: '系统管理员',
+        roles: [UserRole.ADMIN_PLATFORM],
+        organizationName: 'UUSIMA 平台运营中心',
+        organizationSlug: 'platform',
+      },
+      '5': {
+        password: '5',
+        name: '多角色测试人员',
+        roles: [UserRole.STUDENT, UserRole.TEACHER, UserRole.ADMIN_SCHOOL],
+        organizationName: '演示职业技术大学',
+        organizationSlug: 'demo-voc',
+      },
     };
 
     const account = accountMap[username];
     if (account && account.password === password) {
       setError('');
-      onLogin(account.roles, account.name);
-      navigate('/');
+      onLogin(account.roles, account.name, {
+        organizationName: account.organizationName,
+        organizationSlug: account.organizationSlug,
+      });
+      navigate(from, { replace: true });
     } else {
       setError('账号或密码错误（测试提供: 1, 2, 3, 4, 5，密码同账号）');
     }
