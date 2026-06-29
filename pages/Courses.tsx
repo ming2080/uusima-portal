@@ -4,6 +4,10 @@ import { Course } from '../types';
 import { Clock, BookOpen, Loader2 } from 'lucide-react';
 import CourseFilterHeader from '../components/CourseFilterHeader';
 
+interface CoursesProps {
+  onAccessTrigger: () => void;
+}
+
 const AI_COURSE_TEMPLATES = [
   { title: '机器学习基础', description: '掌握监督学习、无监督学习等核心算法及应用。', category: '人工智能' },
   { title: '深度学习入门', description: '基于 PyTorch/TensorFlow 构建神经网络模型。', category: '人工智能' },
@@ -66,7 +70,7 @@ const generateCourses = (page: number, pageSize: number): Course[] => {
   return courses;
 };
 
-const Courses: React.FC = () => {
+const Courses: React.FC<CoursesProps> = ({ onAccessTrigger }) => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState<Course[]>([]);
   const [page, setPage] = useState(1);

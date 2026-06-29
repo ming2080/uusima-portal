@@ -12,10 +12,6 @@ export interface User {
   role: UserRole;
   roles?: UserRole[];
   avatar?: string;
-  /** 演示用：所属学校/组织展示名 */
-  organizationName?: string;
-  /** 演示用：租户 slug，用于校级看板等路由 */
-  organizationSlug?: string;
 }
 
 export interface Course {

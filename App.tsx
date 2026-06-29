@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { HashRouter, Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { HashRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import MyHomeLayout from "./components/MyHomeLayout";
 import Home from "./pages/Home";
@@ -30,58 +30,30 @@ import BigScreenDashboard from "./pages/BigScreenDashboard";
 import PlatformOperationsDashboard from "./pages/PlatformOperationsDashboard";
 import PlatformApplicationDashboard from "./pages/PlatformApplicationDashboard";
 import SchoolDashboard from "./pages/SchoolDashboard";
-import Products from "./pages/Products";
 
 const AppContent: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [accessNotice, setAccessNotice] = useState<string | null>(null);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  useEffect(() => {
-    if (!accessNotice) return;
-    const t = window.setTimeout(() => setAccessNotice(null), 4500);
-    return () => window.clearTimeout(t);
-  }, [accessNotice]);
-
+  // Simple access check for courses/exams
   const handleRestrictedAccess = () => {
     if (!user) {
-      navigate("/login", { state: { from: location.pathname } });
-      return;
+      navigate('/login');
+    } else {
+      alert(`访问许可：欢迎，${user.name}！正在打开资源...`);
     }
-    if (user.role === UserRole.STUDENT) {
-      if (location.pathname.startsWith("/exams")) {
-        navigate("/my-home/exams");
-        setAccessNotice("已为你打开「我的考试」，可查看场次与进度。");
-      } else {
-        navigate("/my-home/learning");
-        setAccessNotice("已为你打开「我的学习」。");
-      }
-      return;
-    }
-    if (user.role === UserRole.TEACHER && location.pathname.startsWith("/exams")) {
-      navigate("/my-home/grading");
-      setAccessNotice("已为你打开「评卷管理」入口。");
-      return;
-    }
-    setAccessNotice(`${user.name}，如需报名或开通课程权限，请联系教务或平台管理员。`);
   };
 
-  const handleLogin = (
-    roles: UserRole[],
-    name: string,
-    organization?: { organizationName?: string; organizationSlug?: string },
-  ) => {
+  const handleLogin = (roles: UserRole[], name: string) => {
     const newUser: User = {
       id: Date.now().toString(),
       name: name,
       role: roles[0],
       roles: roles,
       avatar: "https://picsum.photos/100",
-      organizationName: organization?.organizationName,
-      organizationSlug: organization?.organizationSlug,
     };
     setUser(newUser);
+    navigate('/my-home');
   };
 
   const handleSwitchRole = (newRole: UserRole) => {
@@ -135,11 +107,9 @@ const AppContent: React.FC = () => {
         element={
           <Layout
             user={user}
-            onLoginClick={() => navigate("/login", { state: { from: location.pathname } })}
+            onLoginClick={() => navigate('/login')}
             onLogoutClick={handleLogout}
             onSwitchRole={handleSwitchRole}
-            accessNotice={accessNotice}
-            onDismissAccessNotice={() => setAccessNotice(null)}
           >
             <Routes>
               <Route path="/" element={<Home user={user} />} />
@@ -175,7 +145,10 @@ const AppContent: React.FC = () => {
                 }
               />
               
-              <Route path="/courses" element={<Courses />} />
+              <Route
+                path="/courses"
+                element={<Courses onAccessTrigger={handleRestrictedAccess} />}
+              />
               <Route path="/course/:id" element={<CourseDetail />} />
               <Route
                 path="/labs"
@@ -192,7 +165,6 @@ const AppContent: React.FC = () => {
                 element={<Exams onAccessTrigger={handleRestrictedAccess} />}
               />
               <Route path="/about" element={<About />} />
-              <Route path="/products" element={<Products />} />
               <Route path="/config" element={<Config user={user} />} />
               {/* Redirect unknown routes within the layout to home */}
               <Route path="*" element={<Navigate to="/" replace />} />
